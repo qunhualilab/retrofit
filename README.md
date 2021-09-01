@@ -1,2 +1,3 @@
-# retrofit
-RETROFIT: REference-free spaTial transcRiptOmics FactorIzaTion
+# RETROFIT: REference-free spaTial transcRiptOmics FactorIzaTion
+
+TBA
