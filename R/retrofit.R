@@ -17,27 +17,27 @@ retrofit <- function(x, iterations=4000) {
   x=as.matrix(x[,-1])
   
   # dimensions
-  L=18 # Cell types
+  L=16 # Cell types
   G=nrow(x) # Gene expressions
   S=ncol(x) # Spots
-  K=L/2
+  K=L/2 # Components
   
   ### initialization
-  # initial values: alpha_w/beta_w/alpha_th/beta_th/alpha_h/beta_h/
-  e=0.05 
-  f=0.0001 
-  g=0.2 
-  h=0.2
-  m=10/K
-  n=10
+  # initial parameters
+  alpha_W_0=0.05 
+  beta_W_0=0.0001 
+  alpha_H_0=0.2 
+  beta_H_0=0.2
+  alpha_TH_0=10/K
+  beta_TH_0=10
   lamda=0.01
   # initial matrices
-  eta_theta=runif(K,0,1)+m
-  gam_theta=runif(K,0,1)+n
-  eta_w=matrix(runif(G*K,0,0.5)+e , nrow=G, ncol=K)
-  gam_w=matrix(runif(G*K,0,0.005)+f , nrow=G, ncol=K)
-  eta_h=matrix(runif(K*S,0,0.1)+g , nrow=K, ncol=S)
-  gam_h=matrix(runif(K*S,0,0.5)+h , nrow=K, ncol=S)
+  eta_theta=runif(K,0,1)+alpha_TH_0
+  gam_theta=runif(K,0,1)+beta_TH_0
+  eta_w=matrix(runif(G*K,0,0.5)+alpha_W_0 , nrow=G, ncol=K)
+  gam_w=matrix(runif(G*K,0,0.005)+beta_W_0 , nrow=G, ncol=K)
+  eta_h=matrix(runif(K*S,0,0.1)+alpha_H_0 , nrow=K, ncol=S)
+  gam_h=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
   # phi_alpha, phi_beta
   p=array(rep(0,G*K*S), c(G,K,S))
   si=matrix(0, nrow=G, ncol=K)
@@ -99,17 +99,17 @@ retrofit <- function(x, iterations=4000) {
     
     # step (4) + (5)
     for(k in 1:K){
-      eta_w[,k]= (1-rho)*eta_w0[,k] + rho*(e + rowSums(x*p[,k,])*si[,k])
+      eta_w[,k]= (1-rho)*eta_w0[,k] + rho*(alpha_W_0 + rowSums(x*p[,k,])*si[,k])
       
-      gam_w[,k]= (1-rho)*gam_w0[,k] + rho*(f + sum(H1[k,]*Thet[k]))
+      gam_w[,k]= (1-rho)*gam_w0[,k] + rho*(beta_W_0 + sum(H1[k,]*Thet[k]))
       
-      eta_h[k,]= (1- rho)*eta_h0[k,] + rho*(g + colSums(x*p[,k,]))
+      eta_h[k,]= (1- rho)*eta_h0[k,] + rho*(alpha_H_0 + colSums(x*p[,k,]))
       
-      gam_h[k,]= (1- rho)*gam_h0[k,] + rho*(h + sum(W1[,k]*Thet[k] + lamda))
+      gam_h[k,]= (1- rho)*gam_h0[k,] + rho*(beta_H_0 + sum(W1[,k]*Thet[k] + lamda))
       
-      eta_theta[k]= (1-rho)*eta_theta0[k] + rho*(m + sum(rowSums(x*p[,k,])*si[,k]))
+      eta_theta[k]= (1-rho)*eta_theta0[k] + rho*(alpha_TH_0 + sum(rowSums(x*p[,k,])*si[,k]))
       
-      gam_theta[k]= (1-rho)*gam_theta0[k] + rho*(n + sum(as.matrix(W1[,k]) %*% 
+      gam_theta[k]= (1-rho)*gam_theta0[k] + rho*(beta_TH_0 + sum(as.matrix(W1[,k]) %*% 
                                                            t(as.matrix(H1[k,]))))
       
     }
