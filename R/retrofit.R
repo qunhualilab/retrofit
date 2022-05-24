@@ -31,13 +31,13 @@ retrofit <- function(x, iterations=4000) {
   alpha_TH_0=10/K
   beta_TH_0=10
   lamda=0.01
-  # initial matrices
-  eta_theta=runif(K,0,1)+alpha_TH_0
-  gam_theta=runif(K,0,1)+beta_TH_0
-  eta_w=matrix(runif(G*K,0,0.5)+alpha_W_0 , nrow=G, ncol=K)
-  gam_w=matrix(runif(G*K,0,0.005)+beta_W_0 , nrow=G, ncol=K)
-  eta_h=matrix(runif(K*S,0,0.1)+alpha_H_0 , nrow=K, ncol=S)
-  gam_h=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
+  # parameter matrices
+  alpha_W_gk=matrix(runif(G*K,0,0.5)+alpha_W_0 , nrow=G, ncol=K)
+  beta_W_gk=matrix(runif(G*K,0,0.005)+beta_W_0 , nrow=G, ncol=K)
+  alpha_H_ks=matrix(runif(K*S,0,0.1)+alpha_H_0 , nrow=K, ncol=S)
+  beta_H_ks=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
+  alpha_TH_k=runif(K,0,1)+alpha_TH_0
+  beta_TH_k=runif(K,0,1)+beta_TH_0
   # phi_alpha, phi_beta
   p=array(rep(0,G*K*S), c(G,K,S))
   si=matrix(0, nrow=G, ncol=K)
@@ -64,11 +64,11 @@ retrofit <- function(x, iterations=4000) {
     # step (2)
     for(k in 1:K){
       for(s in 1:S){
-        H1[k,s]=rgamma(1, shape=eta_h[k,s], rate=gam_h[k,s])
+        H1[k,s]=rgamma(1, shape=alpha_H_ks[k,s], rate=beta_H_ks[k,s])
       }
-      Thet[k]=rgamma(1, shape=eta_theta[k], rate=gam_theta[k])
+      Thet[k]=rgamma(1, shape=alpha_TH_k[k], rate=beta_TH_k[k])
       for(v in 1:G){
-        W1[v,k]=rgamma(1, shape=eta_w[v,k], rate=gam_w[v,k])
+        W1[v,k]=rgamma(1, shape=alpha_W_gk[v,k], rate=beta_W_gk[v,k])
         
         # step (3) - phi_beta
         if((W1[v,k]*Thet[k] + lamda)==0){
@@ -90,26 +90,26 @@ retrofit <- function(x, iterations=4000) {
     }
     
     # for clear assignment
-    eta_theta0=eta_theta
-    gam_theta0=gam_theta
-    eta_h0=eta_h
-    gam_h0=gam_h
-    eta_w0=eta_w
-    gam_w0=gam_w
+    alpha_TH_k0=alpha_TH_k
+    beta_TH_k0=beta_TH_k
+    alpha_H_ks0=alpha_H_ks
+    beta_H_ks0=beta_H_ks
+    alpha_W_gk0=alpha_W_gk
+    beta_W_gk0=beta_W_gk
     
     # step (4) + (5)
     for(k in 1:K){
-      eta_w[,k]= (1-rho)*eta_w0[,k] + rho*(alpha_W_0 + rowSums(x*p[,k,])*si[,k])
+      alpha_W_gk[,k]= (1-rho)*alpha_W_gk0[,k] + rho*(alpha_W_0 + rowSums(x*p[,k,])*si[,k])
       
-      gam_w[,k]= (1-rho)*gam_w0[,k] + rho*(beta_W_0 + sum(H1[k,]*Thet[k]))
+      beta_W_gk[,k]= (1-rho)*beta_W_gk0[,k] + rho*(beta_W_0 + sum(H1[k,]*Thet[k]))
       
-      eta_h[k,]= (1- rho)*eta_h0[k,] + rho*(alpha_H_0 + colSums(x*p[,k,]))
+      alpha_H_ks[k,]= (1- rho)*alpha_H_ks0[k,] + rho*(alpha_H_0 + colSums(x*p[,k,]))
       
-      gam_h[k,]= (1- rho)*gam_h0[k,] + rho*(beta_H_0 + sum(W1[,k]*Thet[k] + lamda))
+      beta_H_ks[k,]= (1- rho)*beta_H_ks0[k,] + rho*(beta_H_0 + sum(W1[,k]*Thet[k] + lamda))
       
-      eta_theta[k]= (1-rho)*eta_theta0[k] + rho*(alpha_TH_0 + sum(rowSums(x*p[,k,])*si[,k]))
+      alpha_TH_k[k]= (1-rho)*alpha_TH_k0[k] + rho*(alpha_TH_0 + sum(rowSums(x*p[,k,])*si[,k]))
       
-      gam_theta[k]= (1-rho)*gam_theta0[k] + rho*(beta_TH_0 + sum(as.matrix(W1[,k]) %*% 
+      beta_TH_k[k]= (1-rho)*beta_TH_k0[k] + rho*(beta_TH_0 + sum(as.matrix(W1[,k]) %*% 
                                                            t(as.matrix(H1[k,]))))
       
     }
@@ -121,9 +121,9 @@ retrofit <- function(x, iterations=4000) {
   }
   
   # step (6) 
-  W_hat=eta_w/gam_w
-  H_hat=eta_h/gam_h
-  Theta_hat=eta_theta/gam_theta
+  W_hat=alpha_W_gk/beta_W_gk
+  H_hat=alpha_H_ks/beta_H_ks
+  Theta_hat=alpha_TH_k/beta_TH_k
   result <- list(w=W_hat, h=H_hat, t=Theta_hat)
   return(result)
 }
