@@ -17,10 +17,10 @@ retrofit <- function(x, iterations=4000) {
   x=as.matrix(x[,-1])
   
   # dimensions
-  K=8
-  G=nrow(x)
-  S=ncol(x)
-  L=2*K
+  L=18 # Cell types
+  G=nrow(x) # Gene expressions
+  S=ncol(x) # Spots
+  K=L/2
   
   ### initialization
   # initial values: alpha_w/beta_w/alpha_th/beta_th/alpha_h/beta_h/
@@ -32,19 +32,19 @@ retrofit <- function(x, iterations=4000) {
   n=10
   lamda=0.01
   # initial matrices
-  eta_theta=runif(L,0,1)+m
-  gam_theta=runif(L,0,1)+n
-  eta_w=matrix(runif(G*L,0,0.5)+e , nrow=G, ncol=L)
-  gam_w=matrix(runif(G*L,0,0.005)+f , nrow=G, ncol=L)
-  eta_h=matrix(runif(L*S,0,0.1)+g , nrow=L, ncol=S)
-  gam_h=matrix(runif(L*S,0,0.5)+h , nrow=L, ncol=S)
+  eta_theta=runif(K,0,1)+m
+  gam_theta=runif(K,0,1)+n
+  eta_w=matrix(runif(G*K,0,0.5)+e , nrow=G, ncol=K)
+  gam_w=matrix(runif(G*K,0,0.005)+f , nrow=G, ncol=K)
+  eta_h=matrix(runif(K*S,0,0.1)+g , nrow=K, ncol=S)
+  gam_h=matrix(runif(K*S,0,0.5)+h , nrow=K, ncol=S)
   # phi_alpha, phi_beta
-  p=array(rep(0,G*L*S), c(G,L,S))
-  si=matrix(0, nrow=G, ncol=L)
+  p=array(rep(0,G*K*S), c(G,K,S))
+  si=matrix(0, nrow=G, ncol=K)
   # W/H/Th from Gamma dist
-  Thet=rep(0,L)
-  W1=matrix(0,nrow=G, ncol=L)
-  H1=matrix(0,nrow=L, ncol=S)
+  Thet=rep(0,K)
+  W1=matrix(0,nrow=G, ncol=K)
+  H1=matrix(0,nrow=K, ncol=S)
   
   
   kappa=0.5
@@ -62,7 +62,7 @@ retrofit <- function(x, iterations=4000) {
     
     # simulating from q(.)
     # step (2)
-    for(k in 1:L){
+    for(k in 1:K){
       for(s in 1:S){
         H1[k,s]=rgamma(1, shape=eta_h[k,s], rate=gam_h[k,s])
       }
@@ -81,7 +81,7 @@ retrofit <- function(x, iterations=4000) {
     
     # step (3) - phi_alpha
     for(s in 1:S){
-      for(k in 1:L){
+      for(k in 1:K){
         p[,k,s]=((W1[,k] * Thet[k]) +lamda)* H1[k,s]
       }
       for(v in 1:G){
@@ -98,7 +98,7 @@ retrofit <- function(x, iterations=4000) {
     gam_w0=gam_w
     
     # step (4) + (5)
-    for(k in 1:L){
+    for(k in 1:K){
       eta_w[,k]= (1-rho)*eta_w0[,k] + rho*(e + rowSums(x*p[,k,])*si[,k])
       
       gam_w[,k]= (1-rho)*gam_w0[,k] + rho*(f + sum(H1[k,]*Thet[k]))
