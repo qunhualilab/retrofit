@@ -17,10 +17,10 @@ retrofit <- function(x, iterations=4000) {
   x=as.matrix(x[,-1])
   
   # dimensions
-  L=16 # Cell types
+  cell_types=8 # Cell types ('K' in the dissertation)
   G=nrow(x) # Gene expressions
   S=ncol(x) # Spots
-  K=L/2 # Components
+  K=2*cell_types # Components ('L' in the dissertation)
   
   ### initialization
   # initial parameters
@@ -38,9 +38,9 @@ retrofit <- function(x, iterations=4000) {
   beta_H_ks=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
   alpha_TH_k=runif(K,0,1)+alpha_TH_0
   beta_TH_k=runif(K,0,1)+beta_TH_0
-  # phi_alpha, phi_beta
-  p=array(rep(0,G*K*S), c(G,K,S))
-  si=matrix(0, nrow=G, ncol=K)
+  # variational parameters
+  phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
+  phi_b_gk=matrix(0, nrow=G, ncol=K)
   # W/H/Th from Gamma dist
   Thet=rep(0,K)
   W1=matrix(0,nrow=G, ncol=K)
@@ -72,9 +72,9 @@ retrofit <- function(x, iterations=4000) {
         
         # step (3) - phi_beta
         if((W1[v,k]*Thet[k] + lamda)==0){
-          si[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
+          phi_b_gk[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
         } else{
-          si[v,k]=(W1[v,k]*Thet[k])/(W1[v,k]*Thet[k] + lamda)
+          phi_b_gk[v,k]=(W1[v,k]*Thet[k])/(W1[v,k]*Thet[k] + lamda)
         }
       }
     }
@@ -82,10 +82,10 @@ retrofit <- function(x, iterations=4000) {
     # step (3) - phi_alpha
     for(s in 1:S){
       for(k in 1:K){
-        p[,k,s]=((W1[,k] * Thet[k]) +lamda)* H1[k,s]
+        phi_a_gks[,k,s]=((W1[,k] * Thet[k]) +lamda)* H1[k,s]
       }
       for(v in 1:G){
-        p[v,,s]=p[v,,s]/sum(p[v,,s])
+        phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
       }
     }
     
@@ -99,15 +99,15 @@ retrofit <- function(x, iterations=4000) {
     
     # step (4) + (5)
     for(k in 1:K){
-      alpha_W_gk[,k]= (1-rho)*alpha_W_gk0[,k] + rho*(alpha_W_0 + rowSums(x*p[,k,])*si[,k])
+      alpha_W_gk[,k]= (1-rho)*alpha_W_gk0[,k] + rho*(alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
       
       beta_W_gk[,k]= (1-rho)*beta_W_gk0[,k] + rho*(beta_W_0 + sum(H1[k,]*Thet[k]))
       
-      alpha_H_ks[k,]= (1- rho)*alpha_H_ks0[k,] + rho*(alpha_H_0 + colSums(x*p[,k,]))
+      alpha_H_ks[k,]= (1- rho)*alpha_H_ks0[k,] + rho*(alpha_H_0 + colSums(x*phi_a_gks[,k,]))
       
       beta_H_ks[k,]= (1- rho)*beta_H_ks0[k,] + rho*(beta_H_0 + sum(W1[,k]*Thet[k] + lamda))
       
-      alpha_TH_k[k]= (1-rho)*alpha_TH_k0[k] + rho*(alpha_TH_0 + sum(rowSums(x*p[,k,])*si[,k]))
+      alpha_TH_k[k]= (1-rho)*alpha_TH_k0[k] + rho*(alpha_TH_0 + sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k]))
       
       beta_TH_k[k]= (1-rho)*beta_TH_k0[k] + rho*(beta_TH_0 + sum(as.matrix(W1[,k]) %*% 
                                                            t(as.matrix(H1[k,]))))
@@ -115,7 +115,7 @@ retrofit <- function(x, iterations=4000) {
     }
     
     t=t+1 
-    if(sum(is.nan(p))>0){
+    if(sum(is.nan(phi_a_gks))>0){
       break
     }
   }
