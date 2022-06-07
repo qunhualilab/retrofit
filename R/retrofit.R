@@ -11,7 +11,7 @@
 #' @examples
 #' 
 retrofit <- function(x, iterations=4000) {
-  if(!is.matrix(x)) stop("x must be a matrix with shape: GeneExpressions:Spots")
+  # if(!is.matrix(x)) stop("x must be a matrix with shape: GeneExpressions:Spots")
   # the first column is the row names
   rownames(x)=x[,1]
   x=as.matrix(x[,-1])
