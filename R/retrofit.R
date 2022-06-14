@@ -1,3 +1,5 @@
+set.seed(5)
+
 #' Split a string
 #'
 #' @param x Spatial Transciptomics Data. Matrix(GeneExpressions, Spots)
