@@ -1,20 +1,23 @@
-# rm(list=ls())
-
-a3_1554 <- function() {
-  dir_path = "~/Research/retrofit/retrofit/results/"
-  in_origin_path = "A3_counts_G=1554.csv"
-  out_h_path = "A3_H_hat_G=1554.csv"
-  out_w_path = "A3_W_hat_G=1554.csv"
-  out_t_path = "A3_Theta_hat_G=1554.csv"
-
-  X=read.csv(paste(dir_path, in_origin_path, sep="/"))
-  ######## X = matrix(X, nrow=1081, ncol=1555)
-
-  result = retrofit(x=X, iterations=100)
-
-  write.csv(result["h"], paste(dir_path, out_h_path, sep="/"))
-  write.csv(result["w"], paste(dir_path, out_w_path, sep="/"))
-  write.csv(result["t"], paste(dir_path, out_t_path, sep="/"))
-
+retrofit_simulation <- function(dir, file, iterations=2) {
+  in_file = paste(file, ".csv", sep="")
+  in_path = paste(dir, in_file, sep="/")
+  out_h_file = paste(file,"_out_H.csv", sep="")
+  out_h_path = paste(dir, out_h_file, sep="/")
+  out_w_file = paste(file,"_out_W.csv", sep="")
+  out_w_path = paste(dir, out_w_file, sep="/")
+  out_t_file = paste(file,"_out_T.csv", sep="")
+  out_t_path = paste(dir, out_t_file, sep="/")
+  
+  X=read.csv(in_path)
+  
+  result = retrofit(X, iterations)
+  
+  write.csv(result["h"], out_h_path)
+  write.csv(result["w"], out_w_path)
+  write.csv(result["t"], out_t_path)
+  
   print("simulation finished")
+  paths <- list(in_path, out_w_path, out_h_path, out_t_path)
+  names(paths) <- c("in_path", "out_w_path", "out_h_path", "out_t_path")
+  return(paths)
 }
