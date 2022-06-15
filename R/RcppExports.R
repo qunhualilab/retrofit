@@ -9,6 +9,10 @@ retrofit_step3_alpha_denominator <- function(phi_a_gks) {
     .Call(`_retrofit_retrofit_step3_alpha_denominator`, phi_a_gks)
 }
 
+retrofit_step3_alpha <- function(W_gk, TH_k, H_ks, lambda) {
+    .Call(`_retrofit_retrofit_step3_alpha`, W_gk, TH_k, H_ks, lambda)
+}
+
 retrofit_step3_beta <- function(W_gk, TH_k, lambda) {
     .Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda)
 }
