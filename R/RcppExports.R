@@ -9,8 +9,24 @@ retrofit_step3_alpha_denominator <- function(phi_a_gks) {
     .Call(`_retrofit_retrofit_step3_alpha_denominator`, phi_a_gks)
 }
 
+retrofit_step3_alpha <- function(W_gk, TH_k, H_ks, lambda) {
+    .Call(`_retrofit_retrofit_step3_alpha`, W_gk, TH_k, H_ks, lambda)
+}
+
 retrofit_step3_beta <- function(W_gk, TH_k, lambda) {
     .Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda)
+}
+
+retrofit_step4_alpha_w <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0) {
+    .Call(`_retrofit_retrofit_step4_alpha_w`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0)
+}
+
+retrofit_step4_alpha_h <- function(x_gs, phi_a_gks, alpha_h_0) {
+    .Call(`_retrofit_retrofit_step4_alpha_h`, x_gs, phi_a_gks, alpha_h_0)
+}
+
+retrofit_step4_alpha_th <- function(x_gs, phi_a_gks, phi_b_gk, alpha_th_0) {
+    .Call(`_retrofit_retrofit_step4_alpha_th`, x_gs, phi_a_gks, phi_b_gk, alpha_th_0)
 }
 
 rcpp_second_dim_sum <- function(v) {
