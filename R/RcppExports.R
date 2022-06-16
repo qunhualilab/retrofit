@@ -17,16 +17,12 @@ retrofit_step3_beta <- function(W_gk, TH_k, lambda) {
     .Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda)
 }
 
-retrofit_step4_alpha_w <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0) {
-    .Call(`_retrofit_retrofit_step4_alpha_w`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0)
+retrofit_step4_alpha_updates <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0) {
+    .Call(`_retrofit_retrofit_step4_alpha_updates`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0)
 }
 
-retrofit_step4_alpha_h <- function(x_gs, phi_a_gks, alpha_h_0) {
-    .Call(`_retrofit_retrofit_step4_alpha_h`, x_gs, phi_a_gks, alpha_h_0)
-}
-
-retrofit_step4_alpha_th <- function(x_gs, phi_a_gks, phi_b_gk, alpha_th_0) {
-    .Call(`_retrofit_retrofit_step4_alpha_th`, x_gs, phi_a_gks, phi_b_gk, alpha_th_0)
+retrofit_step4_beta_updates <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda) {
+    .Call(`_retrofit_retrofit_step4_beta_updates`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda)
 }
 
 rcpp_second_dim_sum <- function(v) {
