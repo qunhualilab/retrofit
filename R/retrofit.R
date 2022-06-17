@@ -10,6 +10,7 @@
 #'
 #' 
 retrofit <- function(x, iterations=4000) {
+  set.seed(1)
   # if(!is.matrix(x)) stop("x must be a matrix with shape: GeneExpressions:Spots")
   # the first column is the row names
   rownames(x)=x[,1]
@@ -27,16 +28,16 @@ retrofit <- function(x, iterations=4000) {
   beta_W_0=0.0001 
   alpha_H_0=0.2 
   beta_H_0=0.2
-  alpha_TH_0=10/K
+  alpha_TH_0=10/cell_types
   beta_TH_0=10
   lamda=0.01
   # parameter matrices
+  alpha_TH_k=runif(K,0,1)+alpha_TH_0
+  beta_TH_k=runif(K,0,1)+beta_TH_0
   alpha_W_gk=matrix(runif(G*K,0,0.5)+alpha_W_0 , nrow=G, ncol=K)
   beta_W_gk=matrix(runif(G*K,0,0.005)+beta_W_0 , nrow=G, ncol=K)
   alpha_H_ks=matrix(runif(K*S,0,0.1)+alpha_H_0 , nrow=K, ncol=S)
   beta_H_ks=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
-  alpha_TH_k=runif(K,0,1)+alpha_TH_0
-  beta_TH_k=runif(K,0,1)+beta_TH_0
   # variational parameters
   phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
   phi_b_gk=matrix(0, nrow=G, ncol=K)
