@@ -10,6 +10,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// retrofit_step2_rgamma
+NumericVector retrofit_step2_rgamma(NumericVector shapes, NumericVector rates);
+RcppExport SEXP _retrofit_retrofit_step2_rgamma(SEXP shapesSEXP, SEXP ratesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type shapes(shapesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type rates(ratesSEXP);
+    rcpp_result_gen = Rcpp::wrap(retrofit_step2_rgamma(shapes, rates));
+    return rcpp_result_gen;
+END_RCPP
+}
 // retrofit_step3_alpha_numerator
 NumericVector retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, float lambda);
 RcppExport SEXP _retrofit_retrofit_step3_alpha_numerator(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP H_ksSEXP, SEXP lambdaSEXP) {
@@ -108,6 +120,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_retrofit_retrofit_step2_rgamma", (DL_FUNC) &_retrofit_retrofit_step2_rgamma, 2},
     {"_retrofit_retrofit_step3_alpha_numerator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_numerator, 4},
     {"_retrofit_retrofit_step3_alpha_denominator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_denominator, 1},
     {"_retrofit_retrofit_step3_alpha", (DL_FUNC) &_retrofit_retrofit_step3_alpha, 4},
