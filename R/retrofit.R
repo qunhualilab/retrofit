@@ -10,6 +10,7 @@
 #'
 #' 
 retrofit <- function(x, iterations=4000) {
+  set.seed(1)
   # if(!is.matrix(x)) stop("x must be a matrix with shape: GeneExpressions:Spots")
   # the first column is the row names
   rownames(x)=x[,1]
@@ -27,16 +28,16 @@ retrofit <- function(x, iterations=4000) {
   beta_W_0=0.0001 
   alpha_H_0=0.2 
   beta_H_0=0.2
-  alpha_TH_0=10/K
+  alpha_TH_0=10/cell_types
   beta_TH_0=10
   lamda=0.01
   # parameter matrices
+  alpha_TH_k=runif(K,0,1)+alpha_TH_0
+  beta_TH_k=runif(K,0,1)+beta_TH_0
   alpha_W_gk=matrix(runif(G*K,0,0.5)+alpha_W_0 , nrow=G, ncol=K)
   beta_W_gk=matrix(runif(G*K,0,0.005)+beta_W_0 , nrow=G, ncol=K)
   alpha_H_ks=matrix(runif(K*S,0,0.1)+alpha_H_0 , nrow=K, ncol=S)
   beta_H_ks=matrix(runif(K*S,0,0.5)+beta_H_0 , nrow=K, ncol=S)
-  alpha_TH_k=runif(K,0,1)+alpha_TH_0
-  beta_TH_k=runif(K,0,1)+beta_TH_0
   # variational parameters
   phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
   phi_b_gk=matrix(0, nrow=G, ncol=K)
@@ -61,6 +62,7 @@ retrofit <- function(x, iterations=4000) {
     
     # simulating from q(.)
     # step (2)
+    from = Sys.time()
     for(k in 1:K){
       for(s in 1:S){
         H_ks[k,s]=rgamma(1, shape=alpha_H_ks[k,s], rate=beta_H_ks[k,s])
@@ -70,41 +72,17 @@ retrofit <- function(x, iterations=4000) {
         W_gk[v,k]=rgamma(1, shape=alpha_W_gk[v,k], rate=beta_W_gk[v,k])
       }
     }
-    
-    # step (3) - phi_alpha:original
-    from = Sys.time()
-    for(s in 1:S){
-      for(k in 1:K){
-        phi_a_gks[,k,s]=((W_gk[,k] * TH_k[k]) +lamda)* H_ks[k,s]
-      }
-      for(v in 1:G){
-        phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
-      }
-    }
-    # print(paste('step3-alpha-original: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    print(paste('step2-original: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
     
     # step (3) - rcpp:phi_alpha
-    # from = Sys.time()
-    # phi_a_gks = array(retrofit_step3_alpha(W_gk, TH_k, H_ks, lamda), c(G,K,S))
-    # print(paste('step3-alpha-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
-    
-    # step (3) - phi_beta:original
-    # from = Sys.time()
-    for(k in 1:K){
-      for(v in 1:G){
-        if((W_gk[v,k]*TH_k[k] + lamda)==0){
-          phi_b_gk[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
-        } else{
-          phi_b_gk[v,k]=(W_gk[v,k]*TH_k[k])/(W_gk[v,k]*TH_k[k] + lamda)
-        }
-      }
-    }
-    # print(paste('step3-beta-original: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    from = Sys.time()
+    phi_a_gks = array(retrofit_step3_alpha(W_gk, TH_k, H_ks, lamda), c(G,K,S))
+    print(paste('step3-alpha-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
     
     # step (3) - phi_beta:rcpp
-    # from = Sys.time()
-    # phi_b_gk = array(retrofit_step3_beta(W_gk, TH_k, lamda), c(G,K))
-    # print(paste('step3-beta-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    from = Sys.time()
+    phi_b_gk = array(retrofit_step3_beta(W_gk, TH_k, lamda), c(G,K))
+    print(paste('step3-beta-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
     
     # for clear assignment
     alpha_TH_k0=alpha_TH_k
