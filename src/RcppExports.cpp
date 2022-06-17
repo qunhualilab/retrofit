@@ -91,8 +91,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // retrofit_step4_beta_calculation
-List retrofit_step4_beta_calculation(NumericVector W_gk, NumericVector H_ks, NumericVector TH_k, float beta_w_0, float beta_h_0, float beta_th_0, float lambda, int t);
-RcppExport SEXP _retrofit_retrofit_step4_beta_calculation(SEXP W_gkSEXP, SEXP H_ksSEXP, SEXP TH_kSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP, SEXP tSEXP) {
+List retrofit_step4_beta_calculation(NumericVector W_gk, NumericVector H_ks, NumericVector TH_k, float beta_w_0, float beta_h_0, float beta_th_0, float lambda);
+RcppExport SEXP _retrofit_retrofit_step4_beta_calculation(SEXP W_gkSEXP, SEXP H_ksSEXP, SEXP TH_kSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -103,8 +103,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< float >::type beta_h_0(beta_h_0SEXP);
     Rcpp::traits::input_parameter< float >::type beta_th_0(beta_th_0SEXP);
     Rcpp::traits::input_parameter< float >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< int >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, t));
+    rcpp_result_gen = Rcpp::wrap(retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,7 +139,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_retrofit_retrofit_step3_alpha", (DL_FUNC) &_retrofit_retrofit_step3_alpha, 4},
     {"_retrofit_retrofit_step3_beta", (DL_FUNC) &_retrofit_retrofit_step3_beta, 3},
     {"_retrofit_retrofit_step4_alpha_calculation", (DL_FUNC) &_retrofit_retrofit_step4_alpha_calculation, 6},
-    {"_retrofit_retrofit_step4_beta_calculation", (DL_FUNC) &_retrofit_retrofit_step4_beta_calculation, 8},
+    {"_retrofit_retrofit_step4_beta_calculation", (DL_FUNC) &_retrofit_retrofit_step4_beta_calculation, 7},
     {"_retrofit_retrofit_step5_parameter_estimation", (DL_FUNC) &_retrofit_retrofit_step5_parameter_estimation, 3},
     {"_retrofit_rcpp_second_dim_sum", (DL_FUNC) &_retrofit_rcpp_second_dim_sum, 1},
     {NULL, NULL, 0}
