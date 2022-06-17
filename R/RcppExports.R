@@ -25,8 +25,8 @@ retrofit_step4_alpha_calculation <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_
     .Call(`_retrofit_retrofit_step4_alpha_calculation`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0)
 }
 
-retrofit_step4_beta_calculation <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, t) {
-    .Call(`_retrofit_retrofit_step4_beta_calculation`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, t)
+retrofit_step4_beta_calculation <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda) {
+    .Call(`_retrofit_retrofit_step4_beta_calculation`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda)
 }
 
 retrofit_step5_parameter_estimation <- function(original, update, rho) {
