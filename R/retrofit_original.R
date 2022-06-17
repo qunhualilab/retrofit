@@ -4,6 +4,7 @@
 
 ### Read synthetic data
 retrofit_original <- function(X, iterations=4000) {
+  set.seed(1)
   # X=read.csv("A3_counts_G=1554.csv") # change this to other ST data
   rownames(X)=X[,1]
   X=as.matrix(X[,-1])
