@@ -82,5 +82,68 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
                                      float beta_th_0,
                                      float lambda)
 {
-  return List();
+  /* Equivalent code
+   * for(k in 1:K){
+   * beta_W_gk[,k]= beta_W_0 + sum(H_ks[k,]*TH_k[k])
+   * beta_H_ks[k,]= beta_H_0 + sum(W_gk[,k]*TH_k[k] + lamda)
+   * beta_TH_k[k]= beta_TH_0 + sum(as.matrix(W_gk[,k]) %*% t(as.matrix(H_ks[k,])))
+   * }
+   */
+  //dimensions
+  NumericVector dim_w = W_gk.attr("dim");
+  int G = dim_w[0];
+  int K = dim_w[1];
+  NumericVector dim_h = H_ks.attr("dim");
+  int S = dim_h[1];
+  
+  //Calculate beta_w
+  NumericVector beta_w (G*K);
+  for(int s=0; s<S; ++s){
+    for(int k=0; k<K; ++k){
+      for(int g=0; g<G; ++g){
+        beta_w[k*G+g] += TH_k[k]*H_ks[s*K+k];
+      }
+    }
+  }
+  for(int k=0; k<K; ++k){
+    for(int g=0; g<G; ++g){
+      beta_w[k*G+g] += beta_w_0;
+    }
+  }
+  
+  //Calculate beta_h
+  NumericVector beta_h (K*S);
+  for(int s=0; s<S; ++s){
+    for(int k=0; k<K; ++k){
+      for(int g=0; g<G; ++g){
+        beta_h[s*K+k] += W_gk[k*G+g]*TH_k[k]+lambda;
+      }
+    }
+  }
+  for(int s=0; s<S; ++s){
+    for(int k=0; k<K; ++k){
+      beta_h[s*K+k] += beta_h_0;
+    }
+  }
+  
+  //Calculate beta_th
+  NumericVector beta_th (K);
+  for(int s=0; s<S; ++s){
+    for(int k=0; k<K; ++k){
+      for(int g=0; g<G; ++g){
+        beta_th[k] += W_gk[k*G+g]*H_ks[s*K+k];
+      }
+    }
+  }
+  
+  for(int k=0; k<K; ++k){
+    beta_th[k] += beta_th_0;
+  }
+  
+  
+  List ret;
+  ret["w"] = beta_w;
+  ret["h"] = beta_h;
+  ret["t"] = beta_th;
+  return ret;
 }
