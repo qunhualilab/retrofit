@@ -23,26 +23,47 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
 
   //Calculate alpha_w
   NumericVector alpha_w (G*K);
+  NumericVector alpha_h (K*S);
+  NumericVector alpha_th (K);
+  float x_gs_val;
+  float phi_a_gks_val;
+  float phi_b_gk_val;
+  NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
+  NumericVector::iterator phi_b_gk_iter = phi_b_gk.begin();
+  NumericVector::iterator x_gs_iter = x_gs.begin();
+  NumericVector::iterator alpha_w_iter = alpha_w.begin();
+  NumericVector::iterator alpha_h_iter = alpha_h.begin();
+  NumericVector::iterator alpha_th_iter = alpha_th.begin();
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        alpha_w[k*G+g] += x_gs[s*G+g]*phi_a_gks[s*G*K+k*G+g]*phi_b_gk[k*G+g];
+        // equivalent: x_gs_val = x_gs[s*G+g];
+        x_gs_val = *x_gs_iter; ++x_gs_iter; if(g==G-1 && k!=K-1) {x_gs_iter -= G;}
+
+        // equivalent: phi_a_gks_val = phi_a_gks[s*G*K+k*G+g];
+        phi_a_gks_val = *phi_a_gks_iter; ++phi_a_gks_iter;
+
+        // equivalent: phi_b_gk_val = phi_b_gk[k*G+g];
+        phi_b_gk_val = *phi_b_gk_iter; ++phi_b_gk_iter; if(g==G-1 && k==K-1) {phi_b_gk_iter -= K*G;}
+
+        // equivalent: alpha_w[k*G+g] += x_gs_val*phi_a_gks_val*phi_b_gk_val;
+        *alpha_w_iter += x_gs_val*phi_a_gks_val*phi_b_gk_val;
+         ++alpha_w_iter; if(g==G-1 && k==K-1) {alpha_w_iter -= K*G;}
+
+        // equivalent: alpha_h[s*K+k] += x_gs_val*phi_a_gks_val;
+        *alpha_h_iter += x_gs_val*phi_a_gks_val;
+        if(g==G-1) {++alpha_h_iter;}
+
+        // equivalent: alpha_th[k] += x_gs_val*phi_a_gks_val*phi_b_gk_val;
+        *alpha_th_iter += x_gs_val*phi_a_gks_val*phi_b_gk_val;
+        if(g==G-1) {++alpha_th_iter;} if(g==G-1 && k==K-1) {alpha_th_iter -= K;}
       }
     }
   }
+
   for(int k=0; k<K; ++k){
     for(int g=0; g<G; ++g){
       alpha_w[k*G+g] += alpha_w_0;
-    }
-  }
-  
-  //Calculate alpha_h
-  NumericVector alpha_h (K*S);
-  for(int s=0; s<S; ++s){
-    for(int k=0; k<K; ++k){
-      for(int g=0; g<G; ++g){
-        alpha_h[s*K+k] += x_gs[s*G+g]*phi_a_gks[s*G*K+k*G+g];
-      }
     }
   }
   for(int s=0; s<S; ++s){
@@ -50,21 +71,9 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
       alpha_h[s*K+k] += alpha_h_0;
     }
   }
-  
-  //Calculate alpha_th
-  NumericVector alpha_th (K);
-  for(int s=0; s<S; ++s){
-    for(int k=0; k<K; ++k){
-      for(int g=0; g<G; ++g){
-        alpha_th[k] += x_gs[s*G+g]*phi_a_gks[s*G*K+k*G+g]*phi_b_gk[k*G+g];
-      }
-    }
-  }
-  
   for(int k=0; k<K; ++k){
     alpha_th[k] += alpha_th_0;
   }
-  
 
   List ret;
   ret["w"] = alpha_w;
@@ -96,28 +105,48 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
   NumericVector dim_h = H_ks.attr("dim");
   int S = dim_h[1];
   
-  //Calculate beta_w
   NumericVector beta_w (G*K);
+  NumericVector beta_h (K*S);
+  NumericVector beta_th (K);
+  NumericVector::iterator beta_w_iter = beta_w.begin();
+  NumericVector::iterator beta_h_iter = beta_h.begin();
+  NumericVector::iterator beta_th_iter = beta_th.begin();
+  NumericVector::iterator W_gk_iter = W_gk.begin();
+  NumericVector::iterator H_ks_iter = H_ks.begin();
+  NumericVector::iterator TH_k_iter = TH_k.begin();
+  float W_gk_val;
+  float H_ks_val;
+  float TH_k_val;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        beta_w[k*G+g] += TH_k[k]*H_ks[s*K+k];
+        // equivalent: W_gk_val = W_gk[k*G+g];
+        W_gk_val = *W_gk_iter; ++W_gk_iter; if(g==G-1 && k==K-1) {W_gk_iter -= K*G;}
+        
+        // equivalent: H_ks_val = H_ks[s*K+k];
+        H_ks_val = *H_ks_iter; if(g==G-1){++H_ks_iter;}
+        
+        // equivalent: TH_k_val = TH_k[k];
+        TH_k_val = *TH_k_iter; if(g==G-1) {++TH_k_iter;} if(g==G-1 && k==K-1) {TH_k_iter -= K;}
+        
+        // equivalent: beta_w[k*G+g] += TH_k_val*H_ks_val;
+        *beta_w_iter += TH_k_val*H_ks_val;
+        ++beta_w_iter; if(g==G-1 && k==K-1) {beta_w_iter -= K*G;}
+        
+        // equivalent: beta_h[s*K+k] += W_gk_val*TH_k_val+lambda;
+        *beta_h_iter += W_gk_val*TH_k_val+lambda;
+        if(g==G-1) {++beta_h_iter;}
+        
+        // equivalent: beta_th[k] += W_gk_val*H_ks_val;
+        *beta_th_iter += W_gk_val*H_ks_val;
+        if(g==G-1) {++beta_th_iter;} if(g==G-1 && k==K-1) {beta_th_iter -= K;}
       }
-    }
-  }
-  for(int k=0; k<K; ++k){
-    for(int g=0; g<G; ++g){
-      beta_w[k*G+g] += beta_w_0;
     }
   }
   
-  //Calculate beta_h
-  NumericVector beta_h (K*S);
-  for(int s=0; s<S; ++s){
-    for(int k=0; k<K; ++k){
-      for(int g=0; g<G; ++g){
-        beta_h[s*K+k] += W_gk[k*G+g]*TH_k[k]+lambda;
-      }
+  for(int k=0; k<K; ++k){
+    for(int g=0; g<G; ++g){
+      beta_w[k*G+g] += beta_w_0;
     }
   }
   for(int s=0; s<S; ++s){
@@ -125,17 +154,6 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
       beta_h[s*K+k] += beta_h_0;
     }
   }
-  
-  //Calculate beta_th
-  NumericVector beta_th (K);
-  for(int s=0; s<S; ++s){
-    for(int k=0; k<K; ++k){
-      for(int g=0; g<G; ++g){
-        beta_th[k] += W_gk[k*G+g]*H_ks[s*K+k];
-      }
-    }
-  }
-  
   for(int k=0; k<K; ++k){
     beta_th[k] += beta_th_0;
   }
