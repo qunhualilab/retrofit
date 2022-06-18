@@ -88,3 +88,38 @@ test_that("step3-beta", {
   
   expect_true(all.equal(phi_b_gk, phi_b_gk_new, tolerance=1e-4))
 })
+
+
+test_that("step3-alpha", {
+  G = 4
+  K = 3
+  S = 2
+  # G = 1550
+  # K = 16
+  # S = 1080
+  W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
+  H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
+  TH_k=array(runif(K, 0, 10))
+  lambda = runif(1, 0, 1)
+  
+  # r code
+  # from = Sys.time()
+  phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
+  for(s in 1:S){
+    for(k in 1:K){
+      phi_a_gks[,k,s] = ((W_gk[,k] * TH_k[k]) +lambda)* H_ks[k,s]
+    }
+    for(v in 1:G){
+      phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
+    }
+  }
+  # print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  
+  
+  # rcpp code
+  # from = Sys.time()
+  phi_a_gks_new = array(retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda), c(G,K,S));
+  # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  
+  expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
+})
