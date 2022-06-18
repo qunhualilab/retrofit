@@ -20,19 +20,19 @@ test_that("step4_alpha", {
   }
   
   # rcpp code
-  ret = retrofit_step4_alpha_updates(x, 
-                                     phi_a_gks, 
-                                     phi_b_gk, 
-                                     alpha_w_0,
-                                     alpha_h_0,
-                                     alpha_th_0)
+  ret = retrofit_step4_alpha_calculation(x, 
+                                         phi_a_gks, 
+                                         phi_b_gk, 
+                                         alpha_w_0,
+                                         alpha_h_0,
+                                         alpha_th_0)
   alpha_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   alpha_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
   alpha_th_k_new = array(ret$t , c(K))
   
-  expect_true(all.equal(alpha_w_gk, alpha_w_gk_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_h_ks, alpha_h_ks_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_th_k, alpha_th_k_new, tolerance=1e-4))
+  expect_true(all.equal(alpha_w_gk, alpha_w_gk_new))
+  expect_true(all.equal(alpha_h_ks, alpha_h_ks_new))
+  expect_true(all.equal(alpha_th_k, alpha_th_k_new))
 })
 
 test_that("step4_beta", {
@@ -59,18 +59,18 @@ test_that("step4_beta", {
   }
   
   # rcpp code
-  ret = retrofit_step4_beta_updates(W_gk,
-                                    H_ks,
-                                    TH_k,
-                                    beta_w_0,
-                                    beta_h_0,
-                                    beta_th_0,
-                                    lambda)
+  ret = retrofit_step4_beta_calculation(W_gk,
+                                        H_ks,
+                                        TH_k,
+                                        beta_w_0,
+                                        beta_h_0,
+                                        beta_th_0,
+                                        lambda)
   beta_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   beta_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
-  beta_th_k_new = array(ret$t , c(K))
+  beta_th_k_new = ret$t
   
-  expect_true(all.equal(beta_w_gk, beta_w_gk_new, tolerance=1e-4))
-  expect_true(all.equal(beta_h_ks, beta_h_ks_new, tolerance=1e-4))
-  expect_true(all.equal(beta_th_k, beta_th_k_new, tolerance=1e-4))
+  expect_true(all.equal(beta_w_gk, beta_w_gk_new))
+  expect_true(all.equal(beta_h_ks, beta_h_ks_new))
+  expect_true(all.equal(beta_th_k, beta_th_k_new))
 })
