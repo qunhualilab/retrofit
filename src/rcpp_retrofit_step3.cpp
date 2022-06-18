@@ -20,13 +20,25 @@ NumericVector retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector T
 
 
   //Calculate numerator part
-  int idx = 0;
   NumericVector phi_a_gks (G*K*S);
+  NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
+  NumericVector::iterator W_gk_iter = W_gk.begin();
+  NumericVector::iterator H_ks_iter = H_ks.begin();
+  NumericVector::iterator TH_k_iter = TH_k.begin();
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = (W_gk[(k*G+g)]*TH_k[k] + lambda)*H_ks[(s*K+k)];
-        idx++;
+        *phi_a_gks_iter = ((*W_gk_iter)*(*TH_k_iter) + lambda)*(*H_ks_iter);
+        ++phi_a_gks_iter;
+        
+        // equivalent: W_gk[k*G+g];
+        ++W_gk_iter; if(g==G-1 && k==K-1) {W_gk_iter -= K*G;}
+        
+        // equivalent: H_ks[s*K+k];
+        if(g==G-1){++H_ks_iter;}
+        
+        // equivalent: TH_k[k];
+        if(g==G-1) {++TH_k_iter;} if(g==G-1 && k==K-1) {TH_k_iter -= K;}
       }
     }
   }
@@ -49,25 +61,30 @@ NumericVector retrofit_step3_alpha_denominator(NumericVector phi_a_gks) {
   int K = dim[1];
   int S = dim[2];
 
-  //Calculate second dimension sums
-  int idx = 0;
   NumericVector sums (G*S);
+  NumericVector::iterator sums_iter = sums.begin();
+  NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
+  //Calculate second dimension sums
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        sums[(s*G+g)] += phi_a_gks[idx];
-        idx++;
+        //equivalent: sums[(s*G+g)] += phi_a_gks[idx];
+        *sums_iter += *phi_a_gks_iter;
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        ++phi_a_gks_iter;
       }
     }
   }
-
+  
+  sums_iter = sums.begin();
+  phi_a_gks_iter = phi_a_gks.begin();
   //Calculate denominator part
-  idx = 0;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = phi_a_gks[idx]/sums[(s*G+g)];
-        idx++;
+        *phi_a_gks_iter = *phi_a_gks_iter/(*sums_iter);
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        ++phi_a_gks_iter;
       }
     }
   }
