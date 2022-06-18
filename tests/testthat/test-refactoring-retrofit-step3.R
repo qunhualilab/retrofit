@@ -11,20 +11,21 @@ test_that("step3-alpha-numerator", {
   lambda = runif(1, 0, 1)
   
   # r code
-  # from = Sys.time()
+  from = Sys.time()
   phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
   for(s in 1:S){
     for(k in 1:K){
       phi_a_gks[,k,s] = ((W_gk[,k] * TH_k[k]) +lambda)* H_ks[k,s]
     }
   }
-  # print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   
   # rcpp code
-  # from = Sys.time()
+  from = Sys.time()
+  # phi_a_gks_new = retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda)
   phi_a_gks_new = array(retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda), c(G,K,S));
-  # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
 })
@@ -39,20 +40,20 @@ test_that("step3-alpha-denominator", {
   sample=array(runif(G*K*S, 0, 10), c(G,K,S))
   
   # r code
-  # from = Sys.time()
+  from = Sys.time()
   phi_a_gks <- sample
   for(s in 1:S){
     for(v in 1:G){
       phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
     }
   }
-  # print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   # rcpp code
-  # from = Sys.time()
+  from = Sys.time()
   phi_a_gks_new <- sample
   phi_a_gks_new = array(retrofit_step3_alpha_denominator(phi_a_gks_new), c(G,K,S));
-  # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   # test: all elements are same
   expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
@@ -103,7 +104,7 @@ test_that("step3-alpha", {
   lambda = runif(1, 0, 1)
   
   # r code
-  # from = Sys.time()
+  from = Sys.time()
   phi_a_gks=array(rep(0,G*K*S), c(G,K,S))
   for(s in 1:S){
     for(k in 1:K){
@@ -113,13 +114,13 @@ test_that("step3-alpha", {
       phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
     }
   }
-  # print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   
   # rcpp code
-  # from = Sys.time()
+  from = Sys.time()
   phi_a_gks_new = array(retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda), c(G,K,S));
-  # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
 })
