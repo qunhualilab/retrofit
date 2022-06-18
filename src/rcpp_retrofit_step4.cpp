@@ -80,8 +80,7 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
                                      float beta_w_0,
                                      float beta_h_0,
                                      float beta_th_0,
-                                     float lambda,
-                                     int t)
+                                     float lambda)
 {
   return List();
 }
