@@ -21,6 +21,7 @@ NumericVector retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector T
 
   //Calculate numerator part
   NumericVector phi_a_gks (G*K*S);
+  phi_a_gks.attr("dim") = NumericVector::create(G,K,S);
   NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
   NumericVector::iterator W_gk_iter = W_gk.begin();
   NumericVector::iterator H_ks_iter = H_ks.begin();
@@ -143,6 +144,7 @@ NumericVector retrofit_step3_alpha(NumericVector W_gk, NumericVector TH_k, Numer
   
   //Calculate numerator part
   NumericVector phi_a_gks (G*K*S);
+  phi_a_gks.attr("dim") = NumericVector::create(G,K,S);
   NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
   NumericVector::iterator W_gk_iter = W_gk.begin();
   NumericVector::iterator H_ks_iter = H_ks.begin();
@@ -229,6 +231,7 @@ NumericVector retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, float 
   float w = 0;
   float th = 0;
   NumericVector phi_b_gk (G*K);
+  phi_b_gk.attr("dim") = NumericVector::create(G,K);
   for(int k=0; k<K; ++k){
     for(int g=0; g<G; ++g){
       w = W_gk[(k*G+g)];
@@ -244,3 +247,4 @@ NumericVector retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, float 
   
   return phi_b_gk;
 }
+
