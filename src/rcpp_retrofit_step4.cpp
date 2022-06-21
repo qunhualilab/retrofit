@@ -114,12 +114,14 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
   NumericVector::iterator W_gk_iter = W_gk.begin();
   NumericVector::iterator H_ks_iter = H_ks.begin();
   NumericVector::iterator TH_k_iter = TH_k.begin();
+  double sum;
   
   // calculate beta_w
   // equivalent: beta_W_gk[,k]= beta_W_0 + sum(H_ks[k,]*TH_k[k])
-  float sum;
+  H_ks_iter = H_ks.begin();
+  TH_k_iter = TH_k.begin();
   for(int k=0; k<K; ++k){
-    
+
     sum = 0;
     for(int s=0; s<S; ++s){
       // equivalent: beta_w[k*G+g] += TH_k_val*H_ks_val;
@@ -129,19 +131,20 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
     }
     ++H_ks_iter;
     ++TH_k_iter;
-    
+
     for(int g=0; g<G; ++g){
       *beta_w_iter = sum;
       ++beta_w_iter;
     }
   }
-  
+
   // calculate beta_h
   // equivalent: beta_H_ks[k,]= beta_H_0 + sum(W_gk[,k]*TH_k[k] + lamda)
+  W_gk_iter = W_gk.begin();
   TH_k_iter = TH_k.begin();
   for(int k=0; k<K; ++k){
     sum = 0;
-    
+
     for(int g=0; g<G; ++g){
       sum += (*W_gk_iter)*(*TH_k_iter)+lambda;
       // equivalent: W_gk_val = W_gk[k*G+g];
@@ -149,40 +152,15 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
     }
     // equivalent: TH_k_val = TH_k[k];
     ++TH_k_iter;
-    
+
     for(int s=0; s<S; ++s){
       *beta_h_iter = sum;
       beta_h_iter += K; if(s==S-1){beta_h_iter-=K*S;}
     }
     ++beta_h_iter;
   }
-  
-  // calculate beta_th
-  // equivalent: beta_TH_k[k]= beta_TH_0 + sum(as.matrix(W_gk[,k]) %*% t(as.matrix(H_ks[k,])))
-  // W_gk_iter = W_gk.begin();
-  // H_ks_iter = H_ks.begin();
-  // for(int k=0; k<K; ++k){
-  // 
-  //   sum = 0;
-  //   for(int s=0; s<S; ++s){
-  //     for(int g=0; g<G; ++g){
-  //       // equivalent: beta_th[k] += W_gk_val*H_ks_val;
-  //       *beta_th_iter += (*W_gk_iter)*(*H_ks_iter);
-  //       
-  //       // equivalent: W_gk_val = W_gk[k*G+g];
-  //       ++W_gk_iter;
-  //       if(g==G-1) {W_gk_iter -= G;}
-  //     }
-  //     // equivalent: H_ks_val = H_ks[s*K+k];
-  //     H_ks_iter += K;
-  //     if(s==S-1){H_ks_iter-=K*S;}
-  //   }
-  // 
-  //   W_gk_iter += G;
-  //   ++H_ks_iter;
-  //   ++beta_th_iter;
-  // }
-  
+
+
   W_gk_iter = W_gk.begin();
   H_ks_iter = H_ks.begin();
   for(int s=0; s<S; ++s){
