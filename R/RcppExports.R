@@ -5,28 +5,32 @@ retrofit_step2_rgamma <- function(shapes, rates) {
     .Call(`_retrofit_retrofit_step2_rgamma`, shapes, rates)
 }
 
-retrofit_step3_alpha_numerator <- function(W_gk, TH_k, H_ks, lambda) {
-    .Call(`_retrofit_retrofit_step3_alpha_numerator`, W_gk, TH_k, H_ks, lambda)
+retrofit_step3_alpha_numerator <- function(W_gk, TH_k, H_ks, lambda, out_phi_a_gks) {
+    invisible(.Call(`_retrofit_retrofit_step3_alpha_numerator`, W_gk, TH_k, H_ks, lambda, out_phi_a_gks))
 }
 
-retrofit_step3_alpha_denominator <- function(phi_a_gks) {
-    .Call(`_retrofit_retrofit_step3_alpha_denominator`, phi_a_gks)
+retrofit_step3_alpha_denominator <- function(out_phi_a_gks) {
+    invisible(.Call(`_retrofit_retrofit_step3_alpha_denominator`, out_phi_a_gks))
 }
 
-retrofit_step3_alpha <- function(W_gk, TH_k, H_ks, lambda) {
-    .Call(`_retrofit_retrofit_step3_alpha`, W_gk, TH_k, H_ks, lambda)
+retrofit_step3_alpha <- function(W_gk, TH_k, H_ks, lambda, out_phi_a_gks) {
+    invisible(.Call(`_retrofit_retrofit_step3_alpha`, W_gk, TH_k, H_ks, lambda, out_phi_a_gks))
 }
 
-retrofit_step3_beta <- function(W_gk, TH_k, lambda) {
-    .Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda)
+retrofit_step3_beta <- function(W_gk, TH_k, lambda, out_phi_b_gk) {
+    invisible(.Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda, out_phi_b_gk))
 }
 
-retrofit_step4_alpha_updates <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0) {
-    .Call(`_retrofit_retrofit_step4_alpha_updates`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0)
+retrofit_step4_alpha_calculation <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0) {
+    .Call(`_retrofit_retrofit_step4_alpha_calculation`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0)
 }
 
-retrofit_step4_beta_updates <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda) {
-    .Call(`_retrofit_retrofit_step4_beta_updates`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda)
+retrofit_step4_beta_calculation <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda) {
+    .Call(`_retrofit_retrofit_step4_beta_calculation`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda)
+}
+
+retrofit_step5_parameter_estimation <- function(original, update, rho) {
+    .Call(`_retrofit_retrofit_step5_parameter_estimation`, original, update, rho)
 }
 
 rcpp_second_dim_sum <- function(v) {

@@ -2,7 +2,11 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, float lambda) {
+void retrofit_step3_alpha_numerator(NumericVector W_gk, 
+                                    NumericVector TH_k, 
+                                    NumericVector H_ks, 
+                                    float lambda,
+                                    NumericVector out_phi_a_gks) {
   /* Equivalent code
    * for(s in 1:S){
    *  for(k in 1:K){
@@ -18,24 +22,62 @@ NumericVector retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector T
   NumericVector dim_h = H_ks.attr("dim");
   int S = dim_h[1];
 
-
   //Calculate numerator part
-  int idx = 0;
-  NumericVector phi_a_gks (G*K*S);
+  // NumericVector phi_a_gks (G*K*S);
+  // phi_a_gks.attr("dim") = NumericVector::create(G,K,S);
+  NumericVector::iterator phi_a_gks_iter = out_phi_a_gks.begin();
+  NumericVector::iterator W_gk_iter = W_gk.begin();
+  NumericVector::iterator H_ks_iter = H_ks.begin();
+  NumericVector::iterator TH_k_iter = TH_k.begin();
+  // for(int s=0; s<S; ++s){
+  //   for(int k=0; k<K; ++k){
+  //     for(int g=0; g<G; ++g){
+  //       *phi_a_gks_iter = ((*W_gk_iter)*(*TH_k_iter) + lambda)*(*H_ks_iter);
+  //       ++phi_a_gks_iter;
+  // 
+  //       // equivalent: W_gk[k*G+g];
+  //       ++W_gk_iter; if(g==G-1 && k==K-1) {W_gk_iter -= K*G;}
+  // 
+  //       // equivalent: H_ks[s*K+k];
+  //       if(g==G-1){++H_ks_iter;}
+  // 
+  //       // equivalent: TH_k[k];
+  //       if(g==G-1) {++TH_k_iter;} if(g==G-1 && k==K-1) {TH_k_iter -= K;}
+  //     }
+  //   }
+  // }
+
+  NumericVector mul_gk (G*K);
+  NumericVector::iterator mul_gk_iter = mul_gk.begin();
+  for(int k=0; k<K; ++k){
+    for(int g=0; g<G; ++g){
+      *mul_gk_iter = (*W_gk_iter)*(*TH_k_iter) + lambda;
+      ++mul_gk_iter;
+      ++W_gk_iter;
+    }
+    ++TH_k_iter;
+  }
+  mul_gk_iter = mul_gk.begin();
+  float H_ks_val;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
+      H_ks_val = *H_ks_iter;
+      ++H_ks_iter;
+  
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = (W_gk[(k*G+g)]*TH_k[k] + lambda)*H_ks[(s*K+k)];
-        idx++;
+        *phi_a_gks_iter = (*mul_gk_iter)*H_ks_val;
+        ++phi_a_gks_iter;
+  
+        // equivalent: W_gk[k*G+g];
+        ++mul_gk_iter; if(g==G-1 && k==K-1) {mul_gk_iter -= K*G;}
       }
     }
   }
-
-  return phi_a_gks;
+  // return phi_a_gks;
 }
 
 // [[Rcpp::export]]
-NumericVector retrofit_step3_alpha_denominator(NumericVector phi_a_gks) {
+void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks) {
 /* Equivalent code
  * for(s in 1:S){
  *  for(v in 1:G){
@@ -44,39 +86,46 @@ NumericVector retrofit_step3_alpha_denominator(NumericVector phi_a_gks) {
  *}
  */
   //3d array
-  NumericVector dim = phi_a_gks.attr("dim");
+  NumericVector dim = out_phi_a_gks.attr("dim");
   int G = dim[0];
   int K = dim[1];
   int S = dim[2];
 
-  //Calculate second dimension sums
-  int idx = 0;
   NumericVector sums (G*S);
+  NumericVector::iterator sums_iter = sums.begin();
+  NumericVector::iterator phi_a_gks_iter = out_phi_a_gks.begin();
+  //Calculate second dimension sums
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        sums[(s*G+g)] += phi_a_gks[idx];
-        idx++;
+        //equivalent: sums[(s*G+g)] += phi_a_gks[idx];
+        *sums_iter += *phi_a_gks_iter;
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        ++phi_a_gks_iter;
       }
     }
   }
-
+  
+  sums_iter = sums.begin();
+  phi_a_gks_iter = out_phi_a_gks.begin();
   //Calculate denominator part
-  idx = 0;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = phi_a_gks[idx]/sums[(s*G+g)];
-        idx++;
+        *phi_a_gks_iter = *phi_a_gks_iter/(*sums_iter);
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        ++phi_a_gks_iter;
       }
     }
   }
-
-  return phi_a_gks;
 }
 
 // [[Rcpp::export]]
-NumericVector retrofit_step3_alpha(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, float lambda) {
+void retrofit_step3_alpha(NumericVector W_gk, 
+                          NumericVector TH_k, 
+                          NumericVector H_ks, 
+                          float lambda,
+                          NumericVector out_phi_a_gks) {
   /* Equivalent code
    * for(s in 1:S){
    *  for(k in 1:K){
@@ -99,45 +148,84 @@ NumericVector retrofit_step3_alpha(NumericVector W_gk, NumericVector TH_k, Numer
   
   
   //Calculate numerator part
-  int idx = 0;
-  NumericVector phi_a_gks (G*K*S);
+  // NumericVector phi_a_gks (G*K*S);
+  // phi_a_gks.attr("dim") = NumericVector::create(G,K,S);
+  NumericVector::iterator phi_a_gks_iter = out_phi_a_gks.begin();
+  NumericVector::iterator W_gk_iter = W_gk.begin();
+  NumericVector::iterator H_ks_iter = H_ks.begin();
+  NumericVector::iterator TH_k_iter = TH_k.begin();
+  NumericVector mul_gk (G*K);
+  NumericVector::iterator mul_gk_iter = mul_gk.begin();
+  for(int k=0; k<K; ++k){
+    for(int g=0; g<G; ++g){
+      *mul_gk_iter = (*W_gk_iter)*(*TH_k_iter) + lambda;
+      ++mul_gk_iter;
+      ++W_gk_iter;
+    }
+    ++TH_k_iter;
+  }
+  // numerator variables
+  mul_gk_iter = mul_gk.begin();
+  float H_ks_val;
+  // denominator variables
+  NumericVector sums (G*S);
+  NumericVector::iterator sums_iter = sums.begin();
+  phi_a_gks_iter = out_phi_a_gks.begin();
+  
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
+      H_ks_val = *H_ks_iter;
+      ++H_ks_iter;
+      
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = (W_gk[(k*G+g)]*TH_k[k] + lambda)*H_ks[(s*K+k)];
-        idx++;
+        // numerator part
+        *phi_a_gks_iter = (*mul_gk_iter)*H_ks_val;
+        // ++phi_a_gks_iter;
+        // equivalent: W_gk[k*G+g];
+        ++mul_gk_iter; if(g==G-1 && k==K-1) {mul_gk_iter -= K*G;}
+        
+        // denominator part
+        //equivalent: sums[(s*G+g)] += phi_a_gks[idx];
+        *sums_iter += *phi_a_gks_iter;
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        
+        ++phi_a_gks_iter;
       }
     }
   }
+  
   
   //Calculate second dimension sums
-  idx = 0;
-  NumericVector sums (G*S);
-  for(int s=0; s<S; ++s){
-    for(int k=0; k<K; ++k){
-      for(int g=0; g<G; ++g){
-        sums[(s*G+g)] += phi_a_gks[idx];
-        idx++;
-      }
-    }
-  }
+  // for(int s=0; s<S; ++s){
+  //   for(int k=0; k<K; ++k){
+  //     for(int g=0; g<G; ++g){
+  //       *sums_iter += *phi_a_gks_iter;
+  //       ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+  //       ++phi_a_gks_iter;
+  //     }
+  //   }
+  // }
   
+  sums_iter = sums.begin();
+  phi_a_gks_iter = out_phi_a_gks.begin();
   //Calculate denominator part
-  idx = 0;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        phi_a_gks[idx] = phi_a_gks[idx]/sums[(s*G+g)];
-        idx++;
+        *phi_a_gks_iter = *phi_a_gks_iter/(*sums_iter);
+        ++sums_iter; if(g==G-1 && k!=K-1) {sums_iter -= G;}
+        ++phi_a_gks_iter;
       }
     }
   }
-  return phi_a_gks;
 }
 
 
 // [[Rcpp::export]]
-NumericVector retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, float lambda) {
+void retrofit_step3_beta(NumericVector W_gk, 
+                         NumericVector TH_k, 
+                         float lambda,
+                         NumericVector out_phi_b_gk) {
   /* Equivalent code
    * for(k in 1:K){
    *  for(v in 1:G){
@@ -158,19 +246,19 @@ NumericVector retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, float 
   int idx = 0;
   float w = 0;
   float th = 0;
-  NumericVector phi_b_gk (G*K);
+  // NumericVector phi_b_gk (G*K);
+  // phi_b_gk.attr("dim") = NumericVector::create(G,K);
   for(int k=0; k<K; ++k){
     for(int g=0; g<G; ++g){
       w = W_gk[(k*G+g)];
       th = TH_k[k];
       if((w*th + lambda)==0){
-        phi_b_gk[idx]=1; // to avoid numerical error of 0/0 when lambda=0
+        out_phi_b_gk[idx]=1; // to avoid numerical error of 0/0 when lambda=0
       } else {
-        phi_b_gk[idx]=(w*th)/(w*th + lambda);
+        out_phi_b_gk[idx]=(w*th)/(w*th + lambda);
       }
       idx++;
     }
   }
-  
-  return phi_b_gk;
 }
+
