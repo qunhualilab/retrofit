@@ -2,6 +2,9 @@ test_that("step5-alpha-updates", {
   G = 4
   K = 3
   S = 2
+  G = 1550
+  K = 16
+  S = 1080
   W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   W_gk_updated=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
@@ -25,7 +28,7 @@ test_that("step5-alpha-updates", {
   alpha_H_ks_new = array(retrofit_step5_parameter_estimation(H_ks, H_ks_updated, rho), c(K,S))
   alpha_TH_k_new = array(retrofit_step5_parameter_estimation(TH_k, TH_k_updated, rho), c(K))
   
-  expect_true(all.equal(alpha_W_gk, alpha_W_gk_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_H_ks, alpha_H_ks_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_TH_k, alpha_TH_k_new, tolerance=1e-4))
+  expect_true(all.equal(alpha_W_gk, alpha_W_gk_new))
+  expect_true(all.equal(alpha_H_ks, alpha_H_ks_new))
+  expect_true(all.equal(alpha_TH_k, alpha_TH_k_new))
 })

@@ -5,7 +5,7 @@ using namespace Rcpp;
 void retrofit_step3_alpha_numerator(NumericVector W_gk, 
                                     NumericVector TH_k, 
                                     NumericVector H_ks, 
-                                    float lambda,
+                                    double lambda,
                                     NumericVector out_phi_a_gks) {
   /* Equivalent code
    * for(s in 1:S){
@@ -58,7 +58,7 @@ void retrofit_step3_alpha_numerator(NumericVector W_gk,
     ++TH_k_iter;
   }
   mul_gk_iter = mul_gk.begin();
-  float H_ks_val;
+  double H_ks_val;
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       H_ks_val = *H_ks_iter;
@@ -124,7 +124,7 @@ void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks) {
 void retrofit_step3_alpha(NumericVector W_gk, 
                           NumericVector TH_k, 
                           NumericVector H_ks, 
-                          float lambda,
+                          double lambda,
                           NumericVector out_phi_a_gks) {
   /* Equivalent code
    * for(s in 1:S){
@@ -166,7 +166,7 @@ void retrofit_step3_alpha(NumericVector W_gk,
   }
   // numerator variables
   mul_gk_iter = mul_gk.begin();
-  float H_ks_val;
+  double H_ks_val;
   // denominator variables
   NumericVector sums (G*S);
   NumericVector::iterator sums_iter = sums.begin();
@@ -224,7 +224,7 @@ void retrofit_step3_alpha(NumericVector W_gk,
 // [[Rcpp::export]]
 void retrofit_step3_beta(NumericVector W_gk, 
                          NumericVector TH_k, 
-                         float lambda,
+                         double lambda,
                          NumericVector out_phi_b_gk) {
   /* Equivalent code
    * for(k in 1:K){
@@ -244,8 +244,8 @@ void retrofit_step3_beta(NumericVector W_gk,
   int K = dim_w[1];
   
   int idx = 0;
-  float w = 0;
-  float th = 0;
+  double w = 0;
+  double th = 0;
   // NumericVector phi_b_gk (G*K);
   // phi_b_gk.attr("dim") = NumericVector::create(G,K);
   for(int k=0; k<K; ++k){
