@@ -50,76 +50,37 @@ retrofit <- function(x, iterations=4000) {
   kappa=0.5
   
   ## start of algorithm
-  t=1
+  t=0
   
-  while(t<iterations){ 
+  while(t<iterations){
+    from = Sys.time()
+    t=t+1
+    
     # step (1)
     rho=(t)^(-kappa)
     
-    if(t %% 1 == 0){
-      print(paste("Iteration",t))
-    }
-    
-    # simulating from q(.)
     # step (2)
-    from = Sys.time()
-    for(k in 1:K){
-      for(s in 1:S){
-        H_ks[k,s]=rgamma(1, shape=alpha_H_ks[k,s], rate=beta_H_ks[k,s])
-      }
-    }
+    H_ks=matrix(retrofit_step2_rgamma(alpha_H_ks, beta_H_ks), nrow=K, ncol=S)
+    TH_k=array(retrofit_step2_rgamma(alpha_TH_k, beta_TH_k), c(K)) 
+    W_gk=matrix(retrofit_step2_rgamma(alpha_W_gk, beta_W_gk), nrow=G, ncol=K)
     
-    for(k in 1:K){
-      TH_k[k]=rgamma(1, shape=alpha_TH_k[k], rate=beta_TH_k[k])
-    }
+    # step (3)
+    retrofit_step3_alpha(W_gk, TH_k, H_ks, lamda, phi_a_gks)
+    retrofit_step3_beta(W_gk, TH_k, lamda, phi_b_gk)
     
-    for(k in 1:K){
-      for(v in 1:G){
-        W_gk[v,k]=rgamma(1, shape=alpha_W_gk[v,k], rate=beta_W_gk[v,k])
-      }
-    }
-    print(paste('step2-original: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    # step (4)
+    alpha_updated = retrofit_step4_alpha_calculation(x, phi_a_gks, phi_b_gk, alpha_W_0, alpha_H_0, alpha_TH_0)
+    beta_updated = retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_W_0, beta_H_0, beta_TH_0, lamda)
     
-    # step (3) - rcpp:phi_alpha
-    from = Sys.time()
-    phi_a_gks = array(retrofit_step3_alpha(W_gk, TH_k, H_ks, lamda), c(G,K,S))
-    print(paste('step3-alpha-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    # step (5)
+    alpha_W_gk = matrix(retrofit_step5_parameter_estimation(alpha_W_gk, alpha_updated$w, rho), nrow=G, ncol=K) 
+    alpha_H_ks = matrix(retrofit_step5_parameter_estimation(alpha_H_ks, alpha_updated$h, rho), nrow=K, ncol=S)
+    alpha_TH_k = array(retrofit_step5_parameter_estimation(alpha_TH_k, alpha_updated$t, rho), c(K))
+    beta_W_gk = matrix(retrofit_step5_parameter_estimation(beta_W_gk, beta_updated$w, rho), nrow=G, ncol=K)
+    beta_H_ks = matrix(retrofit_step5_parameter_estimation(beta_H_ks, beta_updated$h, rho), nrow=K, ncol=S)
+    beta_TH_k = array(retrofit_step5_parameter_estimation(beta_TH_k, beta_updated$t, rho), c(K))
     
-    # step (3) - phi_beta:rcpp
-    from = Sys.time()
-    phi_b_gk = array(retrofit_step3_beta(W_gk, TH_k, lamda), c(G,K))
-    print(paste('step3-beta-rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
-    
-    # for clear assignment
-    alpha_TH_k0=alpha_TH_k
-    beta_TH_k0=beta_TH_k
-    alpha_H_ks0=alpha_H_ks
-    beta_H_ks0=beta_H_ks
-    alpha_W_gk0=alpha_W_gk
-    beta_W_gk0=beta_W_gk
-    
-    # step (4) + (5)
-    # from = Sys.time()
-    for(k in 1:K){
-      alpha_W_gk[,k]= (1-rho)*alpha_W_gk0[,k] + rho*(alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
-      
-      beta_W_gk[,k]= (1-rho)*beta_W_gk0[,k] + rho*(beta_W_0 + sum(H_ks[k,]*TH_k[k]))
-      
-      alpha_H_ks[k,]= (1- rho)*alpha_H_ks0[k,] + rho*(alpha_H_0 + colSums(x*phi_a_gks[,k,]))
-      
-      beta_H_ks[k,]= (1- rho)*beta_H_ks0[k,] + rho*(beta_H_0 + sum(W_gk[,k]*TH_k[k] + lamda))
-      
-      alpha_TH_k[k]= (1-rho)*alpha_TH_k0[k] + rho*(alpha_TH_0 + sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k]))
-      
-      beta_TH_k[k]= (1-rho)*beta_TH_k0[k] + rho*(beta_TH_0 + sum(as.matrix(W_gk[,k]) %*% 
-                                                           t(as.matrix(H_ks[k,]))))
-      
-    }
-    # print(paste('step45-original: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
-    t=t+1 
-    if(sum(is.nan(phi_a_gks))>0){
-      break
-    }
+    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
   # step (6) 

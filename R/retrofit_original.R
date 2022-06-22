@@ -43,12 +43,10 @@ retrofit_original <- function(X, iterations=4000) {
   ## start of algorithm
   t=1
   
-  while(t<iterations){
+  while(t<=iterations){
+    from = Sys.time()
+    
     rho=(t)^(-kappa) #step size
-  
-    if(t %% 100 == 0){
-      print(paste("Iteration",t))
-    }
   
     # simulating from q(.)
     # for(k in 1:L){
@@ -124,6 +122,8 @@ retrofit_original <- function(X, iterations=4000) {
   
     }
   
+    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    
     t=t+1
     if(sum(is.nan(p))>0){
       break
