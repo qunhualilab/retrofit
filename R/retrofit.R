@@ -67,7 +67,13 @@ retrofit <- function(x, iterations=4000) {
       for(s in 1:S){
         H_ks[k,s]=rgamma(1, shape=alpha_H_ks[k,s], rate=beta_H_ks[k,s])
       }
+    }
+    
+    for(k in 1:K){
       TH_k[k]=rgamma(1, shape=alpha_TH_k[k], rate=beta_TH_k[k])
+    }
+    
+    for(k in 1:K){
       for(v in 1:G){
         W_gk[v,k]=rgamma(1, shape=alpha_W_gk[v,k], rate=beta_W_gk[v,k])
       }

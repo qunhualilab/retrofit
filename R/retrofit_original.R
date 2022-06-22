@@ -51,13 +51,40 @@ retrofit_original <- function(X, iterations=4000) {
     }
   
     # simulating from q(.)
-    for(k in 1:L){
-      for(s in 1:S){
+    # for(k in 1:L){
+    #   for(s in 1:S){
+    #     H1[k,s]=rgamma(1, shape=eta_h[k,s], rate=gam_h[k,s])
+    #   }
+    #   Thet[k]=rgamma(1, shape=eta_theta[k], rate=gam_theta[k])
+    #   for(v in 1:G){
+    #     W1[v,k]=rgamma(1, shape=eta_w[v,k], rate=gam_w[v,k])
+    #     if((W1[v,k]*Thet[k] + lamda)==0){
+    #       si[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
+    #     } else{
+    #       si[v,k]=(W1[v,k]*Thet[k])/(W1[v,k]*Thet[k] + lamda)
+    #     }
+    #   }
+    # }
+    
+    # simulating from q(.) - modified to match the usage of set.seed().
+    for(s in 1:S){
+      for(k in 1:L){
         H1[k,s]=rgamma(1, shape=eta_h[k,s], rate=gam_h[k,s])
       }
+    }
+    
+    for(k in 1:L){
       Thet[k]=rgamma(1, shape=eta_theta[k], rate=gam_theta[k])
+    }
+    
+    for(k in 1:L){
       for(v in 1:G){
         W1[v,k]=rgamma(1, shape=eta_w[v,k], rate=gam_w[v,k])
+      }
+    }
+
+    for(k in 1:L){
+      for(v in 1:G){
         if((W1[v,k]*Thet[k] + lamda)==0){
           si[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
         } else{
@@ -65,7 +92,7 @@ retrofit_original <- function(X, iterations=4000) {
         }
       }
     }
-
+    
     for(s in 1:S){
       for(k in 1:L){
         p[,k,s]=((W1[,k] * Thet[k]) +lamda)* H1[k,s]
