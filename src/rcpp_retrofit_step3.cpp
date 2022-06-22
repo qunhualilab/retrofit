@@ -6,7 +6,8 @@ void retrofit_step3_alpha_numerator(NumericVector W_gk,
                                     NumericVector TH_k, 
                                     NumericVector H_ks, 
                                     double lambda,
-                                    NumericVector out_phi_a_gks) {
+                                    NumericVector out_phi_a_gks,
+                                    NumericVector dim) {
   /* Equivalent code
    * for(s in 1:S){
    *  for(k in 1:K){
@@ -16,11 +17,10 @@ void retrofit_step3_alpha_numerator(NumericVector W_gk,
    */
   //dimensions
   // W_gk:(G,K), TH_K:(K), H_ks:(K,S)
-  NumericVector dim_w = W_gk.attr("dim");
-  int G = dim_w[0];
-  int K = dim_w[1];
-  NumericVector dim_h = H_ks.attr("dim");
-  int S = dim_h[1];
+  // NumericVector dim = out_phi_a_gks.attr("dim");
+  int G = dim[0];
+  int K = dim[1];
+  int S = dim[2];
 
   //Calculate numerator part
   // NumericVector phi_a_gks (G*K*S);
@@ -77,7 +77,8 @@ void retrofit_step3_alpha_numerator(NumericVector W_gk,
 }
 
 // [[Rcpp::export]]
-void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks) {
+void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks,
+                                      NumericVector dim) {
 /* Equivalent code
  * for(s in 1:S){
  *  for(v in 1:G){
@@ -86,7 +87,7 @@ void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks) {
  *}
  */
   //3d array
-  NumericVector dim = out_phi_a_gks.attr("dim");
+  // NumericVector dim = out_phi_a_gks.attr("dim");
   int G = dim[0];
   int K = dim[1];
   int S = dim[2];
@@ -125,7 +126,8 @@ void retrofit_step3_alpha(NumericVector W_gk,
                           NumericVector TH_k, 
                           NumericVector H_ks, 
                           double lambda,
-                          NumericVector out_phi_a_gks) {
+                          NumericVector out_phi_a_gks,
+                          NumericVector dim) {
   /* Equivalent code
    * for(s in 1:S){
    *  for(k in 1:K){
@@ -140,11 +142,10 @@ void retrofit_step3_alpha(NumericVector W_gk,
    */
   //dimensions
   // W_gk:(G,K), TH_K:(K), H_ks:(K,S)
-  NumericVector dim_w = W_gk.attr("dim");
-  int G = dim_w[0];
-  int K = dim_w[1];
-  NumericVector dim_h = H_ks.attr("dim");
-  int S = dim_h[1];
+  // NumericVector dim = out_phi_a_gks.attr("dim");
+  int G = dim[0];
+  int K = dim[1];
+  int S = dim[2];
   
   
   //Calculate numerator part
@@ -225,7 +226,8 @@ void retrofit_step3_alpha(NumericVector W_gk,
 void retrofit_step3_beta(NumericVector W_gk, 
                          NumericVector TH_k, 
                          double lambda,
-                         NumericVector out_phi_b_gk) {
+                         NumericVector out_phi_b_gk,
+                         NumericVector dim) {
   /* Equivalent code
    * for(k in 1:K){
    *  for(v in 1:G){
@@ -239,9 +241,9 @@ void retrofit_step3_beta(NumericVector W_gk,
    */
   //dimensions
   // W_gk:(G,K), TH_K:(K)
-  NumericVector dim_w = W_gk.attr("dim");
-  int G = dim_w[0];
-  int K = dim_w[1];
+  // NumericVector dim = out_phi_b_gk.attr("dim");
+  int G = dim[0];
+  int K = dim[1];
   
   int idx = 0;
   double w = 0;

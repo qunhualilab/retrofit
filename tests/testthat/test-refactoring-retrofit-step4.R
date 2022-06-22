@@ -31,7 +31,8 @@ test_that("step4_alpha", {
                                          phi_b_gk, 
                                          alpha_w_0,
                                          alpha_h_0,
-                                         alpha_th_0)
+                                         alpha_th_0, 
+                                         c(G,K,S))
   alpha_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   alpha_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
   alpha_th_k_new = array(ret$t , c(K))
@@ -78,7 +79,8 @@ test_that("step4_beta", {
                                         beta_w_0,
                                         beta_h_0,
                                         beta_th_0,
-                                        lambda)
+                                        lambda, 
+                                        c(G,K,S))
   beta_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   beta_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
   beta_th_k_new = ret$t

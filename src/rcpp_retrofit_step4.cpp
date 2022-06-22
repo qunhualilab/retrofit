@@ -7,7 +7,8 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
                                       NumericVector phi_b_gk, 
                                       double alpha_w_0,
                                       double alpha_h_0,
-                                      double alpha_th_0) {
+                                      double alpha_th_0,
+                                      NumericVector dim) {
   /* Equivalent code
    * for(k in 1:K){
    *  alpha_W_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
@@ -16,7 +17,7 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
    * }
    */
   //dimensions
-  NumericVector dim = phi_a_gks.attr("dim");
+  // NumericVector dim = phi_a_gks.attr("dim");
   int G = dim[0];
   int K = dim[1];
   int S = dim[2];
@@ -89,7 +90,8 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
                                      double beta_w_0,
                                      double beta_h_0,
                                      double beta_th_0,
-                                     double lambda)
+                                     double lambda,
+                                     NumericVector dim)
 {
   /* Equivalent code
    * for(k in 1:K){
@@ -99,11 +101,9 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
    * }
    */
   //dimensions
-  NumericVector dim_w = W_gk.attr("dim");
-  int G = dim_w[0];
-  int K = dim_w[1];
-  NumericVector dim_h = H_ks.attr("dim");
-  int S = dim_h[1];
+  int G = dim[0];
+  int K = dim[1];
+  int S = dim[2];
   
   NumericVector beta_w (G*K);
   NumericVector beta_h (K*S);

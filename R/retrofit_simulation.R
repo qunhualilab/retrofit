@@ -9,6 +9,8 @@ retrofit_simulation <- function(dir, file, iterations=2) {
   out_t_path = paste(dir, out_t_file, sep="/")
   
   X=read.csv(in_path)
+  rownames(X)=X[,1]
+  X=as.matrix(X[,-1])
   
   result = retrofit(X, iterations)
   

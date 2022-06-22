@@ -23,8 +23,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // retrofit_step3_alpha_numerator
-void retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, double lambda, NumericVector out_phi_a_gks);
-RcppExport SEXP _retrofit_retrofit_step3_alpha_numerator(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP H_ksSEXP, SEXP lambdaSEXP, SEXP out_phi_a_gksSEXP) {
+void retrofit_step3_alpha_numerator(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, double lambda, NumericVector out_phi_a_gks, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step3_alpha_numerator(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP H_ksSEXP, SEXP lambdaSEXP, SEXP out_phi_a_gksSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type W_gk(W_gkSEXP);
@@ -32,23 +32,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type H_ks(H_ksSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type out_phi_a_gks(out_phi_a_gksSEXP);
-    retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda, out_phi_a_gks);
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda, out_phi_a_gks, dim);
     return R_NilValue;
 END_RCPP
 }
 // retrofit_step3_alpha_denominator
-void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks);
-RcppExport SEXP _retrofit_retrofit_step3_alpha_denominator(SEXP out_phi_a_gksSEXP) {
+void retrofit_step3_alpha_denominator(NumericVector out_phi_a_gks, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step3_alpha_denominator(SEXP out_phi_a_gksSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type out_phi_a_gks(out_phi_a_gksSEXP);
-    retrofit_step3_alpha_denominator(out_phi_a_gks);
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    retrofit_step3_alpha_denominator(out_phi_a_gks, dim);
     return R_NilValue;
 END_RCPP
 }
 // retrofit_step3_alpha
-void retrofit_step3_alpha(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, double lambda, NumericVector out_phi_a_gks);
-RcppExport SEXP _retrofit_retrofit_step3_alpha(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP H_ksSEXP, SEXP lambdaSEXP, SEXP out_phi_a_gksSEXP) {
+void retrofit_step3_alpha(NumericVector W_gk, NumericVector TH_k, NumericVector H_ks, double lambda, NumericVector out_phi_a_gks, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step3_alpha(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP H_ksSEXP, SEXP lambdaSEXP, SEXP out_phi_a_gksSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type W_gk(W_gkSEXP);
@@ -56,26 +58,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type H_ks(H_ksSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type out_phi_a_gks(out_phi_a_gksSEXP);
-    retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, out_phi_a_gks);
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, out_phi_a_gks, dim);
     return R_NilValue;
 END_RCPP
 }
 // retrofit_step3_beta
-void retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, double lambda, NumericVector out_phi_b_gk);
-RcppExport SEXP _retrofit_retrofit_step3_beta(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP lambdaSEXP, SEXP out_phi_b_gkSEXP) {
+void retrofit_step3_beta(NumericVector W_gk, NumericVector TH_k, double lambda, NumericVector out_phi_b_gk, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step3_beta(SEXP W_gkSEXP, SEXP TH_kSEXP, SEXP lambdaSEXP, SEXP out_phi_b_gkSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type W_gk(W_gkSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type TH_k(TH_kSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type out_phi_b_gk(out_phi_b_gkSEXP);
-    retrofit_step3_beta(W_gk, TH_k, lambda, out_phi_b_gk);
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    retrofit_step3_beta(W_gk, TH_k, lambda, out_phi_b_gk, dim);
     return R_NilValue;
 END_RCPP
 }
 // retrofit_step4_alpha_calculation
-List retrofit_step4_alpha_calculation(NumericVector x_gs, NumericVector phi_a_gks, NumericVector phi_b_gk, double alpha_w_0, double alpha_h_0, double alpha_th_0);
-RcppExport SEXP _retrofit_retrofit_step4_alpha_calculation(SEXP x_gsSEXP, SEXP phi_a_gksSEXP, SEXP phi_b_gkSEXP, SEXP alpha_w_0SEXP, SEXP alpha_h_0SEXP, SEXP alpha_th_0SEXP) {
+List retrofit_step4_alpha_calculation(NumericVector x_gs, NumericVector phi_a_gks, NumericVector phi_b_gk, double alpha_w_0, double alpha_h_0, double alpha_th_0, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step4_alpha_calculation(SEXP x_gsSEXP, SEXP phi_a_gksSEXP, SEXP phi_b_gkSEXP, SEXP alpha_w_0SEXP, SEXP alpha_h_0SEXP, SEXP alpha_th_0SEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,13 +89,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha_w_0(alpha_w_0SEXP);
     Rcpp::traits::input_parameter< double >::type alpha_h_0(alpha_h_0SEXP);
     Rcpp::traits::input_parameter< double >::type alpha_th_0(alpha_th_0SEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_step4_alpha_calculation(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0));
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(retrofit_step4_alpha_calculation(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, dim));
     return rcpp_result_gen;
 END_RCPP
 }
 // retrofit_step4_beta_calculation
-List retrofit_step4_beta_calculation(NumericVector W_gk, NumericVector H_ks, NumericVector TH_k, double beta_w_0, double beta_h_0, double beta_th_0, double lambda);
-RcppExport SEXP _retrofit_retrofit_step4_beta_calculation(SEXP W_gkSEXP, SEXP H_ksSEXP, SEXP TH_kSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP) {
+List retrofit_step4_beta_calculation(NumericVector W_gk, NumericVector H_ks, NumericVector TH_k, double beta_w_0, double beta_h_0, double beta_th_0, double lambda, NumericVector dim);
+RcppExport SEXP _retrofit_retrofit_step4_beta_calculation(SEXP W_gkSEXP, SEXP H_ksSEXP, SEXP TH_kSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -102,7 +107,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_h_0(beta_h_0SEXP);
     Rcpp::traits::input_parameter< double >::type beta_th_0(beta_th_0SEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda));
+    Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, dim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -133,12 +139,12 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_retrofit_retrofit_step2_rgamma", (DL_FUNC) &_retrofit_retrofit_step2_rgamma, 2},
-    {"_retrofit_retrofit_step3_alpha_numerator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_numerator, 5},
-    {"_retrofit_retrofit_step3_alpha_denominator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_denominator, 1},
-    {"_retrofit_retrofit_step3_alpha", (DL_FUNC) &_retrofit_retrofit_step3_alpha, 5},
-    {"_retrofit_retrofit_step3_beta", (DL_FUNC) &_retrofit_retrofit_step3_beta, 4},
-    {"_retrofit_retrofit_step4_alpha_calculation", (DL_FUNC) &_retrofit_retrofit_step4_alpha_calculation, 6},
-    {"_retrofit_retrofit_step4_beta_calculation", (DL_FUNC) &_retrofit_retrofit_step4_beta_calculation, 7},
+    {"_retrofit_retrofit_step3_alpha_numerator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_numerator, 6},
+    {"_retrofit_retrofit_step3_alpha_denominator", (DL_FUNC) &_retrofit_retrofit_step3_alpha_denominator, 2},
+    {"_retrofit_retrofit_step3_alpha", (DL_FUNC) &_retrofit_retrofit_step3_alpha, 6},
+    {"_retrofit_retrofit_step3_beta", (DL_FUNC) &_retrofit_retrofit_step3_beta, 5},
+    {"_retrofit_retrofit_step4_alpha_calculation", (DL_FUNC) &_retrofit_retrofit_step4_alpha_calculation, 7},
+    {"_retrofit_retrofit_step4_beta_calculation", (DL_FUNC) &_retrofit_retrofit_step4_beta_calculation, 8},
     {"_retrofit_retrofit_step5_parameter_estimation", (DL_FUNC) &_retrofit_retrofit_step5_parameter_estimation, 3},
     {"_retrofit_rcpp_second_dim_sum", (DL_FUNC) &_retrofit_rcpp_second_dim_sum, 1},
     {NULL, NULL, 0}

@@ -24,7 +24,7 @@ test_that("step3-alpha-numerator", {
   # rcpp code
   from = Sys.time()
   # phi_a_gks_new = retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda)
-  retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda, phi_a_gks_new);
+  retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda, phi_a_gks_new, c(G,K,S));
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new))
@@ -51,7 +51,7 @@ test_that("step3-alpha-denominator", {
   
   # rcpp code
   from = Sys.time()
-  retrofit_step3_alpha_denominator(phi_a_gks_new);
+  retrofit_step3_alpha_denominator(phi_a_gks_new, c(G,K,S));
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   # test: all elements are same
@@ -61,8 +61,10 @@ test_that("step3-alpha-denominator", {
 test_that("step3-beta", {
   G = 4
   K = 3
+  S = 2
   G = 1550
   K = 16
+  S = 1080
   W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   TH_k=array(runif(K, 0, 10))
   lambda = runif(1, 0, 1)
@@ -84,7 +86,7 @@ test_that("step3-beta", {
   
   # rcpp code
   # from = Sys.time()
-  retrofit_step3_beta(W_gk, TH_k, lambda, phi_b_gk_new);
+  retrofit_step3_beta(W_gk, TH_k, lambda, phi_b_gk_new, c(G,K,S));
   # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_b_gk, phi_b_gk_new))
@@ -120,7 +122,7 @@ test_that("step3-alpha", {
   
   # rcpp code
   from = Sys.time()
-  retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, phi_a_gks_new);
+  retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, phi_a_gks_new, c(G,K,S));
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new))
