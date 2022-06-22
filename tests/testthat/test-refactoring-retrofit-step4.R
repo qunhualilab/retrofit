@@ -38,9 +38,9 @@ test_that("step4_alpha", {
   print(paste('rcpp-code: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   
-  expect_true(all.equal(alpha_w_gk, alpha_w_gk_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_h_ks, alpha_h_ks_new, tolerance=1e-4))
-  expect_true(all.equal(alpha_th_k, alpha_th_k_new, tolerance=1e-4))
+  expect_true(all.equal(alpha_w_gk, alpha_w_gk_new))
+  expect_true(all.equal(alpha_h_ks, alpha_h_ks_new))
+  expect_true(all.equal(alpha_th_k, alpha_th_k_new))
 })
 
 test_that("step4_beta", {
@@ -84,7 +84,7 @@ test_that("step4_beta", {
   beta_th_k_new = ret$t
   print(paste('rcpp-code: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
 
-  expect_true(all.equal(beta_w_gk, beta_w_gk_new, tolerance=1e-4))
-  expect_true(all.equal(beta_h_ks, beta_h_ks_new, tolerance=1e-4))
-  expect_true(all.equal(beta_th_k, beta_th_k_new, tolerance=1e-4))
+  expect_true(all.equal(beta_w_gk, beta_w_gk_new))
+  expect_true(all.equal(beta_h_ks, beta_h_ks_new))
+  expect_true(all.equal(beta_th_k, beta_th_k_new))
 })

@@ -5,9 +5,9 @@ using namespace Rcpp;
 List retrofit_step4_alpha_calculation(NumericVector x_gs, 
                                       NumericVector phi_a_gks, 
                                       NumericVector phi_b_gk, 
-                                      float alpha_w_0,
-                                      float alpha_h_0,
-                                      float alpha_th_0) {
+                                      double alpha_w_0,
+                                      double alpha_h_0,
+                                      double alpha_th_0) {
   /* Equivalent code
    * for(k in 1:K){
    *  alpha_W_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
@@ -25,9 +25,9 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
   NumericVector alpha_w (G*K);
   NumericVector alpha_h (K*S);
   NumericVector alpha_th (K);
-  float x_gs_val;
-  float phi_a_gks_val;
-  float phi_b_gk_val;
+  double x_gs_val;
+  double phi_a_gks_val;
+  double phi_b_gk_val;
   NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
   NumericVector::iterator phi_b_gk_iter = phi_b_gk.begin();
   NumericVector::iterator x_gs_iter = x_gs.begin();
@@ -86,10 +86,10 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
 List retrofit_step4_beta_calculation(NumericVector W_gk,
                                      NumericVector H_ks,
                                      NumericVector TH_k,
-                                     float beta_w_0,
-                                     float beta_h_0,
-                                     float beta_th_0,
-                                     float lambda)
+                                     double beta_w_0,
+                                     double beta_h_0,
+                                     double beta_th_0,
+                                     double lambda)
 {
   /* Equivalent code
    * for(k in 1:K){

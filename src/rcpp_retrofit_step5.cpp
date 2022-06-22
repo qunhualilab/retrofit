@@ -4,7 +4,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector retrofit_step5_parameter_estimation(NumericVector original, 
                                                   NumericVector update, 
-                                                  float rho) {
+                                                  double rho) {
   
   NumericVector ret (original.length());
   for(int i=0; i<original.length(); ++i){

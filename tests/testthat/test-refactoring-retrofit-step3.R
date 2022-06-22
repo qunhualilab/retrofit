@@ -2,9 +2,9 @@ test_that("step3-alpha-numerator", {
   G = 4
   K = 3
   S = 2
-  # G = 1550
-  # K = 16
-  # S = 1080
+  G = 1550
+  K = 16
+  S = 1080
   W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
   TH_k=array(runif(K, 0, 10))
@@ -27,16 +27,16 @@ test_that("step3-alpha-numerator", {
   retrofit_step3_alpha_numerator(W_gk, TH_k, H_ks, lambda, phi_a_gks_new);
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
-  expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
+  expect_true(all.equal(phi_a_gks, phi_a_gks_new))
 })
 
 test_that("step3-alpha-denominator", {
   G = 4
   K = 3
   S = 2
-  # G = 1550
-  # K = 16
-  # S = 1080
+  G = 1550
+  K = 16
+  S = 1080
   phi_a_gks = array(runif(G*K*S, 0, 10), c(G,K,S))
   phi_a_gks_new <- phi_a_gks
   
@@ -55,14 +55,14 @@ test_that("step3-alpha-denominator", {
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   # test: all elements are same
-  expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
+  expect_true(all.equal(phi_a_gks, phi_a_gks_new))
 })
 
 test_that("step3-beta", {
   G = 4
   K = 3
-  # G = 1550
-  # K = 16
+  G = 1550
+  K = 16
   W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   TH_k=array(runif(K, 0, 10))
   lambda = runif(1, 0, 1)
@@ -87,7 +87,7 @@ test_that("step3-beta", {
   retrofit_step3_beta(W_gk, TH_k, lambda, phi_b_gk_new);
   # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
-  expect_true(all.equal(phi_b_gk, phi_b_gk_new, tolerance=1e-4))
+  expect_true(all.equal(phi_b_gk, phi_b_gk_new))
 })
 
 
@@ -95,9 +95,9 @@ test_that("step3-alpha", {
   G = 4
   K = 3
   S = 2
-  # G = 1550
-  # K = 16
-  # S = 1080
+  G = 1550
+  K = 16
+  S = 1080
   W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
   H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
   TH_k=array(runif(K, 0, 10))
@@ -123,7 +123,7 @@ test_that("step3-alpha", {
   retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, phi_a_gks_new);
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
-  expect_true(all.equal(phi_a_gks, phi_a_gks_new, tolerance=1e-4))
+  expect_true(all.equal(phi_a_gks, phi_a_gks_new))
 })
 
 
