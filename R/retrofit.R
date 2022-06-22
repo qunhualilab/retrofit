@@ -21,28 +21,55 @@ retrofit <- function(x, iterations=4000) {
   
   ### initialization
   # initial parameters
-  alpha_W_0   = 0.05 
-  beta_W_0    = 0.0001 
-  alpha_H_0   = 0.2 
-  beta_H_0    = 0.2
-  alpha_TH_0  = 10/cell_types
-  beta_TH_0   = 10
-  lamda       = 0.01
+  alpha_w_0   = 0.05 
+  beta_w_0    = 0.0001 
+  alpha_h_0   = 0.2 
+  beta_h_0    = 0.2
+  alpha_th_0  = 10/cell_types
+  beta_th_0   = 10
+  lambda       = 0.01
   kappa       = 0.5
+  # memory managed vectors
+  distributions = list(
+    # W/H/Th from Gamma dist
+    w_gk                = rep(0, len=G*K),
+    h_ks                = rep(0, len=K*S),
+    th_k                = rep(0, len=K)
+  )
+  # probabilities = list(
+  #   # probability variables
+  #   phi_a_gks           = rep(0, len=G*K*S),
+  #   phi_b_gk            = rep(0, len=G*K)
+  # )
+  # parameters = list(
+  #   # parameter vectors
+  #   alpha_th_k          = runif(K,0,1)+alpha_th_0,
+  #   beta_th_k           = runif(K,0,1)+beta_th_0,
+  #   alpha_w_gk          = runif(G*K,0,0.5)+alpha_w_0,
+  #   beta_w_gk           = runif(G*K,0,0.005)+beta_w_0,
+  #   alpha_h_ks          = runif(K*S,0,0.1)+alpha_h_0,
+  #   beta_h_ks           = runif(K*S,0,0.5)+beta_h_0,
+  #   alpha_th_k_asterisk = rep(K,0),
+  #   beta_th_k_asterisk  = rep(K,0),
+  #   alpha_w_gk_asterisk = rep(G*K,0),
+  #   beta_w_gk_asterisk  = rep(G*K,0),
+  #   alpha_h_ks_asterisk = rep(K*S,0),
+  #   beta_h_ks_asterisk  = rep(K*S,0)
+  # )
   # parameter matrices
-  alpha_TH_k  = runif(K,0,1)+alpha_TH_0
-  beta_TH_k   = runif(K,0,1)+beta_TH_0
-  alpha_W_gk  = runif(G*K,0,0.5)+alpha_W_0
-  beta_W_gk   = runif(G*K,0,0.005)+beta_W_0
-  alpha_H_ks  = runif(K*S,0,0.1)+alpha_H_0
-  beta_H_ks   = runif(K*S,0,0.5)+beta_H_0
+  alpha_TH_k  = runif(K,0,1)+alpha_th_0
+  beta_TH_k   = runif(K,0,1)+beta_th_0
+  alpha_W_gk  = runif(G*K,0,0.5)+alpha_w_0
+  beta_W_gk   = runif(G*K,0,0.005)+beta_w_0
+  alpha_H_ks  = runif(K*S,0,0.1)+alpha_h_0
+  beta_H_ks   = runif(K*S,0,0.5)+beta_h_0
   # variational parameters
   phi_a_gks   = rep(0, len=G*K*S)
   phi_b_gk    = rep(0, len=G*K)
-  # W/H/Th from Gamma dist
-  W_gk        = rep(0, len=G*K)
-  H_ks        = rep(0, len=K*S)
-  TH_k        = rep(0, len=K)
+  # # W/H/Th from Gamma dist
+  # W_gk        = rep(0, len=G*K)
+  # H_ks        = rep(0, len=K*S)
+  # TH_k        = rep(0, len=K)
   
   ## start of algorithm
   t=0
@@ -55,17 +82,17 @@ retrofit <- function(x, iterations=4000) {
     rho = (t)^(-kappa)
     
     # step (2)
-    H_ks = retrofit_step2_rgamma(alpha_H_ks, beta_H_ks)
-    TH_k = retrofit_step2_rgamma(alpha_TH_k, beta_TH_k)
-    W_gk = retrofit_step2_rgamma(alpha_W_gk, beta_W_gk)
+    retrofit_decomposition_step2(alpha_H_ks, beta_H_ks, distributions$h_ks)
+    retrofit_decomposition_step2(alpha_TH_k, beta_TH_k, distributions$th_k)
+    retrofit_decomposition_step2(alpha_W_gk, beta_W_gk, distributions$w_gk)
     
     # step (3)
-    retrofit_step3_alpha(W_gk, TH_k, H_ks, lamda, phi_a_gks, c(G,K,S))
-    retrofit_step3_beta(W_gk, TH_k, lamda, phi_b_gk, c(G,K,S))
+    retrofit_step3_alpha(distributions$w_gk, distributions$th_k, distributions$h_ks, lambda, phi_a_gks, c(G,K,S))
+    retrofit_step3_beta(distributions$w_gk, distributions$th_k, lambda, phi_b_gk, c(G,K,S))
     
     # step (4)
-    alpha_new = retrofit_step4_alpha_calculation(x, phi_a_gks, phi_b_gk, alpha_W_0, alpha_H_0, alpha_TH_0, c(G,K,S))
-    beta_new  = retrofit_step4_beta_calculation(W_gk, H_ks, TH_k, beta_W_0, beta_H_0, beta_TH_0, lamda, c(G,K,S))
+    alpha_new = retrofit_step4_alpha_calculation(x, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, c(G,K,S))
+    beta_new  = retrofit_step4_beta_calculation(distributions$w_gk, distributions$h_ks, distributions$th_k, beta_w_0, beta_h_0, beta_th_0, lambda, c(G,K,S))
     
     # step (5)
     alpha_W_gk = retrofit_step5_parameter_estimation(alpha_W_gk, alpha_new$w, rho)

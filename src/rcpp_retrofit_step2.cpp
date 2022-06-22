@@ -4,14 +4,17 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-NumericVector retrofit_step2_rgamma(NumericVector shapes, NumericVector rates) {
+void retrofit_decomposition_step2(NumericVector shapes, 
+                                  NumericVector rates,
+                                  NumericVector &out) {
 /* Equivalent code
+ * for(k in 1:L){
+ *    for(s in 1:S){
+ *       H1[k,s]=rgamma(1, shape=eta_h[k,s], rate=gam_h[k,s])
+ *    }
+ *  }
  */
-  NumericVector ret (shapes.length());
   for(int i=0; i<shapes.length(); ++i){
-    
-    ret[i] = rgamma(1, shapes[i], 1/rates[i])[0];
+    out[i] = rgamma(1, shapes[i], 1/rates[i])[0];
   }
-  
-  return ret;
 }
