@@ -5,12 +5,12 @@ retrofit_decomposition_step2 <- function(shapes, rates, out) {
     invisible(.Call(`_retrofit_retrofit_decomposition_step2`, shapes, rates, out))
 }
 
-retrofit_step3_alpha <- function(W_gk, TH_k, H_ks, lambda, out_phi_a_gks, dim) {
-    invisible(.Call(`_retrofit_retrofit_step3_alpha`, W_gk, TH_k, H_ks, lambda, out_phi_a_gks, dim))
+retrofit_decomposition_step3_alpha <- function(distributions, lambda, dim, phi_a_gks) {
+    invisible(.Call(`_retrofit_retrofit_decomposition_step3_alpha`, distributions, lambda, dim, phi_a_gks))
 }
 
-retrofit_step3_beta <- function(W_gk, TH_k, lambda, out_phi_b_gk, dim) {
-    invisible(.Call(`_retrofit_retrofit_step3_beta`, W_gk, TH_k, lambda, out_phi_b_gk, dim))
+retrofit_decomposition_step3_beta <- function(distributions, lambda, dim, phi_b_gk) {
+    invisible(.Call(`_retrofit_retrofit_decomposition_step3_beta`, distributions, lambda, dim, phi_b_gk))
 }
 
 retrofit_step4_alpha_calculation <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, dim) {

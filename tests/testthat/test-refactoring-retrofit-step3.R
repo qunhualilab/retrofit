@@ -5,12 +5,19 @@ test_that("step3-alpha", {
   G = 1550
   K = 16
   S = 1080
-  W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
-  H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
-  TH_k=array(runif(K, 0, 10))
+  distributions = list(
+    # W/H/Th from Gamma dist
+    w_gk                = runif(G*K, 0, 10),
+    h_ks                = runif(K*S, 0, 10),
+    th_k                = runif(K, 0, 10)
+  )
+  phi_a_gks             = array(0, c(G,K,S))
+  phi_a_gks_new         = array(0, c(G,K,S))
   lambda = runif(1, 0, 1)
-  phi_a_gks = array(rep(0,G*K*S), c(G,K,S))
-  phi_a_gks_new <- phi_a_gks
+  
+  W_gk = array(distributions$w_gk, c(G,K))
+  H_ks = array(distributions$h_ks, c(K,S))
+  TH_k = array(distributions$th_k, c(K))
   
   # r code
   from = Sys.time()
@@ -24,10 +31,9 @@ test_that("step3-alpha", {
   }
   print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
-  
   # rcpp code
   from = Sys.time()
-  retrofit_step3_alpha(W_gk, TH_k, H_ks, lambda, phi_a_gks_new, c(G,K,S));
+  retrofit_decomposition_step3_alpha(distributions, lambda, c(G,K,S), phi_a_gks_new);
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new))
@@ -40,14 +46,22 @@ test_that("step3-beta", {
   G = 1550
   K = 16
   S = 1080
-  W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
-  TH_k=array(runif(K, 0, 10))
+  distributions = list(
+    # W/H/Th from Gamma dist
+    w_gk                = runif(G*K, 0, 10),
+    h_ks                = runif(K*S, 0, 10),
+    th_k                = runif(K, 0, 10)
+  )
+  phi_b_gk              = array(0, c(G,K))
+  phi_b_gk_new          = array(0, c(G,K))
   lambda = runif(1, 0, 1)
-  phi_b_gk=array(rep(0,G*K), c(G,K))
-  phi_b_gk_new <- phi_b_gk
+  
+  W_gk = array(distributions$w_gk, c(G,K))
+  H_ks = array(distributions$h_ks, c(K,S))
+  TH_k = array(distributions$th_k, c(K))
   
   # r code
-  # from = Sys.time()
+  from = Sys.time()
   for(k in 1:K){
     for(v in 1:G){
       if((W_gk[v,k]*TH_k[k] + lambda)==0){
@@ -57,12 +71,12 @@ test_that("step3-beta", {
       }
     }
   }
-  # print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  print(paste('r: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   # rcpp code
-  # from = Sys.time()
-  retrofit_step3_beta(W_gk, TH_k, lambda, phi_b_gk_new, c(G,K,S));
-  # print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+  from = Sys.time()
+  retrofit_decomposition_step3_beta(distributions, lambda, c(G,K,S), phi_b_gk_new);
+  print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_b_gk, phi_b_gk_new))
 })

@@ -36,11 +36,11 @@ retrofit <- function(x, iterations=4000) {
     h_ks                = rep(0, len=K*S),
     th_k                = rep(0, len=K)
   )
-  # probabilities = list(
-  #   # probability variables
-  #   phi_a_gks           = rep(0, len=G*K*S),
-  #   phi_b_gk            = rep(0, len=G*K)
-  # )
+  probabilities = list(
+    # probability variables
+    phi_a_gks           = rep(0, len=G*K*S),
+    phi_b_gk            = rep(0, len=G*K)
+  )
   # parameters = list(
   #   # parameter vectors
   #   alpha_th_k          = runif(K,0,1)+alpha_th_0,
@@ -64,8 +64,8 @@ retrofit <- function(x, iterations=4000) {
   alpha_H_ks  = runif(K*S,0,0.1)+alpha_h_0
   beta_H_ks   = runif(K*S,0,0.5)+beta_h_0
   # variational parameters
-  phi_a_gks   = rep(0, len=G*K*S)
-  phi_b_gk    = rep(0, len=G*K)
+  # phi_a_gks   = rep(0, len=G*K*S)
+  # phi_b_gk    = rep(0, len=G*K)
   # # W/H/Th from Gamma dist
   # W_gk        = rep(0, len=G*K)
   # H_ks        = rep(0, len=K*S)
@@ -87,11 +87,11 @@ retrofit <- function(x, iterations=4000) {
     retrofit_decomposition_step2(alpha_W_gk, beta_W_gk, distributions$w_gk)
     
     # step (3)
-    retrofit_step3_alpha(distributions$w_gk, distributions$th_k, distributions$h_ks, lambda, phi_a_gks, c(G,K,S))
-    retrofit_step3_beta(distributions$w_gk, distributions$th_k, lambda, phi_b_gk, c(G,K,S))
+    retrofit_decomposition_step3_alpha(distributions, lambda, c(G,K,S), probabilities$phi_a_gks)
+    retrofit_decomposition_step3_beta(distributions, lambda, c(G,K,S), probabilities$phi_b_gk)
     
     # step (4)
-    alpha_new = retrofit_step4_alpha_calculation(x, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, c(G,K,S))
+    alpha_new = retrofit_step4_alpha_calculation(x, probabilities$phi_a_gks, probabilities$phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, c(G,K,S))
     beta_new  = retrofit_step4_beta_calculation(distributions$w_gk, distributions$h_ks, distributions$th_k, beta_w_0, beta_h_0, beta_th_0, lambda, c(G,K,S))
     
     # step (5)
