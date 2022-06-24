@@ -2,13 +2,11 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector retrofit_step5_parameter_estimation(NumericVector original, 
-                                                  NumericVector update, 
-                                                  double rho) {
+void retrofit_decomposition_step5(NumericVector main, 
+                                  NumericVector asterisk, 
+                                  double rho) {
   
-  NumericVector ret (original.length());
-  for(int i=0; i<original.length(); ++i){
-    ret[i] = (1-rho)*original[i] + rho*update[i];
+  for(int i=0; i<main.length(); ++i){
+    main[i] = (1-rho)*main[i] + rho*asterisk[i];
   }
-  return ret;
 }

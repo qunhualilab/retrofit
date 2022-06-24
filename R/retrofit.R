@@ -41,28 +41,22 @@ retrofit <- function(x, iterations=4000) {
     phi_a_gks           = rep(0, len=G*K*S),
     phi_b_gk            = rep(0, len=G*K)
   )
-  # parameters = list(
-  #   # parameter vectors
-  #   alpha_th_k          = runif(K,0,1)+alpha_th_0,
-  #   beta_th_k           = runif(K,0,1)+beta_th_0,
-  #   alpha_w_gk          = runif(G*K,0,0.5)+alpha_w_0,
-  #   beta_w_gk           = runif(G*K,0,0.005)+beta_w_0,
-  #   alpha_h_ks          = runif(K*S,0,0.1)+alpha_h_0,
-  #   beta_h_ks           = runif(K*S,0,0.5)+beta_h_0,
-  #   alpha_th_k_asterisk = rep(K,0),
-  #   beta_th_k_asterisk  = rep(K,0),
-  #   alpha_w_gk_asterisk = rep(G*K,0),
-  #   beta_w_gk_asterisk  = rep(G*K,0),
-  #   alpha_h_ks_asterisk = rep(K*S,0),
-  #   beta_h_ks_asterisk  = rep(K*S,0)
-  # )
+  parameters = list(
+    # parameter vectors
+    alpha_th_k          = runif(K,0,1)+alpha_th_0,
+    beta_th_k           = runif(K,0,1)+beta_th_0,
+    alpha_w_gk          = runif(G*K,0,0.5)+alpha_w_0,
+    beta_w_gk           = runif(G*K,0,0.005)+beta_w_0,
+    alpha_h_ks          = runif(K*S,0,0.1)+alpha_h_0,
+    beta_h_ks           = runif(K*S,0,0.5)+beta_h_0
+  )
   # parameter matrices
-  alpha_TH_k  = runif(K,0,1)+alpha_th_0
-  beta_TH_k   = runif(K,0,1)+beta_th_0
-  alpha_W_gk  = runif(G*K,0,0.5)+alpha_w_0
-  beta_W_gk   = runif(G*K,0,0.005)+beta_w_0
-  alpha_H_ks  = runif(K*S,0,0.1)+alpha_h_0
-  beta_H_ks   = runif(K*S,0,0.5)+beta_h_0
+  # alpha_TH_k  = runif(K,0,1)+alpha_th_0
+  # beta_TH_k   = runif(K,0,1)+beta_th_0
+  # alpha_W_gk  = runif(G*K,0,0.5)+alpha_w_0
+  # beta_W_gk   = runif(G*K,0,0.005)+beta_w_0
+  # alpha_H_ks  = runif(K*S,0,0.1)+alpha_h_0
+  # beta_H_ks   = runif(K*S,0,0.5)+beta_h_0
   # variational parameters
   # phi_a_gks   = rep(0, len=G*K*S)
   # phi_b_gk    = rep(0, len=G*K)
@@ -82,9 +76,9 @@ retrofit <- function(x, iterations=4000) {
     rho = (t)^(-kappa)
     
     # step (2) - Update distributions
-    retrofit_decomposition_step2(alpha_H_ks, beta_H_ks, distributions$h_ks)
-    retrofit_decomposition_step2(alpha_TH_k, beta_TH_k, distributions$th_k)
-    retrofit_decomposition_step2(alpha_W_gk, beta_W_gk, distributions$w_gk)
+    retrofit_decomposition_step2(parameters$alpha_h_ks, parameters$beta_h_ks, distributions$h_ks)
+    retrofit_decomposition_step2(parameters$alpha_th_k, parameters$beta_th_k, distributions$th_k)
+    retrofit_decomposition_step2(parameters$alpha_w_gk, parameters$beta_w_gk, distributions$w_gk)
     
     # step (3) - Update probabilities
     retrofit_decomposition_step3_alpha(distributions, lambda, dim, probabilities$phi_a_gks)
@@ -95,19 +89,19 @@ retrofit <- function(x, iterations=4000) {
     beta_asterisk = retrofit_decomposition_step4_beta(distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
     
     # step (5) - Update parameters
-    alpha_W_gk = retrofit_step5_parameter_estimation(alpha_W_gk, alpha_asterisk$w, rho)
-    alpha_H_ks = retrofit_step5_parameter_estimation(alpha_H_ks, alpha_asterisk$h, rho)
-    alpha_TH_k = retrofit_step5_parameter_estimation(alpha_TH_k, alpha_asterisk$t, rho)
-    beta_W_gk  = retrofit_step5_parameter_estimation(beta_W_gk, beta_asterisk$w, rho)
-    beta_H_ks  = retrofit_step5_parameter_estimation(beta_H_ks, beta_asterisk$h, rho)
-    beta_TH_k  = retrofit_step5_parameter_estimation(beta_TH_k, beta_asterisk$t, rho)
+    retrofit_decomposition_step5(parameters$alpha_w_gk, alpha_asterisk$w, rho)
+    retrofit_decomposition_step5(parameters$alpha_h_ks, alpha_asterisk$h, rho)
+    retrofit_decomposition_step5(parameters$alpha_th_k, alpha_asterisk$t, rho)
+    retrofit_decomposition_step5(parameters$beta_w_gk, beta_asterisk$w, rho)
+    retrofit_decomposition_step5(parameters$beta_h_ks, beta_asterisk$h, rho)
+    retrofit_decomposition_step5(parameters$beta_th_k, beta_asterisk$t, rho)
     
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
-  W_hat=array(alpha_W_gk/beta_W_gk, c(G,K))
-  H_hat=array(alpha_H_ks/beta_H_ks, c(K,S))
-  TH_hat=array(alpha_TH_k/beta_TH_k, c(K))
+  W_hat=array(parameters$alpha_w_gk/parameters$beta_w_gk, c(G,K))
+  H_hat=array(parameters$alpha_h_ks/parameters$beta_h_ks, c(K,S))
+  TH_hat=array(parameters$alpha_th_k/parameters$beta_th_k, c(K))
   result <- list(w=W_hat, h=H_hat, t=TH_hat)
   return(result)
 }

@@ -24,9 +24,12 @@ test_that("step5-alpha-updates", {
   }
   
   # rcpp code
-  alpha_W_gk_new = array(retrofit_step5_parameter_estimation(W_gk, W_gk_updated, rho), c(G,K))
-  alpha_H_ks_new = array(retrofit_step5_parameter_estimation(H_ks, H_ks_updated, rho), c(K,S))
-  alpha_TH_k_new = array(retrofit_step5_parameter_estimation(TH_k, TH_k_updated, rho), c(K))
+  alpha_W_gk_new <- W_gk
+  alpha_H_ks_new <- H_ks
+  alpha_TH_k_new <- TH_k
+  retrofit_decomposition_step5(alpha_W_gk_new, W_gk_updated, rho)
+  retrofit_decomposition_step5(alpha_H_ks_new, H_ks_updated, rho)
+  retrofit_decomposition_step5(alpha_TH_k_new, TH_k_updated, rho)
   
   expect_true(all.equal(alpha_W_gk, alpha_W_gk_new))
   expect_true(all.equal(alpha_H_ks, alpha_H_ks_new))

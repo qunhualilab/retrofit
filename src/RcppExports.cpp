@@ -80,17 +80,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// retrofit_step5_parameter_estimation
-NumericVector retrofit_step5_parameter_estimation(NumericVector original, NumericVector update, double rho);
-RcppExport SEXP _retrofit_retrofit_step5_parameter_estimation(SEXP originalSEXP, SEXP updateSEXP, SEXP rhoSEXP) {
+// retrofit_decomposition_step5
+void retrofit_decomposition_step5(NumericVector main, NumericVector asterisk, double rho);
+RcppExport SEXP _retrofit_retrofit_decomposition_step5(SEXP mainSEXP, SEXP asteriskSEXP, SEXP rhoSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type original(originalSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type update(updateSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type main(mainSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type asterisk(asteriskSEXP);
     Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_step5_parameter_estimation(original, update, rho));
-    return rcpp_result_gen;
+    retrofit_decomposition_step5(main, asterisk, rho);
+    return R_NilValue;
 END_RCPP
 }
 // rcpp_second_dim_sum
@@ -111,7 +110,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_retrofit_retrofit_decomposition_step3_beta", (DL_FUNC) &_retrofit_retrofit_decomposition_step3_beta, 4},
     {"_retrofit_retrofit_decomposition_step4_alpha", (DL_FUNC) &_retrofit_retrofit_decomposition_step4_alpha, 6},
     {"_retrofit_retrofit_decomposition_step4_beta", (DL_FUNC) &_retrofit_retrofit_decomposition_step4_beta, 6},
-    {"_retrofit_retrofit_step5_parameter_estimation", (DL_FUNC) &_retrofit_retrofit_step5_parameter_estimation, 3},
+    {"_retrofit_retrofit_decomposition_step5", (DL_FUNC) &_retrofit_retrofit_decomposition_step5, 3},
     {"_retrofit_rcpp_second_dim_sum", (DL_FUNC) &_retrofit_rcpp_second_dim_sum, 1},
     {NULL, NULL, 0}
 };

@@ -21,8 +21,8 @@ retrofit_decomposition_step4_beta <- function(distributions, beta_w_0, beta_h_0,
     .Call(`_retrofit_retrofit_decomposition_step4_beta`, distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
 }
 
-retrofit_step5_parameter_estimation <- function(original, update, rho) {
-    .Call(`_retrofit_retrofit_step5_parameter_estimation`, original, update, rho)
+retrofit_decomposition_step5 <- function(main, asterisk, rho) {
+    invisible(.Call(`_retrofit_retrofit_decomposition_step5`, main, asterisk, rho))
 }
 
 rcpp_second_dim_sum <- function(v) {
