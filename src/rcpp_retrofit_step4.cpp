@@ -2,18 +2,17 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List retrofit_step4_alpha_calculation(NumericVector x_gs, 
-                                      NumericVector phi_a_gks, 
-                                      NumericVector phi_b_gk, 
-                                      double alpha_w_0,
-                                      double alpha_h_0,
-                                      double alpha_th_0,
-                                      NumericVector dim) {
+List retrofit_decomposition_step4_alpha(NumericVector x_gs, 
+                                        List probabilities, 
+                                        double alpha_w_0,
+                                        double alpha_h_0,
+                                        double alpha_th_0,
+                                        NumericVector dim) {
   /* Equivalent code
    * for(k in 1:K){
-   *  alpha_W_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
-   *  alpha_H_ks[k,]= alpha_H_0 + colSums(x*phi_a_gks[,k,])
-   *  alpha_TH_k[k]= alpha_TH_0 + sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
+   *  alpha_w_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
+   *  alpha_h_ks[k,]= alpha_H_0 + colSums(x*phi_a_gks[,k,])
+   *  alpha_th_k[k]= alpha_TH_0 + sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
    * }
    */
   //dimensions
@@ -29,6 +28,8 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
   double x_gs_val;
   double phi_a_gks_val;
   double phi_b_gk_val;
+  NumericVector phi_a_gks = probabilities["phi_a_gks"];
+  NumericVector phi_b_gk = probabilities["phi_b_gk"];
   NumericVector::iterator phi_a_gks_iter = phi_a_gks.begin();
   NumericVector::iterator phi_b_gk_iter = phi_b_gk.begin();
   NumericVector::iterator x_gs_iter = x_gs.begin();
@@ -84,20 +85,18 @@ List retrofit_step4_alpha_calculation(NumericVector x_gs,
 }
 
 // [[Rcpp::export]]
-List retrofit_step4_beta_calculation(NumericVector W_gk,
-                                     NumericVector H_ks,
-                                     NumericVector TH_k,
-                                     double beta_w_0,
-                                     double beta_h_0,
-                                     double beta_th_0,
-                                     double lambda,
-                                     NumericVector dim)
+List retrofit_decomposition_step4_beta(List distributions,
+                                       double beta_w_0,
+                                       double beta_h_0,
+                                       double beta_th_0,
+                                       double lambda,
+                                       NumericVector dim)
 {
   /* Equivalent code
    * for(k in 1:K){
-   * beta_W_gk[,k]= beta_W_0 + sum(H_ks[k,]*TH_k[k])
-   * beta_H_ks[k,]= beta_H_0 + sum(W_gk[,k]*TH_k[k] + lamda)
-   * beta_TH_k[k]= beta_TH_0 + sum(as.matrix(W_gk[,k]) %*% t(as.matrix(H_ks[k,])))
+   * beta_w_gk[,k]= beta_W_0 + sum(h_ks[k,]*th_k[k])
+   * beta_h_ks[k,]= beta_H_0 + sum(w_gk[,k]*th_k[k] + lamda)
+   * beta_th_k[k]= beta_TH_0 + sum(as.matrix(w_gk[,k]) %*% t(as.matrix(h_ks[k,])))
    * }
    */
   //dimensions
@@ -111,26 +110,29 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
   NumericVector::iterator beta_w_iter = beta_w.begin();
   NumericVector::iterator beta_h_iter = beta_h.begin();
   NumericVector::iterator beta_th_iter = beta_th.begin();
-  NumericVector::iterator W_gk_iter = W_gk.begin();
-  NumericVector::iterator H_ks_iter = H_ks.begin();
-  NumericVector::iterator TH_k_iter = TH_k.begin();
+  NumericVector w_gk = distributions["w_gk"];
+  NumericVector h_ks = distributions["h_ks"];
+  NumericVector th_k = distributions["th_k"];
+  NumericVector::iterator w_gk_iter = w_gk.begin();
+  NumericVector::iterator h_ks_iter = h_ks.begin();
+  NumericVector::iterator th_k_iter = th_k.begin();
   double sum;
   
   // calculate beta_w
-  // equivalent: beta_W_gk[,k]= beta_W_0 + sum(H_ks[k,]*TH_k[k])
-  H_ks_iter = H_ks.begin();
-  TH_k_iter = TH_k.begin();
+  // equivalent: beta_w_gk[,k]= beta_W_0 + sum(h_ks[k,]*th_k[k])
+  h_ks_iter = h_ks.begin();
+  th_k_iter = th_k.begin();
   for(int k=0; k<K; ++k){
 
     sum = 0;
     for(int s=0; s<S; ++s){
-      // equivalent: beta_w[k*G+g] += TH_k_val*H_ks_val;
-      sum += (*TH_k_iter)*(*H_ks_iter);
-      // equivalent: H_ks_val = H_ks[s*K+k];
-      H_ks_iter += K; if(s==S-1){H_ks_iter -= K*S;}
+      // equivalent: beta_w[k*G+g] += th_k_val*h_ks_val;
+      sum += (*th_k_iter)*(*h_ks_iter);
+      // equivalent: h_ks_val = h_ks[s*K+k];
+      h_ks_iter += K; if(s==S-1){h_ks_iter -= K*S;}
     }
-    ++H_ks_iter;
-    ++TH_k_iter;
+    ++h_ks_iter;
+    ++th_k_iter;
 
     for(int g=0; g<G; ++g){
       *beta_w_iter = sum;
@@ -139,19 +141,19 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
   }
 
   // calculate beta_h
-  // equivalent: beta_H_ks[k,]= beta_H_0 + sum(W_gk[,k]*TH_k[k] + lamda)
-  W_gk_iter = W_gk.begin();
-  TH_k_iter = TH_k.begin();
+  // equivalent: beta_h_ks[k,]= beta_H_0 + sum(w_gk[,k]*th_k[k] + lamda)
+  w_gk_iter = w_gk.begin();
+  th_k_iter = th_k.begin();
   for(int k=0; k<K; ++k){
     sum = 0;
 
     for(int g=0; g<G; ++g){
-      sum += (*W_gk_iter)*(*TH_k_iter)+lambda;
-      // equivalent: W_gk_val = W_gk[k*G+g];
-      ++W_gk_iter;
+      sum += (*w_gk_iter)*(*th_k_iter)+lambda;
+      // equivalent: w_gk_val = w_gk[k*G+g];
+      ++w_gk_iter;
     }
-    // equivalent: TH_k_val = TH_k[k];
-    ++TH_k_iter;
+    // equivalent: th_k_val = th_k[k];
+    ++th_k_iter;
 
     for(int s=0; s<S; ++s){
       *beta_h_iter = sum;
@@ -161,20 +163,20 @@ List retrofit_step4_beta_calculation(NumericVector W_gk,
   }
 
 
-  W_gk_iter = W_gk.begin();
-  H_ks_iter = H_ks.begin();
+  w_gk_iter = w_gk.begin();
+  h_ks_iter = h_ks.begin();
   for(int s=0; s<S; ++s){
     for(int k=0; k<K; ++k){
       for(int g=0; g<G; ++g){
-        // equivalent: beta_th[k] += W_gk_val*H_ks_val;
-        *beta_th_iter += (*W_gk_iter)*(*H_ks_iter);
-        ++W_gk_iter;
+        // equivalent: beta_th[k] += w_gk_val*h_ks_val;
+        *beta_th_iter += (*w_gk_iter)*(*h_ks_iter);
+        ++w_gk_iter;
       }
-      ++H_ks_iter;
+      ++h_ks_iter;
       ++beta_th_iter;
       if(k==K-1){beta_th_iter-=K;}
     }
-    W_gk_iter -= G*K;
+    w_gk_iter -= G*K;
   }
     
   for(int k=0; k<K; ++k){

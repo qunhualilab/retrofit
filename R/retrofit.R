@@ -13,12 +13,12 @@ retrofit <- function(x, iterations=4000) {
   set.seed(1)
   
   # dimensions
-  dim = dim(x)
-  G=dim[1] # Gene expressions
-  S=dim[2] # Spots
+  G=dim(x)[1] # Gene expressions
+  S=dim(x)[2] # Spots
   cell_types=8 # Cell types ('K' in the dissertation)
   K=2*cell_types # Components ('L' in the dissertation)
-  
+  dim = c(G,K,S)
+    
   ### initialization
   # initial parameters
   alpha_w_0   = 0.05 
@@ -81,26 +81,26 @@ retrofit <- function(x, iterations=4000) {
     # step (1)
     rho = (t)^(-kappa)
     
-    # step (2)
+    # step (2) - Update distributions
     retrofit_decomposition_step2(alpha_H_ks, beta_H_ks, distributions$h_ks)
     retrofit_decomposition_step2(alpha_TH_k, beta_TH_k, distributions$th_k)
     retrofit_decomposition_step2(alpha_W_gk, beta_W_gk, distributions$w_gk)
     
-    # step (3)
-    retrofit_decomposition_step3_alpha(distributions, lambda, c(G,K,S), probabilities$phi_a_gks)
-    retrofit_decomposition_step3_beta(distributions, lambda, c(G,K,S), probabilities$phi_b_gk)
+    # step (3) - Update probabilities
+    retrofit_decomposition_step3_alpha(distributions, lambda, dim, probabilities$phi_a_gks)
+    retrofit_decomposition_step3_beta(distributions, lambda, dim, probabilities$phi_b_gk)
     
-    # step (4)
-    alpha_new = retrofit_step4_alpha_calculation(x, probabilities$phi_a_gks, probabilities$phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, c(G,K,S))
-    beta_new  = retrofit_step4_beta_calculation(distributions$w_gk, distributions$h_ks, distributions$th_k, beta_w_0, beta_h_0, beta_th_0, lambda, c(G,K,S))
+    # step (4) - Get new parameter values
+    alpha_asterisk = retrofit_decomposition_step4_alpha(x, probabilities, alpha_w_0, alpha_h_0, alpha_th_0, dim)
+    beta_asterisk = retrofit_decomposition_step4_beta(distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
     
-    # step (5)
-    alpha_W_gk = retrofit_step5_parameter_estimation(alpha_W_gk, alpha_new$w, rho)
-    alpha_H_ks = retrofit_step5_parameter_estimation(alpha_H_ks, alpha_new$h, rho)
-    alpha_TH_k = retrofit_step5_parameter_estimation(alpha_TH_k, alpha_new$t, rho)
-    beta_W_gk  = retrofit_step5_parameter_estimation(beta_W_gk, beta_new$w, rho)
-    beta_H_ks  = retrofit_step5_parameter_estimation(beta_H_ks, beta_new$h, rho)
-    beta_TH_k  = retrofit_step5_parameter_estimation(beta_TH_k, beta_new$t, rho)
+    # step (5) - Update parameters
+    alpha_W_gk = retrofit_step5_parameter_estimation(alpha_W_gk, alpha_asterisk$w, rho)
+    alpha_H_ks = retrofit_step5_parameter_estimation(alpha_H_ks, alpha_asterisk$h, rho)
+    alpha_TH_k = retrofit_step5_parameter_estimation(alpha_TH_k, alpha_asterisk$t, rho)
+    beta_W_gk  = retrofit_step5_parameter_estimation(beta_W_gk, beta_asterisk$w, rho)
+    beta_H_ks  = retrofit_step5_parameter_estimation(beta_H_ks, beta_asterisk$h, rho)
+    beta_TH_k  = retrofit_step5_parameter_estimation(beta_TH_k, beta_asterisk$t, rho)
     
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }

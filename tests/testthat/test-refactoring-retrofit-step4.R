@@ -6,8 +6,10 @@ test_that("step4_alpha", {
   K = 16
   S = 1080
   x=matrix(runif(G*S, 0, 10),nrow=G, ncol=S)
-  phi_a_gks=array(runif(G*K*S, 0, 10), c(G,K,S))
-  phi_b_gk=array(runif(G*K, 0, 10), c(G,K))
+  probabilities = list(
+    phi_a_gks=array(runif(G*K*S, 0, 10), c(G,K,S)),
+    phi_b_gk=array(runif(G*K, 0, 10), c(G,K))
+  )
   alpha_w_0 = runif(1, 0, 1)
   alpha_h_0 = runif(1, 0, 1)
   alpha_th_0 = runif(1, 0, 1)
@@ -17,6 +19,8 @@ test_that("step4_alpha", {
   alpha_w_gk = matrix(rep(0, G*K) , nrow=G, ncol=K)
   alpha_h_ks = matrix(rep(0, K*S) , nrow=K, ncol=S)
   alpha_th_k = array(rep(0, K) , c(K))
+  phi_a_gks <- probabilities$phi_a_gks
+  phi_b_gk <- probabilities$phi_b_gk
   for(k in 1:K){
     alpha_w_gk[,k] = alpha_w_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k]
     alpha_h_ks[k,] = alpha_h_0 + colSums(x*phi_a_gks[,k,])
@@ -26,13 +30,12 @@ test_that("step4_alpha", {
   
   # rcpp code
   from = Sys.time()
-  ret = retrofit_step4_alpha_calculation(x, 
-                                         phi_a_gks, 
-                                         phi_b_gk, 
-                                         alpha_w_0,
-                                         alpha_h_0,
-                                         alpha_th_0, 
-                                         c(G,K,S))
+  ret = retrofit_decomposition_step4_alpha(x, 
+                                           probabilities,
+                                           alpha_w_0,
+                                           alpha_h_0,
+                                           alpha_th_0, 
+                                           c(G,K,S))
   alpha_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   alpha_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
   alpha_th_k_new = array(ret$t , c(K))
@@ -72,15 +75,18 @@ test_that("step4_beta", {
   print(paste('r-code: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
 
   # rcpp code
+  distributions = list(
+    w_gk = W_gk,
+    h_ks = H_ks,
+    th_k = TH_k
+  )
   from = Sys.time()
-  ret = retrofit_step4_beta_calculation(W_gk,
-                                        H_ks,
-                                        TH_k,
-                                        beta_w_0,
-                                        beta_h_0,
-                                        beta_th_0,
-                                        lambda, 
-                                        c(G,K,S))
+  ret = retrofit_decomposition_step4_beta(distributions,
+                                          beta_w_0,
+                                          beta_h_0,
+                                          beta_th_0,
+                                          lambda, 
+                                          c(G,K,S))
   beta_w_gk_new = matrix(ret$w, nrow=G, ncol=K)
   beta_h_ks_new = matrix(ret$h, nrow=K, ncol=S)
   beta_th_k_new = ret$t

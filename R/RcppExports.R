@@ -13,12 +13,12 @@ retrofit_decomposition_step3_beta <- function(distributions, lambda, dim, phi_b_
     invisible(.Call(`_retrofit_retrofit_decomposition_step3_beta`, distributions, lambda, dim, phi_b_gk))
 }
 
-retrofit_step4_alpha_calculation <- function(x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, dim) {
-    .Call(`_retrofit_retrofit_step4_alpha_calculation`, x_gs, phi_a_gks, phi_b_gk, alpha_w_0, alpha_h_0, alpha_th_0, dim)
+retrofit_decomposition_step4_alpha <- function(x_gs, probabilities, alpha_w_0, alpha_h_0, alpha_th_0, dim) {
+    .Call(`_retrofit_retrofit_decomposition_step4_alpha`, x_gs, probabilities, alpha_w_0, alpha_h_0, alpha_th_0, dim)
 }
 
-retrofit_step4_beta_calculation <- function(W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, dim) {
-    .Call(`_retrofit_retrofit_step4_beta_calculation`, W_gk, H_ks, TH_k, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
+retrofit_decomposition_step4_beta <- function(distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim) {
+    .Call(`_retrofit_retrofit_decomposition_step4_beta`, distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
 }
 
 retrofit_step5_parameter_estimation <- function(original, update, rho) {
