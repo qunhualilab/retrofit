@@ -5,33 +5,33 @@ test_that("step5-alpha-updates", {
   G = 1550
   K = 16
   S = 1080
-  W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
-  W_gk_updated=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
-  H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
-  H_ks_updated=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
-  TH_k=array(runif(K, 0, 10))
-  TH_k_updated=array(runif(K, 0, 10))
+  w_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
+  w_gk_updated=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
+  h_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
+  h_ks_updated=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
+  th_k=array(runif(K, 0, 10))
+  th_k_updated=array(runif(K, 0, 10))
   rho = runif(1, 0, 1)
   
-  alpha_W_gk = array(rep(0,G*K), c(G,K))
-  alpha_H_ks = array(rep(0,K*S), c(K,S))
-  alpha_TH_k = array(rep(0,K), c(K))
+  alpha_w_gk = array(rep(0,G*K), c(G,K))
+  alpha_h_ks = array(rep(0,K*S), c(K,S))
+  alpha_th_k = array(rep(0,K), c(K))
   # r code
   for(k in 1:K){
-    alpha_W_gk[,k]= (1-rho)*W_gk[,k] + rho*W_gk_updated[,k]
-    alpha_H_ks[k,]= (1-rho)*H_ks[k,] + rho*H_ks_updated[k,]
-    alpha_TH_k[k]= (1-rho)*TH_k[k] + rho*TH_k_updated[k]
+    alpha_w_gk[,k]= (1-rho)*w_gk[,k] + rho*w_gk_updated[,k]
+    alpha_h_ks[k,]= (1-rho)*h_ks[k,] + rho*h_ks_updated[k,]
+    alpha_th_k[k]= (1-rho)*th_k[k] + rho*th_k_updated[k]
   }
   
   # rcpp code
-  alpha_W_gk_new <- W_gk
-  alpha_H_ks_new <- H_ks
-  alpha_TH_k_new <- TH_k
-  retrofit_decomposition_step5(alpha_W_gk_new, W_gk_updated, rho)
-  retrofit_decomposition_step5(alpha_H_ks_new, H_ks_updated, rho)
-  retrofit_decomposition_step5(alpha_TH_k_new, TH_k_updated, rho)
+  alpha_w_gk_new <- w_gk
+  alpha_h_ks_new <- h_ks
+  alpha_th_k_new <- th_k
+  retrofit_decomposition_step5(alpha_w_gk_new, w_gk_updated, rho)
+  retrofit_decomposition_step5(alpha_h_ks_new, h_ks_updated, rho)
+  retrofit_decomposition_step5(alpha_th_k_new, th_k_updated, rho)
   
-  expect_true(all.equal(alpha_W_gk, alpha_W_gk_new))
-  expect_true(all.equal(alpha_H_ks, alpha_H_ks_new))
-  expect_true(all.equal(alpha_TH_k, alpha_TH_k_new))
+  expect_true(all.equal(alpha_w_gk, alpha_w_gk_new))
+  expect_true(all.equal(alpha_h_ks, alpha_h_ks_new))
+  expect_true(all.equal(alpha_th_k, alpha_th_k_new))
 })

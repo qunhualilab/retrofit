@@ -15,15 +15,15 @@ test_that("step3-alpha", {
   phi_a_gks_new         = array(0, c(G,K,S))
   lambda = runif(1, 0, 1)
   
-  W_gk = array(distributions$w_gk, c(G,K))
-  H_ks = array(distributions$h_ks, c(K,S))
-  TH_k = array(distributions$th_k, c(K))
+  w_gk = array(distributions$w_gk, c(G,K))
+  h_ks = array(distributions$h_ks, c(K,S))
+  th_k = array(distributions$th_k, c(K))
   
   # r code
   from = Sys.time()
   for(s in 1:S){
     for(k in 1:K){
-      phi_a_gks[,k,s] = ((W_gk[,k] * TH_k[k]) +lambda)* H_ks[k,s]
+      phi_a_gks[,k,s] = ((w_gk[,k] * th_k[k]) +lambda)* h_ks[k,s]
     }
     for(v in 1:G){
       phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
@@ -56,18 +56,18 @@ test_that("step3-beta", {
   phi_b_gk_new          = array(0, c(G,K))
   lambda = runif(1, 0, 1)
   
-  W_gk = array(distributions$w_gk, c(G,K))
-  H_ks = array(distributions$h_ks, c(K,S))
-  TH_k = array(distributions$th_k, c(K))
+  w_gk = array(distributions$w_gk, c(G,K))
+  h_ks = array(distributions$h_ks, c(K,S))
+  th_k = array(distributions$th_k, c(K))
   
   # r code
   from = Sys.time()
   for(k in 1:K){
     for(v in 1:G){
-      if((W_gk[v,k]*TH_k[k] + lambda)==0){
+      if((w_gk[v,k]*th_k[k] + lambda)==0){
         phi_b_gk[v,k]=1 ## to avoid numerical error of 0/0 when lambda=0
       } else {
-        phi_b_gk[v,k]=(W_gk[v,k]*TH_k[k])/(W_gk[v,k]*TH_k[k] + lambda)
+        phi_b_gk[v,k]=(w_gk[v,k]*th_k[k])/(w_gk[v,k]*th_k[k] + lambda)
       }
     }
   }

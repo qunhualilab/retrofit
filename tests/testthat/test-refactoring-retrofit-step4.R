@@ -60,25 +60,25 @@ test_that("step4_beta", {
 
   # r code
   from = Sys.time()
-  W_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
-  H_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
-  TH_k=runif(K, 0, 10)
+  w_gk=matrix(runif(G*K, 0, 10),nrow=G, ncol=K)
+  h_ks=matrix(runif(K*S, 0, 10),nrow=K, ncol=S)
+  th_k=runif(K, 0, 10)
   lambda = runif(1, 0, 1)
   beta_w_gk=matrix(runif(G*K,0,0.005)+beta_w_0 , nrow=G, ncol=K)
   beta_h_ks=matrix(runif(K*S,0,0.5)+beta_h_0 , nrow=K, ncol=S)
   beta_th_k=runif(K,0,1)+beta_th_0
   for(k in 1:K){
-    beta_w_gk[,k]= beta_w_0 + sum(H_ks[k,]*TH_k[k])
-    beta_h_ks[k,]= beta_h_0 + sum(W_gk[,k]*TH_k[k] + lambda)
-    beta_th_k[k]= beta_th_0 + sum(as.matrix(W_gk[,k]) %*% t(as.matrix(H_ks[k,])))
+    beta_w_gk[,k]= beta_w_0 + sum(h_ks[k,]*th_k[k])
+    beta_h_ks[k,]= beta_h_0 + sum(w_gk[,k]*th_k[k] + lambda)
+    beta_th_k[k]= beta_th_0 + sum(as.matrix(w_gk[,k]) %*% t(as.matrix(h_ks[k,])))
   }
   print(paste('r-code: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
 
   # rcpp code
   distributions = list(
-    w_gk = W_gk,
-    h_ks = H_ks,
-    th_k = TH_k
+    w_gk = w_gk,
+    h_ks = h_ks,
+    th_k = th_k
   )
   from = Sys.time()
   ret = retrofit_decomposition_step4_beta(distributions,
