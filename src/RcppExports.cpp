@@ -10,47 +10,47 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// retrofit_decomposition_step2
-void retrofit_decomposition_step2(NumericVector shapes, NumericVector rates, NumericVector& out);
-RcppExport SEXP _retrofit_retrofit_decomposition_step2(SEXP shapesSEXP, SEXP ratesSEXP, SEXP outSEXP) {
+// decompose_step2
+void decompose_step2(NumericVector shapes, NumericVector rates, NumericVector& out);
+RcppExport SEXP _retrofit_decompose_step2(SEXP shapesSEXP, SEXP ratesSEXP, SEXP outSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type shapes(shapesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type rates(ratesSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type out(outSEXP);
-    retrofit_decomposition_step2(shapes, rates, out);
+    decompose_step2(shapes, rates, out);
     return R_NilValue;
 END_RCPP
 }
-// retrofit_decomposition_step3_alpha
-void retrofit_decomposition_step3_alpha(List distributions, double lambda, NumericVector dim, NumericVector& phi_a_gks);
-RcppExport SEXP _retrofit_retrofit_decomposition_step3_alpha(SEXP distributionsSEXP, SEXP lambdaSEXP, SEXP dimSEXP, SEXP phi_a_gksSEXP) {
+// decompose_step3_alpha
+void decompose_step3_alpha(List distributions, double lambda, NumericVector dim, NumericVector& phi_a_gks);
+RcppExport SEXP _retrofit_decompose_step3_alpha(SEXP distributionsSEXP, SEXP lambdaSEXP, SEXP dimSEXP, SEXP phi_a_gksSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type distributions(distributionsSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type phi_a_gks(phi_a_gksSEXP);
-    retrofit_decomposition_step3_alpha(distributions, lambda, dim, phi_a_gks);
+    decompose_step3_alpha(distributions, lambda, dim, phi_a_gks);
     return R_NilValue;
 END_RCPP
 }
-// retrofit_decomposition_step3_beta
-void retrofit_decomposition_step3_beta(List distributions, double lambda, NumericVector dim, NumericVector& phi_b_gk);
-RcppExport SEXP _retrofit_retrofit_decomposition_step3_beta(SEXP distributionsSEXP, SEXP lambdaSEXP, SEXP dimSEXP, SEXP phi_b_gkSEXP) {
+// decompose_step3_beta
+void decompose_step3_beta(List distributions, double lambda, NumericVector dim, NumericVector& phi_b_gk);
+RcppExport SEXP _retrofit_decompose_step3_beta(SEXP distributionsSEXP, SEXP lambdaSEXP, SEXP dimSEXP, SEXP phi_b_gkSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type distributions(distributionsSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type phi_b_gk(phi_b_gkSEXP);
-    retrofit_decomposition_step3_beta(distributions, lambda, dim, phi_b_gk);
+    decompose_step3_beta(distributions, lambda, dim, phi_b_gk);
     return R_NilValue;
 END_RCPP
 }
-// retrofit_decomposition_step4_alpha
-List retrofit_decomposition_step4_alpha(NumericVector x_gs, List probabilities, double alpha_w_0, double alpha_h_0, double alpha_th_0, NumericVector dim);
-RcppExport SEXP _retrofit_retrofit_decomposition_step4_alpha(SEXP x_gsSEXP, SEXP probabilitiesSEXP, SEXP alpha_w_0SEXP, SEXP alpha_h_0SEXP, SEXP alpha_th_0SEXP, SEXP dimSEXP) {
+// decompose_step4_alpha
+List decompose_step4_alpha(NumericVector x_gs, List probabilities, double alpha_w_0, double alpha_h_0, double alpha_th_0, NumericVector dim);
+RcppExport SEXP _retrofit_decompose_step4_alpha(SEXP x_gsSEXP, SEXP probabilitiesSEXP, SEXP alpha_w_0SEXP, SEXP alpha_h_0SEXP, SEXP alpha_th_0SEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,13 +60,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha_h_0(alpha_h_0SEXP);
     Rcpp::traits::input_parameter< double >::type alpha_th_0(alpha_th_0SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_decomposition_step4_alpha(x_gs, probabilities, alpha_w_0, alpha_h_0, alpha_th_0, dim));
+    rcpp_result_gen = Rcpp::wrap(decompose_step4_alpha(x_gs, probabilities, alpha_w_0, alpha_h_0, alpha_th_0, dim));
     return rcpp_result_gen;
 END_RCPP
 }
-// retrofit_decomposition_step4_beta
-List retrofit_decomposition_step4_beta(List distributions, double beta_w_0, double beta_h_0, double beta_th_0, double lambda, NumericVector dim);
-RcppExport SEXP _retrofit_retrofit_decomposition_step4_beta(SEXP distributionsSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP, SEXP dimSEXP) {
+// decompose_step4_beta
+List decompose_step4_beta(List distributions, double beta_w_0, double beta_h_0, double beta_th_0, double lambda, NumericVector dim);
+RcppExport SEXP _retrofit_decompose_step4_beta(SEXP distributionsSEXP, SEXP beta_w_0SEXP, SEXP beta_h_0SEXP, SEXP beta_th_0SEXP, SEXP lambdaSEXP, SEXP dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -76,42 +76,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_th_0(beta_th_0SEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type dim(dimSEXP);
-    rcpp_result_gen = Rcpp::wrap(retrofit_decomposition_step4_beta(distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim));
+    rcpp_result_gen = Rcpp::wrap(decompose_step4_beta(distributions, beta_w_0, beta_h_0, beta_th_0, lambda, dim));
     return rcpp_result_gen;
 END_RCPP
 }
-// retrofit_decomposition_step5
-void retrofit_decomposition_step5(NumericVector main, NumericVector asterisk, double rho);
-RcppExport SEXP _retrofit_retrofit_decomposition_step5(SEXP mainSEXP, SEXP asteriskSEXP, SEXP rhoSEXP) {
+// decompose_step5
+void decompose_step5(NumericVector main, NumericVector asterisk, double rho);
+RcppExport SEXP _retrofit_decompose_step5(SEXP mainSEXP, SEXP asteriskSEXP, SEXP rhoSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type main(mainSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type asterisk(asteriskSEXP);
     Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    retrofit_decomposition_step5(main, asterisk, rho);
+    decompose_step5(main, asterisk, rho);
     return R_NilValue;
-END_RCPP
-}
-// rcpp_second_dim_sum
-NumericVector rcpp_second_dim_sum(NumericVector v);
-RcppExport SEXP _retrofit_rcpp_second_dim_sum(SEXP vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_second_dim_sum(v));
-    return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_retrofit_retrofit_decomposition_step2", (DL_FUNC) &_retrofit_retrofit_decomposition_step2, 3},
-    {"_retrofit_retrofit_decomposition_step3_alpha", (DL_FUNC) &_retrofit_retrofit_decomposition_step3_alpha, 4},
-    {"_retrofit_retrofit_decomposition_step3_beta", (DL_FUNC) &_retrofit_retrofit_decomposition_step3_beta, 4},
-    {"_retrofit_retrofit_decomposition_step4_alpha", (DL_FUNC) &_retrofit_retrofit_decomposition_step4_alpha, 6},
-    {"_retrofit_retrofit_decomposition_step4_beta", (DL_FUNC) &_retrofit_retrofit_decomposition_step4_beta, 6},
-    {"_retrofit_retrofit_decomposition_step5", (DL_FUNC) &_retrofit_retrofit_decomposition_step5, 3},
-    {"_retrofit_rcpp_second_dim_sum", (DL_FUNC) &_retrofit_rcpp_second_dim_sum, 1},
+    {"_retrofit_decompose_step2", (DL_FUNC) &_retrofit_decompose_step2, 3},
+    {"_retrofit_decompose_step3_alpha", (DL_FUNC) &_retrofit_decompose_step3_alpha, 4},
+    {"_retrofit_decompose_step3_beta", (DL_FUNC) &_retrofit_decompose_step3_beta, 4},
+    {"_retrofit_decompose_step4_alpha", (DL_FUNC) &_retrofit_decompose_step4_alpha, 6},
+    {"_retrofit_decompose_step4_beta", (DL_FUNC) &_retrofit_decompose_step4_beta, 6},
+    {"_retrofit_decompose_step5", (DL_FUNC) &_retrofit_decompose_step5, 3},
     {NULL, NULL, 0}
 };
 

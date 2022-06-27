@@ -23,7 +23,7 @@
 #'result = retrofit_decompose(x)
 #'@seealso papers reference
 #'@export
-retrofit <- function(x, iterations=4000) {
+RetrofitDecompose <- function(x, iterations=4000) {
   set.seed(1)
   
   # dimensions
@@ -75,32 +75,32 @@ retrofit <- function(x, iterations=4000) {
     rho = (t)^(-kappa)
     
     # step (2) - Update dist
-    retrofit_decomposition_step2(param$alpha_h_ks, param$beta_h_ks, dist$h_ks)
-    retrofit_decomposition_step2(param$alpha_th_k, param$beta_th_k, dist$th_k)
-    retrofit_decomposition_step2(param$alpha_w_gk, param$beta_w_gk, dist$w_gk)
+    decompose_step2(param$alpha_h_ks, param$beta_h_ks, dist$h_ks)
+    decompose_step2(param$alpha_th_k, param$beta_th_k, dist$th_k)
+    decompose_step2(param$alpha_w_gk, param$beta_w_gk, dist$w_gk)
     
     # step (3) - Update prob
-    retrofit_decomposition_step3_alpha(dist, lambda, dim, prob$phi_a_gks)
-    retrofit_decomposition_step3_beta(dist, lambda, dim, prob$phi_b_gk)
+    decompose_step3_alpha(dist, lambda, dim, prob$phi_a_gks)
+    decompose_step3_beta(dist, lambda, dim, prob$phi_b_gk)
     
     # step (4) - Get new parameters
-    alpha_asterisk = retrofit_decomposition_step4_alpha(x, prob, alpha_w_0, alpha_h_0, alpha_th_0, dim)
-    beta_asterisk = retrofit_decomposition_step4_beta(dist, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
+    alpha_asterisk = decompose_step4_alpha(x, prob, alpha_w_0, alpha_h_0, alpha_th_0, dim)
+    beta_asterisk = decompose_step4_beta(dist, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
     
     # step (5) - Update param
-    retrofit_decomposition_step5(param$alpha_w_gk, alpha_asterisk$w, rho)
-    retrofit_decomposition_step5(param$alpha_h_ks, alpha_asterisk$h, rho)
-    retrofit_decomposition_step5(param$alpha_th_k, alpha_asterisk$t, rho)
-    retrofit_decomposition_step5(param$beta_w_gk, beta_asterisk$w, rho)
-    retrofit_decomposition_step5(param$beta_h_ks, beta_asterisk$h, rho)
-    retrofit_decomposition_step5(param$beta_th_k, beta_asterisk$t, rho)
+    decompose_step5(param$alpha_w_gk, alpha_asterisk$w, rho)
+    decompose_step5(param$alpha_h_ks, alpha_asterisk$h, rho)
+    decompose_step5(param$alpha_th_k, alpha_asterisk$t, rho)
+    decompose_step5(param$beta_w_gk, beta_asterisk$w, rho)
+    decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
+    decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
-  w_hat=param$alpha_w_gk/param$beta_w_gk
-  h_hat=param$alpha_h_ks/param$beta_h_ks
-  th_hat=param$alpha_th_k/param$beta_th_k
+  w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
+  h_hat=array(param$alpha_h_ks/param$beta_h_ks, c(K,S))
+  th_hat=array(param$alpha_th_k/param$beta_th_k, c(K))
   result <- list(w=w_hat, h=h_hat, t=th_hat)
   return(result)
 }

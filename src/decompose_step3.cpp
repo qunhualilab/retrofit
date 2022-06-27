@@ -3,10 +3,10 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-void retrofit_decomposition_step3_alpha(List distributions, 
-                                        double lambda,
-                                        NumericVector dim,
-                                        NumericVector &phi_a_gks) {
+void decompose_step3_alpha(List distributions, 
+                           double lambda,
+                           NumericVector dim,
+                           NumericVector &phi_a_gks) {
   /*
    * Equivalent code
    * for(s in 1:S){
@@ -90,10 +90,10 @@ void retrofit_decomposition_step3_alpha(List distributions,
 
 
 // [[Rcpp::export]]
-void retrofit_decomposition_step3_beta(List distributions,
-                                       double lambda,
-                                       NumericVector dim,
-                                       NumericVector &phi_b_gk) {
+void decompose_step3_beta(List distributions,
+                          double lambda,
+                          NumericVector dim,
+                          NumericVector &phi_b_gk) {
   /* Equivalent code
    * for(k in 1:K){
    *  for(v in 1:G){

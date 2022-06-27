@@ -14,7 +14,7 @@ test_that("step2-set.seed-works-equivalently-with-Rcpp-and-R", {
   
   set.seed(1)
   val_new = array(rep(0, K*S), c(K, S))
-  retrofit_decomposition_step2(shapes, rates, val_new)
+  decompose_step2(shapes, rates, val_new)
   
   expect_true(all.equal(val, val_new))
 })

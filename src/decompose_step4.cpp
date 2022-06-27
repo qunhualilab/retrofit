@@ -2,12 +2,12 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List retrofit_decomposition_step4_alpha(NumericVector x_gs, 
-                                        List probabilities, 
-                                        double alpha_w_0,
-                                        double alpha_h_0,
-                                        double alpha_th_0,
-                                        NumericVector dim) {
+List decompose_step4_alpha(NumericVector x_gs, 
+                           List probabilities, 
+                           double alpha_w_0,
+                           double alpha_h_0,
+                           double alpha_th_0,
+                           NumericVector dim) {
   /* Equivalent code
    * for(k in 1:K){
    *  alpha_w_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
@@ -85,12 +85,12 @@ List retrofit_decomposition_step4_alpha(NumericVector x_gs,
 }
 
 // [[Rcpp::export]]
-List retrofit_decomposition_step4_beta(List distributions,
-                                       double beta_w_0,
-                                       double beta_h_0,
-                                       double beta_th_0,
-                                       double lambda,
-                                       NumericVector dim)
+List decompose_step4_beta(List distributions,
+                          double beta_w_0,
+                          double beta_h_0,
+                          double beta_th_0,
+                          double lambda,
+                          NumericVector dim)
 {
   /* Equivalent code
    * for(k in 1:K){

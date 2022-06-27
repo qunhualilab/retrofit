@@ -1,19 +1,29 @@
 test_that("reproducibility", {
-  # dir = "~/Research/retrofit/retrofit/results"
   dir = "../../results"
   file="A3_1554"
-  paths_original = retrofit_simulation_original(dir, file, iterations=2)
-  paths = retrofit_simulation(dir, file, iterations=2)
+  iterations = 2
+  in_file = paste(file, ".csv", sep="")
+  in_path = paste(dir, in_file, sep="/")
   
-  w_original=read.csv(paths_original$out_w_path)
-  h_original=read.csv(paths_original$out_h_path)
-  t_original=read.csv(paths_original$out_t_path)
+  # RetrofitDecompose
+  x=read.csv(in_path)
+  rownames(x)=x[,1]
+  x=as.matrix(x[,-1])
+  result = RetrofitDecompose(x, iterations)
   
-  w=read.csv(paths$out_w_path)
-  h=read.csv(paths$out_h_path)
-  t=read.csv(paths$out_t_path)
+  out_h = result$h
+  out_w = result$w
+  out_t = result$t
   
-  expect_true(all.equal(w_original, w))
-  expect_true(all.equal(h_original, h))
-  expect_true(all.equal(t_original, t))
+  # RetrofitDecomposeOriginal
+  x=read.csv(in_path)
+  result = RetrofitDecomposeOriginal(x, iterations)
+  out_original_h = result$h
+  out_original_w = result$w
+  out_original_t = result$t
+  out_original_t = array(out_original_t)
+  
+  expect_true(all.equal(out_original_w, out_w))
+  expect_true(all.equal(out_original_h, out_h))
+  expect_true(all.equal(out_original_t, out_t))
 })

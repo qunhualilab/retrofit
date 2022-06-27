@@ -33,7 +33,7 @@ test_that("step3-alpha", {
   
   # rcpp code
   from = Sys.time()
-  retrofit_decomposition_step3_alpha(distributions, lambda, c(G,K,S), phi_a_gks_new);
+  decompose_step3_alpha(distributions, lambda, c(G,K,S), phi_a_gks_new);
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_a_gks, phi_a_gks_new))
@@ -75,7 +75,7 @@ test_that("step3-beta", {
   
   # rcpp code
   from = Sys.time()
-  retrofit_decomposition_step3_beta(distributions, lambda, c(G,K,S), phi_b_gk_new);
+  decompose_step3_beta(distributions, lambda, c(G,K,S), phi_b_gk_new);
   print(paste('rcpp: ', paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   
   expect_true(all.equal(phi_b_gk, phi_b_gk_new))

@@ -4,9 +4,9 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-void retrofit_decomposition_step2(NumericVector shapes, 
-                                  NumericVector rates,
-                                  NumericVector &out) {
+void decompose_step2(NumericVector shapes, 
+                     NumericVector rates,
+                     NumericVector &out) {
 /* Equivalent code
  * for(k in 1:L){
  *    for(s in 1:S){

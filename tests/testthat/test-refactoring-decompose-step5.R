@@ -27,9 +27,9 @@ test_that("step5-alpha-updates", {
   alpha_w_gk_new <- w_gk
   alpha_h_ks_new <- h_ks
   alpha_th_k_new <- th_k
-  retrofit_decomposition_step5(alpha_w_gk_new, w_gk_updated, rho)
-  retrofit_decomposition_step5(alpha_h_ks_new, h_ks_updated, rho)
-  retrofit_decomposition_step5(alpha_th_k_new, th_k_updated, rho)
+  decompose_step5(alpha_w_gk_new, w_gk_updated, rho)
+  decompose_step5(alpha_h_ks_new, h_ks_updated, rho)
+  decompose_step5(alpha_th_k_new, th_k_updated, rho)
   
   expect_true(all.equal(alpha_w_gk, alpha_w_gk_new))
   expect_true(all.equal(alpha_h_ks, alpha_h_ks_new))

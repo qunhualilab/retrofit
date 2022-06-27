@@ -30,7 +30,7 @@ test_that("step4_alpha", {
   
   # rcpp code
   from = Sys.time()
-  ret = retrofit_decomposition_step4_alpha(x, 
+  ret = decompose_step4_alpha(x, 
                                            probabilities,
                                            alpha_w_0,
                                            alpha_h_0,
@@ -81,7 +81,7 @@ test_that("step4_beta", {
     th_k = th_k
   )
   from = Sys.time()
-  ret = retrofit_decomposition_step4_beta(distributions,
+  ret = decompose_step4_beta(distributions,
                                           beta_w_0,
                                           beta_h_0,
                                           beta_th_0,
