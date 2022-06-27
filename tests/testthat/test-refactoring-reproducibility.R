@@ -1,5 +1,6 @@
 test_that("reproducibility", {
-  dir = "~/Research/retrofit/retrofit/results"
+  # dir = "~/Research/retrofit/retrofit/results"
+  dir = "../../results"
   file="A3_1554"
   paths_original = retrofit_simulation_original(dir, file, iterations=2)
   paths = retrofit_simulation(dir, file, iterations=2)

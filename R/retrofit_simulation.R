@@ -26,8 +26,8 @@ retrofit_simulation <- function(dir, file, iterations=2) {
 
 retrofit_simulation_local <- function() {
   in_file = "a3_1554.csv"
-  in_dir = "~/Research/retrofit/retrofit/results"
-  out_dir = "~/Research/retrofit/retrofit/results/local"
+  in_dir = "../../results"
+  out_dir = "../../results/local"
   out_file = "temp"
   iterations=2
   in_path = paste(in_dir, in_file, sep="/")
