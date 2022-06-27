@@ -31,23 +31,23 @@ retrofit <- function(x, iterations=4000) {
   kappa       = 0.5
   # W/H/Th from Gamma dist
   dist = list(
-    w_gk = rep(0, len=G*K),
-    h_ks = rep(0, len=K*S),
-    th_k = rep(0, len=K)
+    w_gk = array(rep(0, len=G*K), c(G,K)),
+    h_ks = array(rep(0, len=K*S), c(K,S)),
+    th_k = array(rep(0, len=K), c(K))
   )
   # probability variables
   prob = list(
-    phi_a_gks = rep(0, len=G*K*S),
-    phi_b_gk  = rep(0, len=G*K)
+    phi_a_gks = array(rep(0, len=G*K*S), c(G,K,S)),
+    phi_b_gk  = array(rep(0, len=G*K), c(G,K))
   )
   # parameter vectors
   param = list(
-    alpha_th_k  = runif(K,0,1)+alpha_th_0,
-    beta_th_k   = runif(K,0,1)+beta_th_0,
-    alpha_w_gk  = runif(G*K,0,0.5)+alpha_w_0,
-    beta_w_gk   = runif(G*K,0,0.005)+beta_w_0,
-    alpha_h_ks  = runif(K*S,0,0.1)+alpha_h_0,
-    beta_h_ks   = runif(K*S,0,0.5)+beta_h_0
+    alpha_th_k  = array(runif(K,0,1)+alpha_th_0, c(K)),
+    beta_th_k   = array(runif(K,0,1)+beta_th_0, c(K)),
+    alpha_w_gk  = array(runif(G*K,0,0.5)+alpha_w_0, c(G,K)),
+    beta_w_gk   = array(runif(G*K,0,0.005)+beta_w_0, c(G,K)),
+    alpha_h_ks  = array(runif(K*S,0,0.1)+alpha_h_0, c(K,S)),
+    beta_h_ks   = array(runif(K*S,0,0.5)+beta_h_0, c(K,S))
   )
   
   ## start of algorithm
@@ -84,9 +84,9 @@ retrofit <- function(x, iterations=4000) {
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
-  w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
-  h_hat=array(param$alpha_h_ks/param$beta_h_ks, c(K,S))
-  th_hat=array(param$alpha_th_k/param$beta_th_k, c(K))
+  w_hat=param$alpha_w_gk/param$beta_w_gk
+  h_hat=param$alpha_h_ks/param$beta_h_ks
+  th_hat=param$alpha_th_k/param$beta_th_k
   result <- list(w=w_hat, h=h_hat, t=th_hat)
   return(result)
 }
