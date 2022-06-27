@@ -2,19 +2,36 @@
 % Please edit documentation in R/retrofit.R
 \name{retrofit}
 \alias{retrofit}
-\title{Split a string}
+\title{RETROFIT decomposition algorithm}
 \usage{
 retrofit(x, iterations = 4000)
 }
 \arguments{
-\item{x}{Spatial Transciptomics Data. Matrix(GeneExpressions, Spots)}
+\item{x}{Matrix(GeneExpressions, Spots): Spatial Transciptomics Data.}
+
+\item{iterations}{integer: The number of iterations to be executed}
 }
 \value{
-Factorization results.
-W: Matrix(GeneExpressions, Components)
-H: Matrix(Components, Spots)
-$\theta$: Vector(Components)
+A list of decomposed vectors that contains
+\itemize{
+\item w: 2d array with GeneExpressions, Components
+\item h: 2d array with Components, Spots
+\item th: an array with Components
+}
 }
 \description{
-Split a string
+Receiving the input with 2d spatial transcriptomics matrix,
+the function returns factorized {W, H, θ}.
+This function fulfills Structured Stochastic Variational Inference Algorithm for RETROFIT.
+Since exact Bayesian inference is infeasible and considering the large number of spots and genes,
+variational inference was adopted to approximately estimate the parameters in performant manner.
+}
+\examples{
+x=read.csv(in_path)
+rownames(x)=x[,1]
+x=as.matrix(x[,-1])
+result = retrofit_decompose(x)
+}
+\seealso{
+papers reference
 }

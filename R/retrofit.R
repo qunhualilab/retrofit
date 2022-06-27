@@ -1,14 +1,28 @@
-#' Split a string
-#'
-#' @param x Spatial Transciptomics Data. Matrix(GeneExpressions, Spots)
-#'
-#' @return Factorization results.
-#' W: Matrix(GeneExpressions, Components)
-#' H: Matrix(Components, Spots)
-#' $\theta$: Vector(Components)
-#' @export
-#'
+#' RETROFIT decomposition algorithm
 #' 
+#' @description Receiving the input with 2d spatial transcriptomics matrix, 
+#'  the function returns factorized {W, H, θ}.
+#'  This function fulfills Structured Stochastic Variational Inference Algorithm for RETROFIT.
+#'  Since exact Bayesian inference is infeasible and considering the large number of spots and genes,
+#'  variational inference was adopted to approximately estimate the parameters in performant manner.
+#'
+#' @param x Matrix(GeneExpressions, Spots): Spatial Transciptomics Data. 
+#' @param iterations integer: The number of iterations to be executed
+#'
+#' @return A list of decomposed vectors that contains  
+#' \itemize{
+#' \item w: 2d array with GeneExpressions, Components
+#' \item h: 2d array with Components, Spots
+#' \item th: an array with Components
+#' }
+#'
+#'@examples
+#'x=read.csv(in_path)
+#'rownames(x)=x[,1]
+#'x=as.matrix(x[,-1])
+#'result = retrofit_decompose(x)
+#'@seealso papers reference
+#'@export
 retrofit <- function(x, iterations=4000) {
   set.seed(1)
   
