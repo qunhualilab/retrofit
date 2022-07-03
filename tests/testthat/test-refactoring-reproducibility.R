@@ -9,7 +9,7 @@ test_that("reproducibility", {
   x=read.csv(in_path)
   rownames(x)=x[,1]
   x=as.matrix(x[,-1])
-  result = RetrofitDecompose(x, iterations)
+  result = RetrofitDecompose(x, iterations=iterations, seed=1)
   
   out_h = result$h
   out_w = result$w
