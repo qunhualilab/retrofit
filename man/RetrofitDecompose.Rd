@@ -4,12 +4,49 @@
 \alias{RetrofitDecompose}
 \title{RETROFIT decomposition algorithm}
 \usage{
-RetrofitDecompose(x, iterations = 4000)
+RetrofitDecompose(
+  x,
+  K = 16,
+  alpha_w_0 = 0.05,
+  beta_w_0 = 1e-04,
+  alpha_h_0 = 0.2,
+  beta_h_0 = 0.2,
+  alpha_th_0 = 1.25,
+  beta_th_0 = 10,
+  lambda = 0.01,
+  kappa = 0.5,
+  iterations = 4000,
+  tolerance = 0.001,
+  seed = NULL
+)
 }
 \arguments{
-\item{x}{Matrix(GeneExpressions, Spots): Spatial Transciptomics Data.}
+\item{x}{Matrix or Array with dimension (GeneExpressions, Spots).
+This is the main spatial transciptomics data.}
 
-\item{iterations}{integer: The number of iterations to be executed}
+\item{K}{integer: The number of components to be decomposed}
+
+\item{alpha_w_0}{double: Variational initial parameter for vector alpha_w}
+
+\item{beta_w_0}{double:  Variational initial parameter for vector beta_w}
+
+\item{alpha_h_0}{double: Variational initial parameter for vector alpha_h}
+
+\item{beta_h_0}{double:  Variational initial parameter for vector beta_h}
+
+\item{alpha_th_0}{double:Variational initial parameter for vector alpha_th}
+
+\item{beta_th_0}{double: Variational initial parameter for vector beta_th}
+
+\item{lambda}{double: Background expression profile control}
+
+\item{kappa}{double: Learning rate factor}
+
+\item{iterations}{integer: The number of maximum iterations to be executed}
+
+\item{tolerance}{double: tolerance factor for convergence of the algorithm}
+
+\item{seed}{double: Random variable seed in case the output should be deterministic}
 }
 \value{
 A list of decomposed vectors that contains

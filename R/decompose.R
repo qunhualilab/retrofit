@@ -51,6 +51,9 @@ RetrofitDecompose <- function(x,
   if (!is.null(seed)){
     set.seed(seed)  
   }
+  if (K > 50){
+    print('unexpectedly large K')
+  }
   
   # dimensions
   G   = dim(x)[1] # Gene expressions
@@ -65,7 +68,8 @@ RetrofitDecompose <- function(x,
   # probability variables
   prob = list(
     phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S)),
-    phi_b_gk  = array(rep(0, len=G*K),  c(G,K))
+    phi_b_gk  = array(rep(0, len=G*K),  c(G,K)),
+    last_iter_phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S))
   )
   # parameter vectors
   param = list(
@@ -108,6 +112,8 @@ RetrofitDecompose <- function(x,
     decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
     decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
+    err = decompose_compute_and_update_error_two_norm(prob$last_iter_phi_a_gks, prob$phi_a_gks)
+    print(paste('err:', err))
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   

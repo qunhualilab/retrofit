@@ -1,7 +1,7 @@
 test_that("reproducibility", {
   dir = "../../results"
   file="A3_1554"
-  iterations = 2
+  iterations = 10
   in_file = paste(file, ".csv", sep="")
   in_path = paste(dir, in_file, sep="/")
   
