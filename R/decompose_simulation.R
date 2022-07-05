@@ -28,7 +28,7 @@ RetrofitDecomposeSimulationLocal <- function() {
   file_source = "A3_1554"
   in_dir = "results"
   decomp_dir = in_dir
-  iterations=1000
+  iterations=4000
   in_file = paste(file_source,".csv", sep="")
   in_path = paste(in_dir, in_file, sep="/")
   decomp_h_file = paste(file_source,"_decomp_H.csv", sep="")

@@ -80,6 +80,10 @@ RetrofitDecompose <- function(x,
     alpha_h_ks  = array(runif(K*S,0,0.1)+alpha_h_0, c(K,S)),
     beta_h_ks   = array(runif(K*S,0,0.5)+beta_h_0,  c(K,S))
   )
+  err = list(
+    data = data.frame(iter=integer(), error=double()),
+    window = 100
+  )
   
   ## start of algorithm
   t=0
@@ -112,8 +116,23 @@ RetrofitDecompose <- function(x,
     decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
     decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
-    err = decompose_compute_and_update_error_two_norm(prob$last_iter_phi_a_gks, prob$phi_a_gks)
-    print(paste('err:', err))
+    err_val = decompose_compute_and_update_error_mat_norm(prob$last_iter_phi_a_gks, prob$phi_a_gks)
+    err$data[t,] = c(t, err_val)  
+    
+    if(t %% 100 == 0){
+      flush.console()
+      n = 10
+      plots = list(1:n)
+      for(scale in n:1){
+        d <- replace(err$data, err$data>10^(scale), 10^(scale)) 
+        p  <- ggplot2::ggplot(d, ggplot2::aes(x=iter)) + 
+              ggplot2::geom_line(ggplot2::aes(y = error), color = "darkred") +
+              ggtitle(paste0("Convergence (ceiling: 1e+",scale, ")"))
+        plots[[n-scale+1]] = p
+      }
+      gridExtra::grid.arrange(grobs=plots, ncol=2)
+    }
+    
     print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
