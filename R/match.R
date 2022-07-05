@@ -19,7 +19,7 @@ RetrofitMatch <- function(ref_w, w, h) {
   if(dim(w)[2] != dim(h)[1]){
     stop("dimensions not matched")
   }
-  K=dim(w)[2]
+  K=dim(ref_w)[2]
   
   correlations = cor(ref_w, w)
   correlations2 = cor(ref_w, w)
@@ -34,16 +34,9 @@ RetrofitMatch <- function(ref_w, w, h) {
     if(i<K){
       correlations2=correlations2[-r1,-c1]
     }
-    # match1=which(correlations == max(correlations2), arr.ind=TRUE)
-    # match2=which(correlations2 == max(correlations2), arr.ind=TRUE)
-    
-    # ind[match1[1]]=match1[2]
-    # if(i<K){
-    #   correlations2=correlations2[-(match2[1]),-(match[2])]
-    # }
   }
   w_mod=w[,ind]
   h_mod=h[ind,]
-  return <- list(w=w_mod, h=h_mod)
-  return(result)
+  ret <- list(w=w_mod, h=h_mod, i=ind)
+  return(ret)
 }
