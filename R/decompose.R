@@ -94,6 +94,10 @@ RetrofitDecompose <- function(x,
     
     # step (1)
     rho = (t)^(-kappa)
+    # rho = ((1/100)*t)^(-1)
+    # if(rho > 0.4){
+    #   rho = 0.4
+    # }
     
     # step (2) - Sample distributions
     decompose_step2(param$alpha_h_ks, param$beta_h_ks, dist$h_ks)
@@ -124,7 +128,8 @@ RetrofitDecompose <- function(x,
       n = 10
       plots = list(1:n)
       for(scale in n:1){
-        d <- replace(err$data, err$data>10^(scale), 10^(scale)) 
+        d <- err$data
+        d$error[d$error>10^(scale)] = 10^(scale)
         p  <- ggplot2::ggplot(d, ggplot2::aes(x=iter)) + 
               ggplot2::geom_line(ggplot2::aes(y = error), color = "darkred") +
               ggtitle(paste0("Convergence (ceiling: 1e+",scale, ")"))
@@ -133,7 +138,7 @@ RetrofitDecompose <- function(x,
       gridExtra::grid.arrange(grobs=plots, ncol=2)
     }
     
-    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds, error: ", err_val)))
   }
   
   w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
