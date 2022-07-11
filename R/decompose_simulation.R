@@ -25,7 +25,8 @@ RetrofitDecomposeSimulation <- function(dir, file, iterations=2) {
 }
 
 RetrofitDecomposeSimulationLocal <- function() {
-  file_source = "N=20,M=5_loc_X"
+  # file_source = "N=20,M=5_loc_X"
+  file_source = "A3_1554"
   in_dir = "results"
   decomp_dir = in_dir
   iterations=4000

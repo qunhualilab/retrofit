@@ -80,11 +80,15 @@ RetrofitDecompose <- function(x,
     alpha_h_ks  = array(runif(K*S,0,0.1)+alpha_h_0, c(K,S)),
     beta_h_ks   = array(runif(K*S,0,0.5)+beta_h_0,  c(K,S))
   )
-  err = list(
-    data = data.frame(iter=integer(), error=double()),
-    window = 100
-  )
   
+  param_last = list()
+  relative_error = list()
+  for (n in names(param)){
+    param_last[[n]] = rep(0, len=length(param[[n]]))
+    relative_error[[n]] = data.frame(iter=integer(), value=double())
+  }
+  
+  error_window = 100
   ## start of algorithm
   t=0
   
@@ -120,25 +124,42 @@ RetrofitDecompose <- function(x,
     decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
     decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
-    err_val = decompose_compute_and_update_error_mat_norm(prob$last_iter_phi_a_gks, prob$phi_a_gks)
-    err$data[t,] = c(t, err_val)  
+    for (name in names(param)){
+      # e = decompose_compute_error_mat_norm(param_last[[name]], param[[name]])
+      e = decompose_compute_and_update_error_mat_norm(param_last[[name]], param[[name]])
+      relative_error[[name]][t,] <- c(t, e)
+      # param_last[[name]] <- param[[name]]
+    }
     
     if(t %% 100 == 0){
       flush.console()
-      n = 10
-      plots = list(1:n)
-      for(scale in n:1){
-        d <- err$data
-        d$error[d$error>10^(scale)] = 10^(scale)
-        p  <- ggplot2::ggplot(d, ggplot2::aes(x=iter)) + 
-              ggplot2::geom_line(ggplot2::aes(y = error), color = "darkred") +
-              ggtitle(paste0("Convergence (ceiling: 1e+",scale, ")"))
-        plots[[n-scale+1]] = p
+      plots = list()
+      for (name in names(relative_error)){
+        # set target data
+        df <- relative_error[[name]]
+        # calculate the most frequent range
+        labels = -3:3
+        breaks = c(0, 10^labels)
+        levels = table(cut(df$value, labels= labels, breaks=breaks))
+        majority_level = names(which.max(levels))[[1]]
+        upto = strtoi(majority_level)
+        
+        for(scale in upto:(upto-1)){
+          # set ceiling
+          df$value[df$value>10^(scale)] = 10^(scale)
+          # plot
+          p  = (ggplot2::ggplot(df, ggplot2::aes(x=iter))
+                   + ggplot2::geom_line(ggplot2::aes(y=value), color="darkred")
+                   + ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
+          )
+          plots[[paste0(name, scale)]] = p
+        }  
       }
+      
       gridExtra::grid.arrange(grobs=plots, ncol=2)
     }
     
-    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds, error: ", err_val)))
+    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
   }
   
   w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
