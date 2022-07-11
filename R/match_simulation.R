@@ -12,7 +12,7 @@ MatchSimulation <- function(dir, file) {
   rownames(X)=X[,1]
   X=as.matrix(X[,-1])
   
-  result = retrofit(X, iterations)
+  result = RetrofitMatch(X, iterations)
   
   write.csv(result["h"], out_h_path)
   write.csv(result["w"], out_w_path)
@@ -28,7 +28,7 @@ RetrofitMatchSimulationLocal <- function() {
   print(paste("working directory: ", getwd()))
   setwd("~/Research/retrofit/retrofit/R")
   
-  in_file = "A3_1554"
+  in_file = "N=20,M=5_loc_X"
   in_dir = "../results"
   decomp_dir = in_dir
   match_dir = in_dir
@@ -42,7 +42,8 @@ RetrofitMatchSimulationLocal <- function() {
   match_w_file = paste(in_file,"_match_W.csv", sep="")
   match_w_path = paste(match_dir, match_w_file, sep="/")
   
-  ref_w_file = "A3_1554_ref_W"
+  # ref_w_file = "A3_1554_ref_W"
+  ref_w_file = "Cerebellum_W_K=10"
   ref_w_file = paste(ref_w_file,".csv", sep="")
   ref_w_path = paste(match_dir, ref_w_file, sep="/")
   
@@ -53,11 +54,6 @@ RetrofitMatchSimulationLocal <- function() {
   ref_w=read.csv(ref_w_path)
   ref_w=ref_w[,-1]
   
-  print(dim(ref_w))
-  print(dim(w))
-  print(dim(h))
-  
-  write.csv(cor(ref_w, w), match_w_path)
   ret = RetrofitMatch(ref_w,w,h)
   write.csv(ret$w, match_w_path)
   write.csv(ret$h, match_h_path)
