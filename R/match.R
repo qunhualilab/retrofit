@@ -15,14 +15,13 @@
 #'@examples
 #'@seealso papers reference
 #'@export
-RetrofitMatch <- function(ref_w, decomp_w, decomp_h) {
+RetrofitMatch <- function(ref_w, decomp_w, decomp_h, K) {
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
     stop("dimensions not matched")
   }
   
   # will ref_w always provide cell types?
   cell_types = colnames(ref_w)
-  K=dim(ref_w)[2]
   
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
   w = matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
@@ -30,14 +29,16 @@ RetrofitMatch <- function(ref_w, decomp_w, decomp_h) {
   
   correlations = cor(ref_w, w)
   correlations2 = cor(ref_w, w)
-  
+  print(correlations)
   col_sel=rep(NA,K)
-  row_sel=rep(NA,length(cell_types))
+  row_sel=rep(NA,K)
   for(i in 1:K){
     r2=which(correlations == max(correlations2), arr.ind=TRUE)[1]
     c2=which(correlations == max(correlations2), arr.ind=TRUE)[2]
     r1=which(correlations2 == max(correlations2), arr.ind=TRUE)[1]
     c1=which(correlations2 == max(correlations2), arr.ind=TRUE)[2]
+    
+    print(paste("r2:", r2, cell_types[r2], "r1:", r1, cell_types[r1]))
     
     row_sel[i]=r2
     col_sel[r2]=c2
@@ -47,8 +48,8 @@ RetrofitMatch <- function(ref_w, decomp_w, decomp_h) {
     }
   }
   
-  cell_mod = rep(NA, length(cell_types))
-  for (i in 1:length(cell_types)) {
+  cell_mod = rep(NA, K)
+  for (i in 1:K) {
     cell_mod[i] = cell_types[row_sel[i]]
   }
   
