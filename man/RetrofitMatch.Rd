@@ -4,12 +4,12 @@
 \alias{RetrofitMatch}
 \title{RETROFIT matching algorithm}
 \usage{
-RetrofitMatch(ref_w, w, h)
+RetrofitMatch(ref_w, decomp_w, decomp_h, K)
 }
 \arguments{
-\item{h}{}
-
 \item{x}{Matrix(GeneExpressions, Spots): Spatial Transciptomics Data.}
+
+\item{h}{}
 }
 \value{
 A list of
