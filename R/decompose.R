@@ -150,7 +150,7 @@ RetrofitDecompose <- function(x,
           # plot
           p  = (ggplot2::ggplot(df, ggplot2::aes(x=iter))
                    + ggplot2::geom_line(ggplot2::aes(y=value), color="darkred")
-                   + ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
+                   + ggplot2::ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
           )
           plots[[paste0(name, scale)]] = p
         }  
