@@ -20,6 +20,7 @@
 #' @param lambda double: Background expression profile control
 #' @param kappa double: Learning rate factor
 #' @param seed double: Random variable seed in case the output should be deterministic
+#' @param plot boolean: Plot relative errors
 #'
 #' @return A list of decomposed vectors that contains
 #' \itemize{
@@ -47,7 +48,8 @@ RetrofitDecompose <- function(x,
                               kappa       = 0.5,
                               iterations  = 4000, 
                               tolerance   = 1e-3,
-                              seed        = NULL) {
+                              seed        = NULL,
+                              plot        = FALSE) {
   if (!is.null(seed)){
     set.seed(seed)  
   }
@@ -144,7 +146,7 @@ RetrofitDecompose <- function(x,
         majority_level = names(which.max(levels))[[1]]
         upto = strtoi(majority_level)
         
-        for(scale in upto:(upto-1)){
+        for(scale in (upto+1):(upto-2)){
           # set ceiling
           df$value[df$value>10^(scale)] = 10^(scale)
           # plot
