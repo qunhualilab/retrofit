@@ -28,33 +28,33 @@ RetrofitMatchSimulationLocal <- function() {
   print(paste("working directory: ", getwd()))
   setwd("~/Research/retrofit/retrofit/R")
   
-  in_file = "N=20,M=5_loc_X"
+  in_files = c("N=20,M=5_loc_X", "N=10,M=3_loc_X", "extra5_loc_X")
   in_dir = "../results"
-  decomp_dir = in_dir
-  match_dir = in_dir
-  decomp_h_file = paste(in_file,"_decomp_H.csv", sep="")
-  decomp_h_path = paste(decomp_dir, decomp_h_file, sep="/")
-  decomp_w_file = paste(in_file,"_decomp_W.csv", sep="")
-  decomp_w_path = paste(decomp_dir, decomp_w_file, sep="/")
   
-  match_h_file = paste(in_file,"_match_H.csv", sep="")
-  match_h_path = paste(match_dir, match_h_file, sep="/")
-  match_w_file = paste(in_file,"_match_W.csv", sep="")
-  match_w_path = paste(match_dir, match_w_file, sep="/")
+  ref_w_file = "Cerebellum_W_K=10.csv"
+  ref_w_path = paste(in_dir, ref_w_file, sep="/")
+  ref_w=read.csv(ref_w_path, row.names = 1)
   
-  # ref_w_file = "A3_1554_ref_W"
-  ref_w_file = "Cerebellum_W_K=10"
-  ref_w_file = paste(ref_w_file,".csv", sep="")
-  ref_w_path = paste(match_dir, ref_w_file, sep="/")
-  
-  w=read.csv(decomp_w_path)
-  w=w[,-1]
-  h=read.csv(decomp_h_path)
-  h=h[,-1]
-  ref_w=read.csv(ref_w_path)
-  ref_w=ref_w[,-1]
-  
-  ret = RetrofitMatch(ref_w,w,h)
-  write.csv(ret$w, match_w_path)
-  write.csv(ret$h, match_h_path)
+  for (in_file in in_files){
+    decomp_dir = in_dir
+    match_dir = in_dir
+    decomp_h_file = paste(in_file,"_decomp_H.csv", sep="")
+    decomp_h_path = paste(decomp_dir, decomp_h_file, sep="/")
+    decomp_w_file = paste(in_file,"_decomp_W.csv", sep="")
+    decomp_w_path = paste(decomp_dir, decomp_w_file, sep="/")
+    
+    match_h_file = paste(in_file,"_match_H.csv", sep="")
+    match_h_path = paste(match_dir, match_h_file, sep="/")
+    match_w_file = paste(in_file,"_match_W.csv", sep="")
+    match_w_path = paste(match_dir, match_w_file, sep="/")
+    
+    
+    w=read.csv(decomp_w_path, row.names = 1)
+    h=read.csv(decomp_h_path, row.names = 1)
+    
+    ret = RetrofitMatch(ref_w, w, h)
+    
+    write.csv(ret$w, match_w_path)
+    write.csv(ret$h, match_h_path)
+  }
 }
