@@ -49,7 +49,7 @@ RetrofitDecompose <- function(x,
                               iterations  = 4000, 
                               tolerance   = 1e-3,
                               seed        = NULL,
-                              plot        = FALSE) {
+                              plot_convergence = FALSE) {
   if (!is.null(seed)){
     set.seed(seed)  
   }
@@ -91,6 +91,7 @@ RetrofitDecompose <- function(x,
   }
   
   error_window = 100
+  durations = NULL
   ## start of algorithm
   t=0
   
@@ -132,37 +133,43 @@ RetrofitDecompose <- function(x,
       relative_error[[name]][t,] <- c(t, e)
       # param_last[[name]] <- param[[name]]
     }
-    
-    if(t %% 100 == 0){
-      flush.console()
-      plots = list()
-      for (name in names(relative_error)){
-        # set target data
-        df <- relative_error[[name]]
-        # calculate the most frequent range
-        labels = -3:3
-        breaks = c(0, 10^labels)
-        levels = table(cut(df$value, labels= labels, breaks=breaks))
-        majority_level = names(which.max(levels))[[1]]
-        upto = strtoi(majority_level)
-        
-        for(scale in (upto+1):(upto-2)){
-          # set ceiling
-          df$value[df$value>10^(scale)] = 10^(scale)
-          # plot
-          p  = (ggplot2::ggplot(df, ggplot2::aes(x=iter))
-                   + ggplot2::geom_line(ggplot2::aes(y=value), color="darkred")
-                   + ggplot2::ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
-          )
-          plots[[paste0(name, scale)]] = p
-        }  
-      }
-      
-      gridExtra::grid.arrange(grobs=plots, ncol=2)
-    }
-    
-    print(paste('iteration:', t, paste0(round(as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs")), 3), " Seconds")))
+    dur = as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
+    durations = cbind(durations, dur)
+    print(paste('iteration:', t, paste0(round(dur, 3), " Seconds")))
   }
+  
+  # convergence plotting
+  if(plot_convergence){
+    flush.console()
+    plots = list()
+    for (name in names(relative_error)){
+      # set target data
+      df <- relative_error[[name]]
+      # calculate the most frequent range
+      labels = -3:3
+      breaks = c(0, 10^labels)
+      levels = table(cut(df$value, labels= labels, breaks=breaks))
+      majority_level = names(which.max(levels))[[1]]
+      upto = strtoi(majority_level)
+      
+      for(scale in upto:(upto-1)){
+        # set ceiling
+        df$value[df$value>10^(scale)] = 10^(scale)
+        # plot
+        p  = (ggplot2::ggplot(df, ggplot2::aes(x=iter))
+              + ggplot2::geom_line(ggplot2::aes(y=value), color="darkred")
+              + ggplot2::ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
+        )
+        plots[[paste0(name, scale)]] = p
+      }  
+    }
+    gridExtra::grid.arrange(grobs=plots, ncol=2)
+  }
+  
+  # measure performance
+  iter_mean = round(mean(durations), 3)
+  iter_sd = round(sd(durations), 3)
+  print(paste('Iteration mean: ', iter_mean, " Seconds", ", Iteration std: ", iter_sd, " Seconds"))
   
   w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
   h_hat=array(param$alpha_h_ks/param$beta_h_ks, c(K,S))

@@ -17,7 +17,8 @@ RetrofitDecompose(
   kappa = 0.5,
   iterations = 4000,
   tolerance = 0.001,
-  seed = NULL
+  seed = NULL,
+  plot_convergence = FALSE
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ This is the main spatial transciptomics data.}
 \item{tolerance}{double: tolerance factor for convergence of the algorithm}
 
 \item{seed}{double: Random variable seed in case the output should be deterministic}
+
+\item{plot}{boolean: Plot relative errors}
 }
 \value{
 A list of decomposed vectors that contains
