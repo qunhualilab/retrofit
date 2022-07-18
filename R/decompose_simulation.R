@@ -1,4 +1,6 @@
 RetrofitDecomposeSimulation <- function(dir, file, iterations=2) {
+  setwd("~/Research/retrofit/retrofit/R")
+  
   in_file = paste(file, ".csv", sep="")
   in_path = paste(dir, in_file, sep="/")
   decomp_h_file = paste(file,"_decomp_H.csv", sep="")
@@ -25,9 +27,12 @@ RetrofitDecomposeSimulation <- function(dir, file, iterations=2) {
 }
 
 RetrofitDecomposeSimulationLocal <- function() {
+  setwd("~/Research/retrofit/retrofit/R")
   # file_source = "N=20,M=5_loc_X"
-  file_source = "A3_1554"
-  in_dir = "results"
+  file_source = "N=10,M=3_loc_X"
+  # file_source = "extra5_loc_X"
+  K = 20
+  in_dir = "../results"
   decomp_dir = in_dir
   iterations=4000
   in_file = paste(file_source,".csv", sep="")
@@ -44,7 +49,7 @@ RetrofitDecomposeSimulationLocal <- function() {
   rownames(x)=x[,1]
   x=as.matrix(x[,-1])
 
-  result = RetrofitDecompose(x, iterations=iterations)
+  result = RetrofitDecompose(x, K=K, iterations=iterations, plot_convergence=TRUE)
 
   write.csv(result["h"], decomp_h_path)
   write.csv(result["w"], decomp_w_path)
