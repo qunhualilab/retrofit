@@ -30,9 +30,7 @@
 #' }
 #'
 #'@examples
-#'x=read.csv(in_path)
-#'rownames(x)=x[,1]
-#'x=as.matrix(x[,-1])
+#'x=read.csv(in_path, row.names=1)
 #'result = retrofit_decompose(x)
 #'@seealso papers reference
 #'@export
@@ -56,6 +54,8 @@ RetrofitDecompose <- function(x,
   if (K > 50){
     print('unexpectedly large K')
   }
+  # copy and 'purify' the matrix
+  x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
   
   # dimensions
   G   = dim(x)[1] # Gene expressions
@@ -101,10 +101,6 @@ RetrofitDecompose <- function(x,
     
     # step (1)
     rho = (t)^(-kappa)
-    # rho = ((1/100)*t)^(-1)
-    # if(rho > 0.4){
-    #   rho = 0.4
-    # }
     
     # step (2) - Sample distributions
     decompose_step2(param$alpha_h_ks, param$beta_h_ks, dist$h_ks)
@@ -127,12 +123,13 @@ RetrofitDecompose <- function(x,
     decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
     decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
+    # record error
     for (name in names(param)){
-      # e = decompose_compute_error_mat_norm(param_last[[name]], param[[name]])
-      e = decompose_compute_and_update_error_mat_norm(param_last[[name]], param[[name]])
+      e = decompose_compute_error_mat_norm(param_last[[name]], param[[name]])
+      decompose_update_original(param_last[[name]], param[[name]])
       relative_error[[name]][t,] <- c(t, e)
-      # param_last[[name]] <- param[[name]]
     }
+    # record performance
     dur = as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
     durations = cbind(durations, dur)
     print(paste('iteration:', t, paste0(round(dur, 3), " Seconds")))

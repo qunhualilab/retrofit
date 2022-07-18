@@ -34,6 +34,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// decompose_update_original
+void decompose_update_original(NumericVector original, NumericVector inferred);
+RcppExport SEXP _retrofit_decompose_update_original(SEXP originalSEXP, SEXP inferredSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type original(originalSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type inferred(inferredSEXP);
+    decompose_update_original(original, inferred);
+    return R_NilValue;
+END_RCPP
+}
 // decompose_compute_and_update_error_two_norm
 double decompose_compute_and_update_error_two_norm(NumericVector original, NumericVector inferred);
 RcppExport SEXP _retrofit_decompose_compute_and_update_error_two_norm(SEXP originalSEXP, SEXP inferredSEXP) {
@@ -144,6 +155,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_retrofit_decompose_compute_error_two_norm", (DL_FUNC) &_retrofit_decompose_compute_error_two_norm, 2},
     {"_retrofit_decompose_compute_error_mat_norm", (DL_FUNC) &_retrofit_decompose_compute_error_mat_norm, 2},
+    {"_retrofit_decompose_update_original", (DL_FUNC) &_retrofit_decompose_update_original, 2},
     {"_retrofit_decompose_compute_and_update_error_two_norm", (DL_FUNC) &_retrofit_decompose_compute_and_update_error_two_norm, 2},
     {"_retrofit_decompose_compute_and_update_error_mat_norm", (DL_FUNC) &_retrofit_decompose_compute_and_update_error_mat_norm, 2},
     {"_retrofit_decompose_step2", (DL_FUNC) &_retrofit_decompose_step2, 3},

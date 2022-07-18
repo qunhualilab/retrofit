@@ -9,6 +9,10 @@ decompose_compute_error_mat_norm <- function(original, inferred) {
     .Call(`_retrofit_decompose_compute_error_mat_norm`, original, inferred)
 }
 
+decompose_update_original <- function(original, inferred) {
+    invisible(.Call(`_retrofit_decompose_update_original`, original, inferred))
+}
+
 decompose_compute_and_update_error_two_norm <- function(original, inferred) {
     .Call(`_retrofit_decompose_compute_and_update_error_two_norm`, original, inferred)
 }

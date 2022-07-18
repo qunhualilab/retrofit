@@ -36,6 +36,19 @@ double decompose_compute_error_mat_norm(NumericVector original, NumericVector in
 }
 
 // [[Rcpp::export]]
+void decompose_update_original(NumericVector original, NumericVector inferred) {
+  NumericVector::iterator inferred_iter = inferred.begin();
+  NumericVector::iterator original_iter = original.begin();
+  int length = inferred.length();
+  
+  for(int i=0; i<length; ++i){
+    *original_iter = *inferred_iter;
+    ++inferred_iter;
+    ++original_iter;
+  }
+}
+
+// [[Rcpp::export]]
 double decompose_compute_and_update_error_two_norm(NumericVector original, NumericVector inferred) {
   double sum = 0;
   NumericVector::iterator original_iter = original.begin();
