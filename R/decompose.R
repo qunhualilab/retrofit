@@ -51,9 +51,7 @@ RetrofitDecompose <- function(x,
   if (!is.null(seed)){
     set.seed(seed)  
   }
-  if (K > 50){
-    print('unexpectedly large K')
-  }
+
   # copy and 'purify' the matrix
   x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
   
@@ -61,6 +59,11 @@ RetrofitDecompose <- function(x,
   G   = dim(x)[1] # Gene expressions
   S   = dim(x)[2] # Spots
   dim = c(G,K,S)
+  if (G*K*S > 4*1e+7){
+    warning(paste('The dimension ( G,K,S =>', toString(dim), ') might be too large to handle depending on the device.'))
+    return()
+  }
+  
   # W/H/Th from Gamma dist
   dist = list(
     w_gk = array(rep(0, len=G*K), c(G,K)),
