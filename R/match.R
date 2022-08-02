@@ -35,8 +35,28 @@ RetrofitMatch <- function(ref_w,
   w = matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
   h = matrix(as.numeric(unlist(decomp_h)), nrow=nrow(decomp_h), ncol=ncol(decomp_h))
   
-  correlations = cor(ref_w, w)
-  correlations2 = cor(ref_w, w)
+  # ref_w_normalized = matrix(0, nrow=nrow(ref_w), ncol=ncol(ref_w))
+  ref_w_normalized <- ref_w
+  ref_w_rowsums = rowSums(ref_w)
+  for (i in 1:length(ref_w_rowsums)){
+    if(ref_w_rowsums[i] != 0){
+      ref_w_normalized[i,] = ref_w[i,]/ref_w_rowsums[i]
+    } else {
+      ref_w_normalized[i,] = ref_w[i,]
+    }
+  }
+  w_normalized <- w
+  w_rowsums = rowSums(w)
+  for (i in 1:length(w_rowsums)){
+    if(w_rowsums[i] != 0){
+      w_normalized[i,] = w[i,]/w_rowsums[i]
+    } else {
+      w_normalized[i,] = w[i,]
+    }
+  }
+  
+  correlations = cor(ref_w_normalized, w_normalized)
+  correlations2 = cor(ref_w_normalized, w_normalized)
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)
