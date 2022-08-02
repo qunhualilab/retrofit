@@ -6,9 +6,8 @@ test_that("reproducibility", {
   in_path = paste(dir, in_file, sep="/")
   
   # RetrofitDecompose
-  x=read.csv(in_path)
-  rownames(x)=x[,1]
-  x=as.matrix(x[,-1])
+  x=read.csv(in_path, row.names = 1)
+  
   result = RetrofitDecompose(x, iterations=iterations, seed=1)
   
   out_h = result$h

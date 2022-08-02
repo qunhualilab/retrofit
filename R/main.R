@@ -72,6 +72,7 @@ RetrofitMain <- function(x,
   ret = RetrofitMatch(ref_w, w, h, K)
   w_match = ret$w
   h_match = ret$h
-  result <- list(w=w, h=h, th=th, w_match=w_match, h_match=h_match)
+  w_cor = cor(ref_w, w_match)
+  result <- list(w=w, h=h, th=th, w_match=w_match, h_match=h_match, w_cor=w_cor)
   return(result)
 }

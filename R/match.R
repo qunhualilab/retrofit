@@ -1,6 +1,6 @@
 #' RETROFIT matching algorithm
 #' 
-#' @description matching algorithm description
+#' @description Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 #'
 #' @param x Matrix(GeneExpressions, Spots): Spatial Transciptomics Data. 
 #' @param w
@@ -15,13 +15,21 @@
 #'@examples
 #'@seealso papers reference
 #'@export
-RetrofitMatch <- function(ref_w, decomp_w, decomp_h, K) {
+RetrofitMatch <- function(ref_w, 
+                          decomp_w, 
+                          decomp_h, 
+                          K) {
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
     stop("dimensions not matched")
   }
   
-  # will ref_w always provide cell types?
   cell_types = colnames(ref_w)
+  
+  # will ref_w always provide cell types?
+  if(is.null(cell_types)){
+    col_length = dim(ref_w)[2]
+    cell_types = paste('ref_w', array(1:col_length), sep='')
+  }
   
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
   w = matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
@@ -45,8 +53,16 @@ RetrofitMatch <- function(ref_w, decomp_w, decomp_h, K) {
       correlations2=correlations2[-r1,-c1]
     }
   }
-  
-  print(col_sel)
+  # order selections by row numbers
+  sel <- data.frame(
+    r = row_sel,
+    c = col_sel
+  )
+  sel <- sel[
+    with(sel, order(r)),
+  ]
+  row_sel = sel$r
+  col_sel = sel$c
   
   cell_mod = rep(NA, K)
   for (i in 1:K) {

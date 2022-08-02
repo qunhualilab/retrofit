@@ -10,7 +10,7 @@
 #'          This is the main spatial transciptomics data.
 #' @param iterations integer: The number of maximum iterations to be executed
 #' @param tolerance double: tolerance factor for convergence of the algorithm 
-#' @param K integer: The number of components to be decomposed
+#' @param L integer: The number of components to be decomposed
 #' @param alpha_w_0 double: Variational initial parameter for vector alpha_w
 #' @param beta_w_0 double:  Variational initial parameter for vector beta_w
 #' @param alpha_h_0 double: Variational initial parameter for vector alpha_h
@@ -35,7 +35,7 @@
 #'@seealso papers reference
 #'@export
 RetrofitDecompose <- function(x, 
-                              K           = 16,
+                              L           = 16,
                               alpha_w_0   = 0.05, 
                               beta_w_0    = 0.0001, 
                               alpha_h_0   = 0.2,
@@ -58,10 +58,10 @@ RetrofitDecompose <- function(x,
   # dimensions
   G   = dim(x)[1] # Gene expressions
   S   = dim(x)[2] # Spots
+  K   = L # alias the component number
   dim = c(G,K,S)
   if (G*K*S > 4*1e+7){
     warning(paste('The dimension ( G,K,S =>', toString(dim), ') might be too large to handle depending on the device.'))
-    return()
   }
   
   # W/H/Th from Gamma dist
@@ -174,6 +174,6 @@ RetrofitDecompose <- function(x,
   w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
   h_hat=array(param$alpha_h_ks/param$beta_h_ks, c(K,S))
   th_hat=array(param$alpha_th_k/param$beta_th_k, c(K))
-  result <- list(w=w_hat, h=h_hat, t=th_hat)
+  result <- list(w=w_hat, h=h_hat, th=th_hat)
   return(result)
 }
