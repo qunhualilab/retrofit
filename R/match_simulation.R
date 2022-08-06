@@ -53,7 +53,7 @@ RetrofitMatchSimulationLocal <- function() {
   w=read.csv(decomp_w_path, row.names = 1)
   h=read.csv(decomp_h_path, row.names = 1)
   
-  ret = RetrofitMatch(ref_w, w, h, K)
+  ret = RetrofitMatchWithRef(ref_w, w, h, K)
   
   write.csv(ret$w, match_w_path)
   write.csv(ret$h, match_h_path)
@@ -61,26 +61,60 @@ RetrofitMatchSimulationLocal <- function() {
 
 RetrofitMatchSimulationTemp <- function() {
   print(paste("working directory: ", getwd()))
-  setwd("~/Research/retrofit/retrofit/R")
   
-  in_r_dir = "~/Research/retrofit/codes/Simulations"
-  in_w_file = "N=10,M=3_loc_W_hat_L=20"# "extra5_loc_W_hat_L=10"
-  in_h_file = "N=10,M=3_loc_H_hat_L=20" # "extra5_loc_H_hat_L=10"
+  in_r_dir = "~/Research/retrofit/retrofit/results/local/plot"
+  in_w_file = "N=20,M=5_loc_W_hat_L=20"
+  in_h_file = "N=20,M=5_loc_H_hat_L=20"
   K = 10
   
   w_path = paste(in_r_dir,"/", in_w_file, '.csv', sep="")
   h_path = paste(in_r_dir,"/", in_h_file, '.csv', sep="")
+  
   w=read.csv(w_path, row.names = 1)
   h=read.csv(h_path, row.names = 1)
   
+  setwd("~/Research/retrofit/retrofit/R")
   in_dir = "../results"
-  
   ref_w_file = "Cerebellum_W_K=10.csv"
   ref_w_path = paste(in_dir, ref_w_file, sep="/")
   ref_w=read.csv(ref_w_path, row.names = 1)
   
-  ret = RetrofitMatch(ref_w, w, h, K)
+  ret = RetrofitMatchWithRef(ref_w, w, h, K)
   
-  write.csv(ret$w, paste(in_dir, "/", in_w_file, '_match.csv', sep=""))
-  write.csv(ret$h, paste(in_dir, "/", in_h_file, '_match.csv', sep=""))
+  write.csv(ret$w, paste(in_dir, "/", "local", "/", in_w_file, '_match.csv', sep=""))
+  write.csv(ret$h, paste(in_dir, "/", "local", "/", in_h_file, '_match.csv', sep=""))
+}
+
+RetrofitMatchMarkerTemp <- function() {
+  print(paste("working directory: ", getwd()))
+  
+  in_r_dir = "~/Research/retrofit/Simulation backup"
+  in_w_file = "A4_X_decomposed_W"
+  in_h_file = "A4_X_decomposed_H"
+  
+  w_path = paste(in_r_dir,"/", in_w_file, '.csv', sep="")
+  h_path = paste(in_r_dir,"/", in_h_file, '.csv', sep="")
+  
+  w=read.csv(w_path, row.names = 1)
+  h=read.csv(h_path, row.names = 1)
+  
+  setwd("~/Research/retrofit/retrofit/R")
+  in_dir = "../results"
+  ref_w_file = "Colon_Markers.csv"
+  ref_w_path = paste(in_dir, ref_w_file, sep="/")
+  ref_w=read.csv(ref_w_path, row.names = 1)
+  ref_marker = list()
+  for(r in 1:nrow(ref_w)){
+    gene = ref_w[[1]][r]
+    cell_type = ref_w[[2]][r]
+    if(is.null(ref_marker[[cell_type]])){
+      ref_marker[[cell_type]] = c()
+    }
+    ref_marker[[cell_type]] = c(ref_marker[[cell_type]], gene)
+  }
+  
+  ret = RetrofitMapByMarkers(ref_marker, w, h)
+  
+  write.csv(ret$w, paste(in_dir, "/", "local", "/", in_w_file, '_match_markers.csv', sep=""))
+  write.csv(ret$h, paste(in_dir, "/", "local", "/", in_h_file, '_match_markers.csv', sep=""))
 }

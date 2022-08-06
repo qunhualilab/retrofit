@@ -6,7 +6,7 @@
 \usage{
 RetrofitDecompose(
   x,
-  K = 16,
+  L = 16,
   alpha_w_0 = 0.05,
   beta_w_0 = 1e-04,
   alpha_h_0 = 0.2,
@@ -25,7 +25,7 @@ RetrofitDecompose(
 \item{x}{Matrix or Array with dimension (GeneExpressions, Spots).
 This is the main spatial transciptomics data.}
 
-\item{K}{integer: The number of components to be decomposed}
+\item{L}{integer: The number of components to be decomposed}
 
 \item{alpha_w_0}{double: Variational initial parameter for vector alpha_w}
 
@@ -67,9 +67,7 @@ Since exact Bayesian inference is infeasible and considering the large number of
 variational inference was adopted to approximately estimate the parameters in performant manner.
 }
 \examples{
-x=read.csv(in_path)
-rownames(x)=x[,1]
-x=as.matrix(x[,-1])
+x=read.csv(in_path, row.names=1)
 result = retrofit_decompose(x)
 }
 \seealso{

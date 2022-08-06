@@ -15,34 +15,40 @@
 #'@examples
 #'@seealso papers reference
 #'@export
-RetrofitMatch <- function(ref_w, 
-                          decomp_w, 
-                          decomp_h, 
-                          K) {
+RetrofitMapByCorrelation <- function(ref_cor, 
+                                     K,
+                                     decomp_w, 
+                                     decomp_h) {
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
-    stop("dimensions not matched")
+    stop("decomp_w and decomp_h dimensions not matched")
   }
   
-  cell_types = colnames(ref_w)
+  cell_types = colnames(ref_cor)
   
-  # will ref_w always provide cell types?
+  # will ref_cor always provide cell types?
   if(is.null(cell_types)){
-    col_length = dim(ref_w)[2]
-    cell_types = paste('ref_w', array(1:col_length), sep='')
+    col_length = dim(ref_cor)[2]
+    cell_types = paste('ref_cor', array(1:col_length), sep='')
+  }
+  if(length(cell_types)<K){
+    warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, ")."))
+    K = length(cell_types)
   }
   
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
   w = matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
   h = matrix(as.numeric(unlist(decomp_h)), nrow=nrow(decomp_h), ncol=ncol(decomp_h))
+  rownames(w) = rownames(decomp_w)
+  colnames(w) = colnames(decomp_w)
+  rownames(h) = rownames(decomp_h)
+  colnames(h) = colnames(decomp_h)
   
-  # ref_w_normalized = matrix(0, nrow=nrow(ref_w), ncol=ncol(ref_w))
-  ref_w_normalized <- ref_w
-  ref_w_rowsums = rowSums(ref_w)
-  for (i in 1:length(ref_w_rowsums)){
-    if(ref_w_rowsums[i] != 0){
-      ref_w_normalized[i,] = ref_w[i,]/ref_w_rowsums[i]
-    } else {
-      ref_w_normalized[i,] = ref_w[i,]
+  # ref_cor_normalized = matrix(0, nrow=nrow(ref_cor), ncol=ncol(ref_cor))
+  ref_cor_normalized <- ref_cor
+  ref_cor_rowsums = rowSums(ref_cor)
+  for (i in 1:length(ref_cor_rowsums)){
+    if(ref_cor_rowsums[i] != 0){
+      ref_cor_normalized[i,] = ref_cor[i,]/ref_cor_rowsums[i]
     }
   }
   w_normalized <- w
@@ -50,13 +56,11 @@ RetrofitMatch <- function(ref_w,
   for (i in 1:length(w_rowsums)){
     if(w_rowsums[i] != 0){
       w_normalized[i,] = w[i,]/w_rowsums[i]
-    } else {
-      w_normalized[i,] = w[i,]
     }
   }
   
-  correlations = cor(ref_w_normalized, w_normalized)
-  correlations2 = cor(ref_w_normalized, w_normalized)
+  correlations = cor(ref_cor_normalized, w_normalized)
+  correlations2 = cor(ref_cor_normalized, w_normalized)
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)
@@ -92,7 +96,6 @@ RetrofitMatch <- function(ref_w,
   w_mod = w[,col_sel]
   h_mod = h[col_sel,]
   
-  print(dim(w_mod))
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   

@@ -51,8 +51,10 @@ RetrofitDecompose <- function(x,
   if (!is.null(seed)){
     set.seed(seed)  
   }
-
+  
   # copy and 'purify' the matrix
+  x_rownames = rownames(x)
+  x_colnames = colnames(x)
   x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
   
   # dimensions
@@ -171,9 +173,13 @@ RetrofitDecompose <- function(x,
   iter_sd = round(sd(durations), 3)
   print(paste('Iteration mean: ', iter_mean, " Seconds", ", Iteration std: ", iter_sd, " Seconds"))
   
-  w_hat=array(param$alpha_w_gk/param$beta_w_gk, c(G,K))
-  h_hat=array(param$alpha_h_ks/param$beta_h_ks, c(K,S))
-  th_hat=array(param$alpha_th_k/param$beta_th_k, c(K))
+  w_hat=matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
+  h_hat=matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
+  th_hat=matrix(param$alpha_th_k/param$beta_th_k, nrow=K)
+  
+  rownames(w_hat) = x_rownames
+  colnames(h_hat) = x_colnames
+  
   result <- list(w=w_hat, h=h_hat, th=th_hat)
   return(result)
 }

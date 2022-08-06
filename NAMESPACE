@@ -2,5 +2,6 @@
 
 export(RetrofitDecompose)
 export(RetrofitMain)
-export(RetrofitMatch)
+export(RetrofitMapByCorrelation)
+export(RetrofitMapByMarkers)
 useDynLib(retrofit, .registration = TRUE)

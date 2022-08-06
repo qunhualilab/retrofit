@@ -35,7 +35,8 @@
 #'@seealso papers reference
 #'@export
 RetrofitMain <- function(x,
-                         ref_w,
+                         ref_cor     = NULL,
+                         ref_marker  = NULL,
                          L           = 16,
                          K           = 8,
                          alpha_w_0   = 0.05, 
@@ -68,11 +69,31 @@ RetrofitMain <- function(x,
   w = ret$w
   h = ret$h
   th= ret$th
-  # Match
-  ret = RetrofitMatch(ref_w, w, h, K)
-  w_match = ret$w
-  h_match = ret$h
-  w_cor = cor(ref_w, w_match)
-  result <- list(w=w, h=h, th=th, w_match=w_match, h_match=h_match, w_cor=w_cor)
+  w_cor_map = NULL
+  h_cor_map = NULL
+  w_cor_map_correlation = NULL
+  w_marker_map = NULL
+  h_marker_map = NULL
+  # Map
+  if(!is.null(ref_cor)){
+    ret = RetrofitMapByCorrelation(ref_cor, K, w, h)
+    w_cor_map = ret$w
+    h_cor_map = ret$h
+    w_cor_map_correlation = cor(ref_cor, w_cor_map)
+  }
+  if(!is.null(ref_marker)){
+    ret = RetrofitMapByMarkers(ref_marker, K, w, h)
+    w_marker_map = ret$w
+    h_marker_map = ret$h
+  }
+  
+  result <- list(w=w, 
+                 h=h, 
+                 th=th, 
+                 w_cor_map=w_cor_map, 
+                 h_cor_map=h_cor_map, 
+                 w_cor_map_correlation=w_cor_map_correlation,
+                 w_marker_map=w_marker_map,
+                 h_marker_map=h_marker_map)
   return(result)
 }

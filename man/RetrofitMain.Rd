@@ -4,25 +4,76 @@
 \alias{RetrofitMain}
 \title{RETROFIT}
 \usage{
-RetrofitMain(x)
+RetrofitMain(
+  x,
+  ref_cor = NULL,
+  ref_marker = NULL,
+  L = 16,
+  K = 8,
+  alpha_w_0 = 0.05,
+  beta_w_0 = 1e-04,
+  alpha_h_0 = 0.2,
+  beta_h_0 = 0.2,
+  alpha_th_0 = 1.25,
+  beta_th_0 = 10,
+  lambda = 0.01,
+  kappa = 0.5,
+  iterations = 4000,
+  tolerance = 0.001,
+  seed = NULL,
+  plot_convergence = FALSE
+)
 }
 \arguments{
-\item{x}{Matrix(GeneExpressions, Spots): Spatial Transciptomics Data.}
+\item{x}{Matrix or Array with two dimensions (GeneExpressions, Spots).
+This is the main spatial transciptomics data.}
+
+\item{L}{integer: The number of components to be decomposed}
+
+\item{K}{integer: The number of cell types to be selected}
+
+\item{alpha_w_0}{double: Variational initial parameter for vector alpha_w}
+
+\item{beta_w_0}{double:  Variational initial parameter for vector beta_w}
+
+\item{alpha_h_0}{double: Variational initial parameter for vector alpha_h}
+
+\item{beta_h_0}{double:  Variational initial parameter for vector beta_h}
+
+\item{alpha_th_0}{double:Variational initial parameter for vector alpha_th}
+
+\item{beta_th_0}{double: Variational initial parameter for vector beta_th}
+
+\item{lambda}{double: Background expression profile control}
+
+\item{kappa}{double: Learning rate factor}
+
+\item{iterations}{integer: The number of maximum iterations to be executed}
+
+\item{tolerance}{double: tolerance factor for convergence of the algorithm}
+
+\item{seed}{double: Random variable seed in case the output should be deterministic}
+
+\item{ref_w}{A Matrix or Array with two dimensions (GeneExpressions, Cell types).}
+
+\item{plot}{boolean: Plot relative errors}
 }
 \value{
-A list of paths of output data that contain
+A list of decomposed vectors that contains
 \itemize{
 \item w: 2d array with GeneExpressions, Components
 \item h: 2d array with Components, Spots
 \item th: an array with Components
-\item match: an array with Components
+\item w_match: 2d array filtered from 'w' with columns labeled as selected cell types (from ref_w)
+\item h_match: 2d array filtered from 'h' with rows labeled as selected cell types (from ref_w)
 }
 }
 \description{
 The main algorithm
 }
 \examples{
-temporary
+x=read.csv(in_path, row.names=1)
+result = retrofit_decompose(x)
 }
 \seealso{
 papers reference
