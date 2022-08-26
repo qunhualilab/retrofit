@@ -25,14 +25,17 @@ RetrofitMapByCorrelation <- function(ref_cor,
   
   cell_types = colnames(ref_cor)
   
-  # will ref_cor always provide cell types?
   if(is.null(cell_types)){
     col_length = dim(ref_cor)[2]
     cell_types = paste('ref_cor', array(1:col_length), sep='')
   }
   if(length(cell_types)<K){
-    warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, ")."))
+    warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, "). K is overrided to ", length(cell_types)))
     K = length(cell_types)
+  }
+  if(dim(decomp_w)[2]<K){
+    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overrided to ", dim(decomp_w)[2]))
+    K = dim(decomp_w)[2]
   }
   
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
