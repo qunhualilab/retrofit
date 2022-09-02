@@ -61,6 +61,7 @@ RetrofitMapByMarkers <- function(ref_marker,
   for(r in 1:nrow(gene_sums)){
     cell = cell_types[r]
     genes = ref_marker[[cell]]
+    genes = unique(genes)
     
     for(c in 1:ncol(gene_sums)){
       w_matched_values = w_normed[rownames(w_normed) %in% genes, c]
