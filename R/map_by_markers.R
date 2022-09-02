@@ -32,9 +32,14 @@ RetrofitMapByMarkers <- function(ref_marker,
   
   cell_types = names(ref_marker)
   all_genes = unlist(ref_marker)
+  
   if(length(cell_types)<K){
     warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, ")."))
     K = length(cell_types)
+  }
+  if(dim(decomp_w)[2]<K){
+    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overrided to ", dim(decomp_w)[2]))
+    K = dim(decomp_w)[2]
   }
   
   gene_sums=matrix(NA, nrow=length(cell_types), ncol=ncol(decomp_w))
@@ -42,6 +47,11 @@ RetrofitMapByMarkers <- function(ref_marker,
   
   w_normed <- w[rownames(w) %in% all_genes,]
   w_rowsums = rowSums(w_normed)
+  
+  if(length(w_rowsums) == 0){
+    stop("the length of rowsums is 0. the rows of decomposed w may not match with the reference")
+  }
+  
   for (i in 1:length(w_rowsums)){
     if(w_rowsums[[i]] != 0){
       w_normed[i,] = w_normed[i,]/w_rowsums[i]

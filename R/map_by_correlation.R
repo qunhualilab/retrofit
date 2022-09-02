@@ -56,6 +56,11 @@ RetrofitMapByCorrelation <- function(ref_cor,
   }
   w_normalized <- w
   w_rowsums = rowSums(w)
+  
+  if(length(w_rowsums) == 0){
+    stop("the length of rowsums is 0. the rows of decomposed w may not match with the reference")
+  }
+  
   for (i in 1:length(w_rowsums)){
     if(w_rowsums[i] != 0){
       w_normalized[i,] = w[i,]/w_rowsums[i]
