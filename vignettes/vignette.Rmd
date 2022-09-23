@@ -1,8 +1,8 @@
 ---
 title: "Retrofit Vignette"
-author: "Roopali"
+author: "Roopali Singh"
 date: "`r Sys.Date()`"
-output: BiocStyle::html_vignette
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Retrofit Vignette}
   %\VignetteEngine{knitr::rmarkdown}
