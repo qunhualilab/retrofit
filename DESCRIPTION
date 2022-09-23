@@ -1,12 +1,13 @@
 Package: retrofit
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+Version: 0.99.0
+Authors@R:
+    c(person(given = "Adam",
+           family = "Park",
+           role = c("cre"),
+           email = "akp6031@psu.edu",
+           comment = c(ORCID = "tbd"))
+    )
 Description: What the package does (one paragraph).
 biocViews: Transcriptomics, Visualization, RNASeq, Bayesian, Spatial, Software,
     GeneExpression
@@ -22,3 +23,5 @@ LinkingTo:
     Rcpp
 Imports: 
     Rcpp
+VignetteBuilder:
+    knitr

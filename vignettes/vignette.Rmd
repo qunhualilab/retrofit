@@ -1,0 +1,28 @@
+---
+title: "Retrofit Vignette"
+author: "Roopali"
+date: "`r Sys.Date()`"
+output: BiocStyle::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Retrofit Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## TBD
+
+Temporary
+
+## TBD
+
+Temporary
+
+## TBD
+
+Temporary
+
+# Session information
+
+```{r}
+sessionInfo()
+```
