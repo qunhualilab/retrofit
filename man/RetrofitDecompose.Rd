@@ -67,8 +67,12 @@ Since exact Bayesian inference is infeasible and considering the large number of
 variational inference was adopted to approximately estimate the parameters in performant manner.
 }
 \examples{
-x=read.csv(in_path, row.names=1)
-result = retrofit_decompose(x)
+iterations = 10
+L = 16
+x=read.csv(paste("../data", "sample_x.csv", sep="/"), row.names = 1, check.names = FALSE)
+result = RetrofitDecompose(x,
+                          iterations=iterations,
+                          L=L)
 }
 \seealso{
 papers reference

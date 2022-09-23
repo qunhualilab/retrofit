@@ -2,9 +2,10 @@
 #' 
 #' @description Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 #'
-#' @param x Matrix(GeneExpressions, Spots): Spatial Transciptomics Data. 
-#' @param w
-#' @param h
+#' @param ref_marker Key-value list: A dictionary of key: cell type, value: GeneExpression list
+#' @param K integer: The number of cell types to be selected
+#' @param decomp_w Matrix(GeneExpressions, Components): Decomposed w matrix
+#' @param decomp_h Matrix(Components, Spots): Decomposed h matrix
 #'
 #' @return A list of 
 #' \itemize{
@@ -13,6 +14,23 @@
 #' }
 #'
 #'@examples
+#'K = 8
+#'decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
+#'decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
+#'ref_marker_d=read.csv(paste("../data", "sample_ref_marker.csv", sep="/"), check.names = FALSE)
+#'ref_marker = list()
+#'for(r in 1:nrow(ref_marker_d)){
+#'  gene = ref_marker_d[[1]][r]
+#'  cell_type = ref_marker_d[[2]][r]
+#'  if(is.null(ref_marker[[cell_type]])){
+#'    ref_marker[[cell_type]] = c()
+#'  }
+#'  ref_marker[[cell_type]] = c(ref_marker[[cell_type]], gene)
+#'}
+#'result = RetrofitMapByMarkers(ref_marker = ref_marker, 
+#'                              K=K,
+#'                              decomp_w = decomp_w,
+#'                              decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
 RetrofitMapByMarkers <- function(ref_marker, 

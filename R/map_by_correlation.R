@@ -2,9 +2,10 @@
 #' 
 #' @description Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 #'
-#' @param x Matrix(GeneExpressions, Spots): Spatial Transciptomics Data. 
-#' @param w
-#' @param h
+#' @param ref_w A Matrix or Array with two dimensions (GeneExpressions, Cell types).
+#' @param K integer: The number of cell types to be selected
+#' @param decomp_w Matrix(GeneExpressions, Components): Decomposed w matrix
+#' @param decomp_h Matrix(Components, Spots): Decomposed h matrix
 #'
 #' @return A list of 
 #' \itemize{
@@ -13,6 +14,14 @@
 #' }
 #'
 #'@examples
+#'K = 8
+#'ref_w=read.csv(paste("../data", "sample_ref_cor.csv", sep="/"), row.names = 1, check.names = FALSE)
+#'decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
+#'decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
+#'result = RetrofitMapByCorrelation(ref_cor=ref_w, 
+#'                                  K=K,
+#'                                  decomp_w = decomp_w,
+#'                                  decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
 RetrofitMapByCorrelation <- function(ref_cor, 
