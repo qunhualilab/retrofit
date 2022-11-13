@@ -9,20 +9,116 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## TBD
+## Introduction
 
-Temporary
+RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. We will annotate cell types using either (a) an annotated single cell reference or (b) marker gene lists. 
 
-## TBD
+## Package Installation
+<!-- adam: this is not usable before submitting to and accepted by Bioconductor -->
+```{r, eval=FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("retrofit")
+```
 
-Temporary
+## Spatial Transcriptomics Data
 
-## TBD
+First load the ST data and preprocess it. We do the same pre-processing as STdeconvolve and follow the following steps:
+remove spots with too few genes
+Remove genes that are present in 100% of the spots
+Remove genes that are present in less than 5% of the spots
+Finding over dispersed genes for deconvolution.
 
-Temporary
+Final ST data matrix will consists of G genes and S spots i.e., a matrix of order G x S.
+
+
+```{r, load_library}
+library(retrofit)
+```
+
+```{r, data}
+ref_cor   =read.csv("data/sample_ref_cor.csv", row.names = 1, check.names = FALSE)
+ref_marker=read.csv("data/sample_ref_marker.csv", row.names = 1, check.names = FALSE)
+x         =read.csv("data/sample_x.csv", row.names = 1, check.names = FALSE)
+```
+
+## Reference-free Deconvolution
+
+Initialize the following parameters for deconvolution:
+L: Number of components
+Lamda (default value is 0.01)
+a, b: gamma parameters for W
+c, d: gamma parameters for H
+e, f: gamma parameters for Theta
+T: Number of iterations
+
+After initialization, run retrofit on the data as follows:
+
+```{r, decompose}
+iterations = 4000
+L = 20
+result = RetrofitDecompose(x, L=L, iterations=iterations)
+H = result["h"]
+W = result["w"]
+Theta =result["th"]
+```
+
+## Cell-type Annotation
+
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta ( a vector of L components). Now we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes.
+
+If annotated single cell reference is available, then the average gene expression profiles for each cell type can be obtained as follows:
+
+```{r, annotate}
+K = 10
+result = RetrofitMapByCorrelation(ref_cor, K, W, H)
+H_annot = result["h"]
+W_annot = result["w"]
+```
+
+Once the average expression profiles are computed, components can be assigned/mapped to the cell type it has maximum correlation with, as follows:
+
+```{r, correlation}
+result = cor(W, ref_cor)
+```
+
+[Provide mapping matrix]
+
+B) If the marker genes for the cell types of interest are known, components can be assigned to the cell type as follows:
+
+<…>
+
+[Provide mapping matrix]
+
+Steps (A) or (B) produce the cell-type proportions for each spot in the ST data, which will be stored in a matrix of order K x S.
+
+Results and visualization
+
+We can do certain diagnostics on the quality of results. For example, look the correlation between marker expression (if known) and cell type proportion in ST data.
+
+<…>
+
+[Some visualizations of markers and proportions]
+
+## Run at once
+
+```{r, run_retrofit}
+iterations = 4000
+K = 20
+L = 10
+result = RetrofitMain(x, 
+                      ref_cor = ref_cor,
+                      ref_marker=ref_marker,
+                      iterations=iterations, 
+                      L=L, 
+                      K=K)
+```
 
 # Session information
 
 ```{r}
 sessionInfo()
 ```
+
+
+
