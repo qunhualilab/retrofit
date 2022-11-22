@@ -61,7 +61,7 @@ After initialization, run retrofit on the data (X) as follows:
 ```{r, decompose}
 Iter = 4000
 L = 20
-result = RetrofitDecompose(x, L=L, iterations=Iter)
+result = RetrofitDecompose(x, L=L, iterations=Iter, seed=12)
 H = result["h"]
 W = result["w"]
 Theta =result["th"]
@@ -128,7 +128,8 @@ result = RetrofitMain(X,
                       ref_cor = sc_ref,
                       iterations=Iter, 
                       L=L, 
-                      K=K)
+                      K=K,
+                      seed=12)
 ```
 or
 
@@ -140,7 +141,8 @@ result = RetrofitMain(X,
                       ref_marker=marker_ref,
                       iterations=Iter, 
                       L=L, 
-                      K=K)
+                      K=K,
+                      seed=12)
 ```
 
 ## Results and visualization
@@ -150,7 +152,29 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 <!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
 
 ```{r}
+# H_annot: cell-annotated H result
+H_annot = result["h"]
 
+# References
+library(DescTools)
+H=read.csv("data/sample_h.csv", row.names = 1, check.names = FALSE)
+X=read.csv("data/sample_x.csv", row.names = 1, check.names = FALSE)
+sc_ref=read.csv("data/sc_ref.csv", row.names = 1, check.names = FALSE)
+
+# Correlation(H, H_hat) - B:1 in figure2
+H_cor=sort(diag(cor(H,H_annot)),decreasing=T,na.last=T)
+H_cor_value = format(round(AUC(x=seq(0,1,length.out = 1000),y=H_cor),digits=3), nsmall = 3)
+print(H_cor_value) # 0.964
+
+# Correlation(X, X_hat) - D:1 in figure2
+H_annot_norm=matrix(NA, ncol=ncol(H), nrow=nrow(H_annot))
+for(i in 1:ncol(H)){
+  H_annot_norm[,i]=H_annot[,i]/sum(H_annot[,i])
+}
+X_hat=as.matrix(sc_ref) %*% H_annot_norm
+X_cor=sort(diag(cor(X,X_hat)),decreasing=T,na.last=T)
+X_cor_value = format(round(AUC(x=seq(0,1,length.out = 1000),y=X_cor),digits=3), nsmall = 3)
+print(X_cor_value) # 0.962
 ```
 
 In case of real data, where ground truth is not available, we can do certain diagnostics on the quality of results. For example, compute the correlation between marker expression (if known) and cell type proportion in ST data and visualize the agreement of the spatial pattern between markers and estimated proportion (read the paper for more information).
