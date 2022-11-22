@@ -61,7 +61,7 @@ After initialization, run retrofit on the data (X) as follows:
 ```{r, decompose}
 Iter = 4000
 L = 20
-result = RetrofitDecompose(x, L=L, iterations=Iter, seed=12)
+result = RetrofitDecompose(X, L=L, iterations=Iter, seed=12)
 H = result["h"]
 W = result["w"]
 Theta =result["th"]
@@ -105,20 +105,18 @@ This file contains the list of marker genes for K cell types. Run the following 
 
 ```{r, annotate}
 K = unique(marker_ref$celltype) # number of cell types
-result = RetrofitMapByCorrelation(marker_ref, K, W, H)
+result = RetrofitMapByMarkers(marker_ref, K, W, H)
 H_annot = result["h"]
 W_annot = result["w"]
 ```
 
-Above code assigns components to the cell type it has maximum average marker expression in. 
-
-[Visualization here]
+Above code assigns components to the cell type it has maximum average marker expression in.
 
 Steps (A) or (B) produce the cell-type proportions for each spot in the ST data, which will be stored in the matrix H_annot of order K x S.
 
 ## Deconvolution with annotation (Optional)
 
-We can also deconvolve the ST data matrix along with cell-type annotation all in one step as follows:
+We can also deconvolve the ST data matrix along with cell-type annotation all in one step, depending upon the reference used, as follows:
 
 ```{r, run_retrofit}
 Iter = 4000
@@ -152,14 +150,10 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 <!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
 
 ```{r}
-# H_annot: cell-annotated H result
-H_annot = result["h"]
-
-# References
 library(DescTools)
-H=read.csv("data/sample_h.csv", row.names = 1, check.names = FALSE)
-X=read.csv("data/sample_x.csv", row.names = 1, check.names = FALSE)
-sc_ref=read.csv("data/sc_ref.csv", row.names = 1, check.names = FALSE)
+
+H_annot = result["h"] # estimated cell type proportions
+H=read.csv("data/sample_h.csv", row.names = 1, check.names = FALSE) # true cell type proportions
 
 # Correlation(H, H_hat) - B:1 in figure2
 H_cor=sort(diag(cor(H,H_annot)),decreasing=T,na.last=T)
