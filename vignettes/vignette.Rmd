@@ -150,7 +150,7 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 <!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
 
 ```{r}
-# correlations of W
+# correlation between true and estimated cell-type proportions
 library(ggplot2)
 reference=as.matrix(read.csv("data/sc_ref.csv", row.names=1, check.names=FALSE))
 result=read.csv("data/sample_results/sample_x__map_cor_w.csv", row.names=1, check.names=FALSE)
@@ -168,6 +168,29 @@ gg <- ggplot(df,aes(x=x, y=y, group=1)) +
   geom_line(aes(x=x, y=y)) + geom_point(aes(x=x, y=y)) + theme_bw() + ylim(0, 1.05) +
   geom_text(data=df, aes(x=label_x1, y=label_y, label=label_corr), size=4, hjust=0) +
   geom_text(data=df, aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
+plot(gg)
+```
+
+```{r}
+# RMSE between true and estimated cell-type proportions
+library(ggplot2)
+H_True=read.csv("data/sc_ref_h.csv", row.names=1, check.names=FALSE)
+H=read.csv("data/sample_results/sample_x__map_cor_h.csv", row.names=1, check.names=FALSE)
+
+rmse=NULL
+for(i in 1:ncol(H_True)){
+  H_True_i=H_True[,i]/sum(H_True[,i])
+  H_i=H[,i]/sum(H[,i])
+  rmse=c(rmse,sqrt(mean((H_True_i-H_i)^2)))
+}
+df=data.frame(x=1, y=rmse)
+
+gg <- ggplot(df,aes(x=x,y=y, fill=x)) + 
+  geom_violin(lwd=0) + theme_bw() + xlim(0,5) + ylim(0, 0.75) +
+  theme(legend.position = "None",
+        axis.title=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_text(size=10))
 plot(gg)
 ```
 
