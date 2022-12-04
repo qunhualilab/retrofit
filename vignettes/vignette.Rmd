@@ -150,25 +150,25 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 <!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
 
 ```{r}
-library(DescTools)
+# correlations of W
+library(ggplot2)
+reference=as.matrix(read.csv("data/sc_ref.csv", row.names=1, check.names=FALSE))
+result=read.csv("data/sample_results/sample_x__map_cor_w.csv", row.names=1, check.names=FALSE)
 
-H_annot = result["h"] # estimated cell type proportions
-H=read.csv("data/sample_h.csv", row.names = 1, check.names = FALSE) # true cell type proportions
+correlations=sort(diag(cor(reference, result)), decreasing=T, na.last=T)
+df=data.frame(x=1:length(correlations), 
+              y=correlations, 
+              label_x1=1, 
+              label_x2=2, 
+              label_y=seq(from=0.5, by=-0.05, length.out=10),
+              label_cell=names(correlations),
+              label_corr=format(round(correlations, digits=4)))
 
-# Correlation(H, H_hat) - B:1 in figure2
-H_cor=sort(diag(cor(H,H_annot)),decreasing=T,na.last=T)
-H_cor_value = format(round(AUC(x=seq(0,1,length.out = 1000),y=H_cor),digits=3), nsmall = 3)
-print(H_cor_value) # 0.964
-
-# Correlation(X, X_hat) - D:1 in figure2
-H_annot_norm=matrix(NA, ncol=ncol(H), nrow=nrow(H_annot))
-for(i in 1:ncol(H)){
-  H_annot_norm[,i]=H_annot[,i]/sum(H_annot[,i])
-}
-X_hat=as.matrix(sc_ref) %*% H_annot_norm
-X_cor=sort(diag(cor(X,X_hat)),decreasing=T,na.last=T)
-X_cor_value = format(round(AUC(x=seq(0,1,length.out = 1000),y=X_cor),digits=3), nsmall = 3)
-print(X_cor_value) # 0.962
+gg <- ggplot(df,aes(x=x, y=y, group=1)) + 
+  geom_line(aes(x=x, y=y)) + geom_point(aes(x=x, y=y)) + theme_bw() + ylim(0, 1.05) +
+  geom_text(data=df, aes(x=label_x1, y=label_y, label=label_corr), size=4, hjust=0) +
+  geom_text(data=df, aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
+plot(gg)
 ```
 
 In case of real data, where ground truth is not available, we can do certain diagnostics on the quality of results. For example, compute the correlation between marker expression (if known) and cell type proportion in ST data and visualize the agreement of the spatial pattern between markers and estimated proportion (read the paper for more information).
