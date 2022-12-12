@@ -11,7 +11,7 @@ vignette: >
 
 ## Introduction
 
-RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. We will annotate cell types using either (a) an annotated single cell reference or (b) marker gene lists. 
+RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. We will annotate cell types using an annotated single cell reference.
 
 ## Package Installation
 
@@ -34,20 +34,7 @@ First load the ST data, using the following command:
 ```{r, data}
 X         =read.csv("data/sample_x.csv", row.names = 1, check.names = FALSE)
 ```
-The ST data matrix will consist of G genes and S spots i.e., a matrix of order G x S.
-
-## Pre-processing ST data 
-
-You may also pre-process the ST data, similar to STdeconvolve, using the following steps:
-<!-- Xi: need the pre-processing steps done by Xi using STdeconvolve package -->
-
-This code will do the following:
-- remove spots with too few genes
-- remove genes that are present in 100% of the spots
-- remove genes that are present in less than 5% of the spots
-- find over dispersed genes for deconvolution.
-
-However, for this sample synthetic data we will skip this part.
+The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
 ## Reference-free Deconvolution
 
@@ -67,12 +54,10 @@ W = result["w"]
 Theta =result["th"]
 ```
 
-## Cell-type Annotation
+## Cell-type Annotation via annotated single cell reference
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
-Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Hence, we can follow either of the sections below to produce the cell-type proportions along with the deconvolution in one step.
-
-## (A) Cell-type annotation via annotated single cell reference
+Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
 
 Load the single cell reference data:
 
@@ -87,36 +72,14 @@ result = RetrofitMapByCorrelation(sc_ref, K, W, H)
 H_annot = result["h"]
 W_annot = result["w"]
 ```
-Above code assigns components to the cell type it has maximum correlation with. 
+[Visualization here] 
 
-[Visualization here]
+Above code assigns components to the cell type it has maximum correlation with, as shown in the plot above.
 
-<!-- Adam: Is it possible to add the mapping matrix visualization to the above mapping function? I can share the code for the visualization. Extra code chunk will require normalization of W and sc_ref matrices, which we are doing anyway inside the function above. -->
-
-
-## (B) Cell-type annotation via known marker genes
-
-Load the marker gene list:
-
-```{r, data}
-marker_ref   =read.csv("data/marker_ref.csv", row.names = 1, check.names = FALSE)
-```
-This file contains the list of marker genes for K cell types. Run the following command to get K cell-type mixtures from the ST data X:
-
-```{r, annotate}
-K = unique(marker_ref$celltype) # number of cell types
-result = RetrofitMapByMarkers(marker_ref, K, W, H)
-H_annot = result["h"]
-W_annot = result["w"]
-```
-
-Above code assigns components to the cell type it has maximum average marker expression in.
-
-Steps (A) or (B) produce the cell-type proportions for each spot in the ST data, which will be stored in the matrix H_annot of order K x S.
 
 ## Deconvolution with annotation (Optional)
 
-We can also deconvolve the ST data matrix along with cell-type annotation all in one step, depending upon the reference used, as follows:
+We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
 
 ```{r, run_retrofit}
 Iter = 4000
@@ -124,19 +87,6 @@ K = 10 # number of cell types in reference
 L = 20 # number of components
 result = RetrofitMain(X, 
                       ref_cor = sc_ref,
-                      iterations=Iter, 
-                      L=L, 
-                      K=K,
-                      seed=12)
-```
-or
-
-```{r, run_retrofit}
-Iter = 4000
-K = 10 # number of cell types in reference
-L = 20 # number of components
-result = RetrofitMain(X,
-                      ref_marker=marker_ref,
                       iterations=Iter, 
                       L=L, 
                       K=K,
