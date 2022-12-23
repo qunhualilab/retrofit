@@ -340,19 +340,53 @@ ggplot(df_new, aes(x=imagerow, y=imagecol))  +
 
 Figure 6B and C:
 
-Normalizing W estimates and single cell reference:
+We found cell-type specific genes using RETROFIT estimates. We filtered genes using the following steps:
+- Common genes in the fetal and adult stages
+- Entropy < 1.5 for all replicates
+- Gini > 0.85 for all replicates
+- Estimated gene expression > 40 for all replicates
+- Cell type specificity consistent across replicates 
+
+Now read the relevant genes for this tissue:
+```{r}
+genes=as.character(read.csv("Fetal12-relevantgenes.csv",header = F)[,1])
+```
+
+Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
 W_prop=W_mark/rowSums(W_mark)
+df=as.matrix(W_prop[genes,])
+df=df[order(row.names(df)),]
 
-W12_prop=sc_ref
-w_rowsums = rowSums(sc_ref)
-for (i in 1:length(w_rowsums)){
-  if(w_rowsums[i] > 0){
-    W12_prop[i,] = W12_prop[i,]/w_rowsums[i]
-  }
-}
+dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
+                                 rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
+                                 rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
+                                 rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
+                               levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
+                                        "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
+               genes=factor(genes,levels=genes),
+               val=c(df[,"Epithelial"],df[,"Fibroblasts"],
+                     df[,"Myo.Meso"],df[,"Endothelium"],
+                     df[,"Pericytes"],df[,"Neural"],
+                     df[,"Immune"],df[,"Muscle"]))
+  
+ggplot(dat, aes(celltype, genes, fill= val)) +  
+  geom_tile() +theme_classic() +
+  scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
+                       name="Normalized\nGene Expression   ",
+                       limit=c(0,1), na.value="grey87"
+  )+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size=8),
+        legend.key.height = unit(0.2, 'cm'), 
+        legend.key.width = unit(1, 'cm'), 
+        legend.title = element_text(size=7),
+        legend.justification="center",
+        legend.box.margin=margin(-20,-10,-5,-10),
+        legend.text=element_text(size=7)) +
+  xlab('')+ ylab('')+ 
+  theme(legend.position="bottom")
 ```
-<This is not complete>
+
 
 # Session information
 
