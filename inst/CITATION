@@ -2,8 +2,9 @@ citHeader("To cite Retrofit in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = "TBD",
-  author   = c("Roopali Singh"),
+  title    = "RETROFIT: Reference-free deconvolution of cell mixtures in spatial 
+transcriptomics",
+  author   = c("Roopali Singh", "Xi He", "Adam Keebum Park", "Ross Cameron Hardison", "Xiang Zhu", "Qunhua Li"),
   journal  = "TBD",
   year     = 2022,
   volume   = 0,
