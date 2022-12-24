@@ -1,6 +1,6 @@
 Package: retrofit
 Title: RETROFIT: Reference-free deconvolution of cell mixtures in spatial 
-transcriptomics
+    transcriptomics
 Version: 0.99.0
 Authors@R:
     c(person(given = "Adam",
@@ -12,12 +12,12 @@ Authors@R:
            family = "Singh",
            role = c("aut"),
            email = "rus82@psu.edu",
-           comment = c(ORCID = "0000-0001-6539-6622"))
+           comment = c(ORCID = "0000-0001-6539-6622")),
       person(given = "Xiang",
            family = "Zhu",
            role = c("aut"),
            email = "xiangzhu@psu.edu",
-           comment = c(ORCID = "0000-0003-1134-6413"))
+           comment = c(ORCID = "0000-0003-1134-6413")),
       person(given = "Qunhua",
            family = "Li",
            role = c("aut"),
@@ -25,13 +25,13 @@ Authors@R:
            comment = c(ORCID = ""))
     )
 Description: RETROFIT is a Bayesian non-negative matrix factorization framework 
-to decompose cell type mixtures in ST data without using external single-cell 
-expression references. RETROFIT outperforms existing reference-based methods 
-in estimating cell type proportions and reconstructing gene expressions in 
-simulations with varying spot size and sample heterogeneity, irrespective of the 
-quality or availability of the single-cell reference. RETROFIT recapitulates 
-known cell-type localization patterns in a Slide-seq dataset of mouse cerebellum 
-without using any single-cell data. 
+    to decompose cell type mixtures in ST data without using external single-cell 
+    expression references. RETROFIT outperforms existing reference-based methods 
+    in estimating cell type proportions and reconstructing gene expressions in 
+    simulations with varying spot size and sample heterogeneity, irrespective of the 
+    quality or availability of the single-cell reference. RETROFIT recapitulates 
+    known cell-type localization patterns in a Slide-seq dataset of mouse cerebellum 
+    without using any single-cell data. 
 biocViews: Transcriptomics, Visualization, RNASeq, Bayesian, Spatial, Software,
     GeneExpression, DimensionReduction, FeatureExtraction, SingleCell
 License: GPL-3
@@ -41,14 +41,16 @@ URL: https://github.com/qunhualilab/retrofit
 BugReports: https://github.com/qunhualilab/retrofit/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
 LinkingTo: 
     Rcpp
 Imports: 
     Rcpp
 Depends:
     R (>= 4.2)
+Suggests:
+    knitr,
+    BiocStyle,
+    rmarkdown,
+    testthat,
 VignetteBuilder:
     knitr

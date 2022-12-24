@@ -1,6 +1,6 @@
 ---
-title: "Retrofit Vignette"
-author: "Roopali Singh"
+title: "Retrofit Colon Vignette"
+author: "Adam Keebum Park, Roopali Singh"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
