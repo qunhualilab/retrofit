@@ -1,8 +1,8 @@
 test_that("main-simulation-works", {
   iterations = 10
   file_source = "sample_x"
-  ref_file_source = "sample_ref_cor"
-  ref_marker_file_source = "sample_ref_marker"
+  ref_file_source = "sc_ref"
+  ref_marker_file_source = "marker_ref"
   L = 16
   K = 8
   seed = 1

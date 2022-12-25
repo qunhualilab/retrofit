@@ -45,8 +45,9 @@ LinkingTo:
     Rcpp
 Imports: 
     Rcpp,
+    ggplot2,
     cowplot,
-    ggplot2
+    ggcorrplot
 Depends:
     R (>= 4.2),
     Rcpp
