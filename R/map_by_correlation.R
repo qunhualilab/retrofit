@@ -81,6 +81,8 @@ RetrofitMapByCorrelation <- function(ref_cor,
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)
+  cor_sel=rep(NA,K) 
+  cell_sel=rep(NA, K)
   for(i in 1:K){
     r2=which(correlations == max(correlations2), arr.ind=TRUE)[1]
     c2=which(correlations == max(correlations2), arr.ind=TRUE)[2]
@@ -89,12 +91,15 @@ RetrofitMapByCorrelation <- function(ref_cor,
     
     row_sel[i]=r2
     col_sel[i]=c2
+    cor_sel[i]=correlations[r2,c2]
+    cell_sel[i]=cell_types[r2]
     
     if(i<K){
       correlations2=correlations2[-r1,-c1]
     }
   }
-  # order selections by row numbers
+  
+  # order selections following the reference
   sel <- data.frame(
     r = row_sel,
     c = col_sel
@@ -105,17 +110,16 @@ RetrofitMapByCorrelation <- function(ref_cor,
   row_sel = sel$r
   col_sel = sel$c
   
+  w_mod = w[,col_sel]
+  h_mod = h[col_sel,]
   cell_mod = rep(NA, K)
   for (i in 1:K) {
     cell_mod[i] = cell_types[row_sel[i]]
   }
   
-  w_mod = w[,col_sel]
-  h_mod = h[col_sel,]
-  
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   
-  ret <- list(w=w_mod, h=h_mod, c=cell_mod)
+  ret <- list(w=w_mod, h=h_mod, cell_sel=cell_sel, cor_sel=cor_sel)
   return(ret)
 }

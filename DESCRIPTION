@@ -44,13 +44,16 @@ RoxygenNote: 7.2.1
 LinkingTo: 
     Rcpp
 Imports: 
-    Rcpp
+    Rcpp,
+    cowplot,
+    ggplot2
 Depends:
-    R (>= 4.2)
+    R (>= 4.2),
+    Rcpp
 Suggests:
     knitr,
     BiocStyle,
     rmarkdown,
-    testthat,
+    testthat
 VignetteBuilder:
     knitr

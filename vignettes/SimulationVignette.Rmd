@@ -1,13 +1,19 @@
 ---
 title: "Retrofit Simulation Vignette"
 author: "Adam Keebum Park, Roopali Singh"
-date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Retrofit Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 ## Introduction
 
@@ -32,7 +38,8 @@ library(retrofit)
 First load the ST data, using the following command:
 
 ```{r, data}
-X         =read.csv("data/sample_x.csv", row.names = 1, check.names = FALSE)
+data(simulation)
+x = data$x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
@@ -46,12 +53,12 @@ Lamda (default value is 0.01)
 After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
-Iter = 4000
+Iter = 10
 L = 20
-result = RetrofitDecompose(X, L=L, iterations=Iter, seed=12)
-H = result["h"]
-W = result["w"]
-Theta =result["th"]
+result = RetrofitDecompose(x, L=L, iterations=Iter, seed=12)
+H = result$h
+W = result$w
+Theta =result$th
 ```
 
 ## Cell-type Annotation via annotated single cell reference
@@ -59,18 +66,20 @@ Theta =result["th"]
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
 Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
 
-Load the single cell reference data:
+Get the single cell reference data:
 
-```{r, data}
-sc_ref   =read.csv("data/sc_ref.csv", row.names = 1, check.names = FALSE)
+```{r, sc_ref}
+sc_ref   =data$sc_ref
 ```
 This file contains average gene expression values for G genes in K cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate}
 K = ncol(W) # number of cell types
 result = RetrofitMapByCorrelation(sc_ref, K, W, H)
-H_annot = result["h"]
-W_annot = result["w"]
+H_annot = result$h
+W_annot = result$w
+cell_rank = result$cell_sel
+correlation_rank = result$cor_sel
 ```
 [Visualization here] 
 
@@ -82,15 +91,15 @@ Above code assigns components to the cell type it has maximum correlation with, 
 We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
 
 ```{r, run_retrofit}
-Iter = 4000
+Iter = 10
 K = 10 # number of cell types in reference
 L = 20 # number of components
-result = RetrofitMain(X, 
-                      ref_cor = sc_ref,
-                      iterations=Iter, 
-                      L=L, 
-                      K=K,
-                      seed=12)
+result = Retrofit(x, 
+                  ref_cor = sc_ref,
+                  iterations=Iter, 
+                  L=L, 
+                  K=K,
+                  seed=12)
 ```
 
 ## Results and visualization
@@ -99,20 +108,16 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 
 <!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
 
-```{r}
+```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
 library(ggplot2)
-reference=as.matrix(read.csv("data/sc_ref.csv", row.names=1, check.names=FALSE))
-result=read.csv("data/sample_results/sample_x__map_cor_w.csv", row.names=1, check.names=FALSE)
-
-correlations=sort(diag(cor(reference, result)), decreasing=T, na.last=T)
-df=data.frame(x=1:length(correlations), 
-              y=correlations, 
+df=data.frame(x=1:length(correlation_rank), 
+              y=correlation_rank, 
               label_x1=1, 
               label_x2=2, 
               label_y=seq(from=0.5, by=-0.05, length.out=10),
-              label_cell=names(correlations),
-              label_corr=format(round(correlations, digits=4)))
+              label_cell=cell_rank,
+              label_corr=format(round(correlation_rank, digits=4)))
 
 gg <- ggplot(df,aes(x=x, y=y, group=1)) + 
   geom_line(aes(x=x, y=y)) + geom_point(aes(x=x, y=y)) + theme_bw() + ylim(0, 1.05) +
@@ -121,11 +126,10 @@ gg <- ggplot(df,aes(x=x, y=y, group=1)) +
 plot(gg)
 ```
 
-```{r}
+```{r, visualize_rmse}
 # RMSE between true and estimated cell-type proportions
-library(ggplot2)
-H_True=read.csv("data/sc_ref_h.csv", row.names=1, check.names=FALSE)
-H=read.csv("data/sample_results/sample_x__map_cor_h.csv", row.names=1, check.names=FALSE)
+H_True=data$sc_ref_h
+H=H_annot
 
 rmse=NULL
 for(i in 1:ncol(H_True)){
