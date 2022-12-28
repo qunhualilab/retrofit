@@ -10,21 +10,22 @@ test_that("main-simulation-works", {
   marker_ref  = test_main_simulation$marker_ref
   results     = test_main_simulation$results
 
-  result = Retrofit(x, 
-                ref_cor=sc_ref, 
-                ref_marker=marker_ref, 
-                iterations=iterations, 
-                L=L, 
-                K=K,
-                seed=seed)
-  
-  expect_true(all.equal(as.matrix(results$decomp_h), result$h, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$decomp_w), result$w, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$decomp_th), result$t, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$match_cor_h), result$h_cor_map, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$match_cor_w), result$w_cor_map, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$match_marker_h), result$h_marker_map, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(results$match_marker_w), result$w_marker_map, check.attributes = FALSE))
+  res = Retrofit(x, 
+                 sc_ref=sc_ref, 
+                 marker_ref=marker_ref, 
+                 iterations=iterations, 
+                 L=L, 
+                 K=K,
+                 seed=seed,
+                 verbose=TRUE)
+
+  expect_true(all.equal(as.matrix(results$decomposed$h),  res$decomposed$h, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$decomposed$w),  res$decomposed$w, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$decomposed$th), res$decomposed$th, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$annotated_correlation$h), res$annotated_correlation$h, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$annotated_correlation$w), res$annotated_correlation$w, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$annotated_marker$h), res$annotated_marker$h, check.attributes = FALSE))
+  expect_true(all.equal(as.matrix(results$annotated_marker$w), res$annotated_marker$w, check.attributes = FALSE))
 })
 
 

@@ -40,18 +40,17 @@
 #'@export
 RetrofitDecompose <- function(x, 
                               L           = 16,
+                              iterations  = 4000,
+                              lambda      = 0.01,
+                              seed        = NULL,
                               alpha_w_0   = 0.05, 
                               beta_w_0    = 0.0001, 
                               alpha_h_0   = 0.2,
                               beta_h_0    = 0.2,
                               alpha_th_0  = 1.25,
                               beta_th_0   = 10,
-                              lambda      = 0.01,
                               kappa       = 0.5,
-                              iterations  = 4000, 
-                              tolerance   = 1e-3,
-                              seed        = NULL,
-                              plot_convergence = FALSE) {
+                              verbose     = FALSE) {
   if (!is.null(seed)){
     set.seed(seed)  
   }
@@ -67,7 +66,8 @@ RetrofitDecompose <- function(x,
   K   = L # alias the component number
   dim = c(G,K,S)
   if (G*K*S > 4*1e+7){
-    warning(paste('The dimension ( G,K,S =>', toString(dim), ') might be too large to handle depending on the device.'))
+    warning(paste('The dimension ( G,K,S =>', toString(dim), ') can be too 
+                  large to handle in this function.'))
   }
   
   # W/H/Th from Gamma dist
@@ -79,31 +79,29 @@ RetrofitDecompose <- function(x,
   # probability variables
   prob = list(
     phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S)),
-    phi_b_gk  = array(rep(0, len=G*K),  c(G,K)),
-    last_iter_phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S))
+    phi_b_gk  = array(rep(0, len=G*K),  c(G,K))
   )
   # parameter vectors
   param = list(
-    alpha_th_k  = array(runif(K,  0,1)  +alpha_th_0,c(K)),
-    beta_th_k   = array(runif(K,  0,1)  +beta_th_0, c(K)),
-    alpha_w_gk  = array(runif(G*K,0,0.5)+alpha_w_0, c(G,K)),
-    beta_w_gk   = array(runif(G*K,0,0.005)+beta_w_0,c(G,K)),
-    alpha_h_ks  = array(runif(K*S,0,0.1)+alpha_h_0, c(K,S)),
-    beta_h_ks   = array(runif(K*S,0,0.5)+beta_h_0,  c(K,S))
+    alpha_th_k = array(stats::runif(K,  0,1)    +alpha_th_0,c(K)),
+    beta_th_k  = array(stats::runif(K,  0,1)    +beta_th_0, c(K)),
+    alpha_w_gk = array(stats::runif(G*K,0,0.5)  +alpha_w_0, c(G,K)),
+    beta_w_gk  = array(stats::runif(G*K,0,0.005)+beta_w_0,  c(G,K)),
+    alpha_h_ks = array(stats::runif(K*S,0,0.1)  +alpha_h_0, c(K,S)),
+    beta_h_ks  = array(stats::runif(K*S,0,0.5)  +beta_h_0,  c(K,S))
   )
   
-  param_last = list()
+  # variables for verbose mode
+  previous_param = list()
   relative_error = list()
   for (n in names(param)){
-    param_last[[n]] = rep(0, len=length(param[[n]]))
-    relative_error[[n]] = data.frame(iter=integer(), value=double())
+    previous_param[[n]] = rep(0, len=length(param[[n]]))
+    relative_error[[n]] = c()
   }
-  
-  error_window = 100
   durations = NULL
+  
   ## start of algorithm
   t=0
-  
   while(t<iterations){
     from = Sys.time()
     t = t+1
@@ -132,50 +130,19 @@ RetrofitDecompose <- function(x,
     decompose_step5(param$beta_h_ks, beta_asterisk$h, rho)
     decompose_step5(param$beta_th_k, beta_asterisk$t, rho)
     
-    # record error
-    for (name in names(param)){
-      e = decompose_compute_error_mat_norm(param_last[[name]], param[[name]])
-      decompose_update_original(param_last[[name]], param[[name]])
-      relative_error[[name]][t,] <- c(t, e)
+    if(verbose){
+      # record error
+      for (name in names(param)){
+        e = decompose_compute_error_mat_norm(previous_param[[name]], param[[name]])
+        decompose_update_original(previous_param[[name]], param[[name]])
+        relative_error[[name]] = c(relative_error[[name]], e)
+      }
+      # record performance
+      dur = as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
+      durations = c(durations, dur)
+      print(paste('iteration:', t, paste0(round(dur, 3), " Seconds")))  
     }
-    # record performance
-    dur = as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
-    durations = cbind(durations, dur)
-    print(paste('iteration:', t, paste0(round(dur, 3), " Seconds")))
   }
-  
-  # convergence plotting
-  if(plot_convergence){
-    flush.console()
-    plots = list()
-    for (name in names(relative_error)){
-      # set target data
-      df <- relative_error[[name]]
-      # calculate the most frequent range
-      labels = -3:3
-      breaks = c(0, 10^labels)
-      levels = table(cut(df$value, labels= labels, breaks=breaks))
-      majority_level = names(which.max(levels))[[1]]
-      upto = strtoi(majority_level)
-      
-      for(scale in upto:(upto-1)){
-        # set ceiling
-        df$value[df$value>10^(scale)] = 10^(scale)
-        # plot
-        p  = (ggplot2::ggplot(df, ggplot2::aes(x=iter))
-              + ggplot2::geom_line(ggplot2::aes(y=value), color="darkred")
-              + ggplot2::ggtitle(paste0(name, " (upto 1e", ifelse(scale >= 0, "+", "-"), abs(scale), ")"))
-        )
-        plots[[paste0(name, scale)]] = p
-      }  
-    }
-    gridExtra::grid.arrange(grobs=plots, ncol=2)
-  }
-  
-  # measure performance
-  iter_mean = round(mean(durations), 3)
-  iter_sd = round(sd(durations), 3)
-  print(paste('Iteration mean: ', iter_mean, " Seconds", ", Iteration std: ", iter_sd, " Seconds"))
   
   w_hat=matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
   h_hat=matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
@@ -184,6 +151,13 @@ RetrofitDecompose <- function(x,
   rownames(w_hat) = x_rownames
   colnames(h_hat) = x_colnames
   
-  result <- list(w=w_hat, h=h_hat, th=th_hat)
+  if(!verbose){
+    result <- list(w=w_hat, h=h_hat, th=th_hat)
+  } else {
+    # measure performance
+    print(paste('Iteration mean: ', round(mean(durations), 3), " seconds", " total: ", round(sum(durations), 3), " seconds"))
+    result <- list(w=w_hat, h=h_hat, th=th_hat, durations=durations, relative_error=relative_error)
+  }
+  
   return(result)
 }

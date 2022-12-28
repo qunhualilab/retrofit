@@ -2,7 +2,7 @@
 #' 
 #' @description Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 #'
-#' @param ref_marker Key-value list: A dictionary of key: cell type, value: GeneExpression list
+#' @param marker_ref Key-value list: A dictionary of key: cell type, value: GeneExpression list
 #' @param K integer: The number of cell types to be selected
 #' @param decomp_w Matrix(GeneExpressions, Components): Decomposed w matrix
 #' @param decomp_h Matrix(Components, Spots): Decomposed h matrix
@@ -17,23 +17,23 @@
 #'K = 8
 #'decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
 #'decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
-#'ref_marker_d=read.csv(paste("../data", "sample_ref_marker.csv", sep="/"), check.names = FALSE)
-#'ref_marker = list()
-#'for(r in 1:nrow(ref_marker_d)){
-#'  gene = ref_marker_d[[1]][r]
-#'  cell_type = ref_marker_d[[2]][r]
-#'  if(is.null(ref_marker[[cell_type]])){
-#'    ref_marker[[cell_type]] = c()
+#'marker_ref_d=read.csv(paste("../data", "sample_marker_ref.csv", sep="/"), check.names = FALSE)
+#'marker_ref = list()
+#'for(r in 1:nrow(marker_ref_d)){
+#'  gene = marker_ref_d[[1]][r]
+#'  cell_type = marker_ref_d[[2]][r]
+#'  if(is.null(marker_ref[[cell_type]])){
+#'    marker_ref[[cell_type]] = c()
 #'  }
-#'  ref_marker[[cell_type]] = c(ref_marker[[cell_type]], gene)
+#'  marker_ref[[cell_type]] = c(marker_ref[[cell_type]], gene)
 #'}
-#'result = RetrofitMapByMarkers(ref_marker = ref_marker, 
+#'result = RetrofitMapByMarkers(marker_ref = marker_ref, 
 #'                              K=K,
 #'                              decomp_w = decomp_w,
 #'                              decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
-RetrofitMapByMarkers <- function(ref_marker, 
+RetrofitMapByMarkers <- function(marker_ref, 
                                  K,
                                  decomp_w, 
                                  decomp_h) {
@@ -48,8 +48,8 @@ RetrofitMapByMarkers <- function(ref_marker,
   rownames(h) = rownames(decomp_h)
   colnames(h) = colnames(decomp_h)
   
-  cell_types = names(ref_marker)
-  all_genes = unlist(ref_marker)
+  cell_types = names(marker_ref)
+  all_genes = unlist(marker_ref)
   
   if(length(cell_types)<K){
     warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, ")."))
@@ -78,7 +78,7 @@ RetrofitMapByMarkers <- function(ref_marker,
   
   for(r in 1:nrow(gene_sums)){
     cell = cell_types[r]
-    genes = ref_marker[[cell]]
+    genes = marker_ref[[cell]]
     genes = unique(genes)
     
     for(c in 1:ncol(gene_sums)){

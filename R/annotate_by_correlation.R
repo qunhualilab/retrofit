@@ -15,16 +15,16 @@
 #'
 #'@examples
 #'K = 8
-#'ref_w=read.csv(paste("../data", "sample_ref_cor.csv", sep="/"), row.names = 1, check.names = FALSE)
+#'ref_w=read.csv(paste("../data", "sample_sc_ref.csv", sep="/"), row.names = 1, check.names = FALSE)
 #'decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
 #'decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
-#'result = RetrofitMapByCorrelation(ref_cor=ref_w, 
+#'result = RetrofitMapByCorrelation(sc_ref=ref_w, 
 #'                                  K=K,
 #'                                  decomp_w = decomp_w,
 #'                                  decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
-RetrofitMapByCorrelation <- function(ref_cor, 
+RetrofitMapByCorrelation <- function(sc_ref, 
                                      K,
                                      decomp_w, 
                                      decomp_h) {
@@ -32,11 +32,11 @@ RetrofitMapByCorrelation <- function(ref_cor,
     stop("decomp_w and decomp_h dimensions not matched")
   }
   
-  cell_types = colnames(ref_cor)
+  cell_types = colnames(sc_ref)
   
   if(is.null(cell_types)){
-    col_length = dim(ref_cor)[2]
-    cell_types = paste('ref_cor', array(1:col_length), sep='')
+    col_length = dim(sc_ref)[2]
+    cell_types = paste('sc_ref', array(1:col_length), sep='')
   }
   if(length(cell_types)<K){
     warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, "). K is overrided to ", length(cell_types)))
@@ -55,12 +55,12 @@ RetrofitMapByCorrelation <- function(ref_cor,
   rownames(h) = rownames(decomp_h)
   colnames(h) = colnames(decomp_h)
   
-  # ref_cor_normalized = matrix(0, nrow=nrow(ref_cor), ncol=ncol(ref_cor))
-  ref_cor_normalized <- ref_cor
-  ref_cor_rowsums = rowSums(ref_cor)
-  for (i in 1:length(ref_cor_rowsums)){
-    if(ref_cor_rowsums[i] != 0){
-      ref_cor_normalized[i,] = ref_cor[i,]/ref_cor_rowsums[i]
+  # sc_ref_normalized = matrix(0, nrow=nrow(sc_ref), ncol=ncol(sc_ref))
+  sc_ref_normalized <- sc_ref
+  sc_ref_rowsums = rowSums(sc_ref)
+  for (i in 1:length(sc_ref_rowsums)){
+    if(sc_ref_rowsums[i] != 0){
+      sc_ref_normalized[i,] = sc_ref[i,]/sc_ref_rowsums[i]
     }
   }
   w_normalized <- w
@@ -76,8 +76,8 @@ RetrofitMapByCorrelation <- function(ref_cor,
     }
   }
   
-  correlations = cor(ref_cor_normalized, w_normalized)
-  correlations2 = cor(ref_cor_normalized, w_normalized)
+  correlations = cor(sc_ref_normalized, w_normalized)
+  correlations2 = cor(sc_ref_normalized, w_normalized)
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)
@@ -120,6 +120,6 @@ RetrofitMapByCorrelation <- function(ref_cor,
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   
-  ret <- list(w=w_mod, h=h_mod, cell_sel=cell_sel, cor_sel=cor_sel)
+  ret <- list(w=w_mod, h=h_mod, ranked_cells=cell_sel, ranked_correlations=cor_sel)
   return(ret)
 }
