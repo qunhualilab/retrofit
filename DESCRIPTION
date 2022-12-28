@@ -42,15 +42,17 @@ BugReports: https://github.com/qunhualilab/retrofit/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends:
-    R (>= 4.2)
+    R (>= 4.2),
+    Rcpp
 LinkingTo: 
     Rcpp
-Imports: 
-    Rcpp
+Imports:
+    testit
 Suggests:
     ggplot2,
     cowplot,
     ggcorrplot,
+    magick,
     knitr,
     BiocStyle,
     rmarkdown,

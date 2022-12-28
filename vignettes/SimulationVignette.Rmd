@@ -8,11 +8,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results = 'hide')
 ```
 
 ## Introduction
@@ -22,13 +19,13 @@ RETROFIT is a statistical method for reference-free deconvolution of spatial tra
 ## Package Installation
 
 Install and load the package using the following steps:
-<!-- adam: this is not usable before submitting to and accepted by Bioconductor -->
 ```{r, eval=FALSE}
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("retrofit")
 ```
 
+The main functionalities of RETROFIT are covered in this tutorial.
 ```{r, load_library}
 library(retrofit)
 ```
@@ -36,29 +33,44 @@ library(retrofit)
 ## Spatial Transcriptomics Data
 
 First load the ST data, using the following command:
-
 ```{r, data}
-data(simulation)
-x = data$x
+data("vignette_simulation")
+x = vignette_simulation$n10m3_x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
 ## Reference-free Deconvolution
 
 Initialize the following parameters for deconvolution:
-Iter: Number of iterations (default = 4000)
+iterations: Number of iterations (default = 4000)
 L: Number of components required
-Lamda (default value is 0.01)
+seed: Seed for controlling random number generation of R
 
 After initialization, run retrofit on the data (X) as follows:
-
 ```{r, decompose}
-Iter = 10
-L = 20
-result = RetrofitDecompose(x, L=L, iterations=Iter, seed=12)
-H = result$h
-W = result$w
-Theta =result$th
+iterations  = 10
+L           = 20
+seed        = 12
+result      = retrofit::decompose(x, L=L, iterations=iterations, seed=seed, verbose=TRUE)
+H           = result$h
+W           = result$w
+Theta       = result$th
+```
+
+### Deconvolution with more iterations for reproducibility
+
+For reproducing the exact results introduced in the paper, 
+4000 iterations are required to stabilize the decomposed matrices.
+The whole computation is omitted here due to time complexity (> 10min)
+```{r, load_retrofit_results}
+H           = vignette_simulation$iter_4k_results$decomposed$h
+W           = vignette_simulation$iter_4k_results$decomposed$w
+Theta       = vignette_simulation$iter_4k_results$decomposed$th
+################################################################################
+# The above results are obtained by running the code below.
+# iterations = 4000
+# result      = decompose(x, L=L, iterations=iterations, seed=seed, verbose=TRUE)
+################################################################################
 ```
 
 ## Cell-type Annotation via annotated single cell reference
@@ -67,57 +79,59 @@ After deconvolution of ST data, we have our estimates of W (a matrix of order G 
 Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
 
 Get the single cell reference data:
-
-```{r, sc_ref}
-sc_ref   =data$sc_ref
+```{r, reference}
+sc_ref_w = vignette_simulation$sc_ref_w
 ```
-This file contains average gene expression values for G genes in K cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 
+This file contains average gene expression values for G genes in K cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 ```{r, annotate}
-K = ncol(W) # number of cell types
-result = RetrofitMapByCorrelation(sc_ref, K, W, H)
+K         = 10
+result  = retrofit::annotate_by_correlations(sc_ref=sc_ref_w, K=K, 
+                                             decomp_w=W, decomp_h=H)
 H_annot = result$h
 W_annot = result$w
-cell_rank = result$cell_sel
-correlation_rank = result$cor_sel
+ranked_cells        = result$ranked_cells
+ranked_correlations = result$ranked_correlations
 ```
-[Visualization here] 
-
-Above code assigns components to the cell type it has maximum correlation with, as shown in the plot above.
-
+Above code assigns components to the cell type it has maximum correlation with.
 
 ## Deconvolution with annotation (Optional)
 
 We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
-
-```{r, run_retrofit}
-Iter = 10
-K = 10 # number of cell types in reference
-L = 20 # number of components
-result = Retrofit(x, 
-                  ref_cor = sc_ref,
-                  iterations=Iter, 
-                  L=L, 
-                  K=K,
-                  seed=12)
+```{r, retrofit}
+iterations  = 10
+L           = 20
+K           = 10 
+seed        = 12 
+result = retrofit::retrofit(x, 
+                            sc_ref=sc_ref_w,
+                            iterations=iterations, 
+                            L=L, 
+                            K=K,
+                            seed=seed)
 ```
 
 ## Results and visualization
 
 Since this is synthetic data, true cell type proportions are known. We can visualize the correlation and RMSE between true and estimated cell-type proportions as follows:
 
-<!-- Adam: need the code to create RMSE and correlation plot for proportions i.e., cor(H, H_hat) and RMSE(H, H_hat) -->
+Below code plots the correlation matrix.
+```{r, visualize_correlation_matrix}
+correlations = cor(sc_ref_w[ranked_cells], W_annot[,ranked_cells])
+ggcorrplot::ggcorrplot(correlations)
+```
 
+Below code plots the correlation values between each cell type and the chosen component.
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
 library(ggplot2)
-df=data.frame(x=1:length(correlation_rank), 
-              y=correlation_rank, 
+df=data.frame(x=1:length(ranked_correlations), 
+              y=ranked_correlations, 
               label_x1=1, 
               label_x2=2, 
               label_y=seq(from=0.5, by=-0.05, length.out=10),
-              label_cell=cell_rank,
-              label_corr=format(round(correlation_rank, digits=4)))
+              label_cell=ranked_cells,
+              label_corr=format(round(ranked_correlations, digits=4)))
 
 gg <- ggplot(df,aes(x=x, y=y, group=1)) + 
   geom_line(aes(x=x, y=y)) + geom_point(aes(x=x, y=y)) + theme_bw() + ylim(0, 1.05) +
@@ -126,9 +140,9 @@ gg <- ggplot(df,aes(x=x, y=y, group=1)) +
 plot(gg)
 ```
 
+Below code visualize RMSE between true and estimated cell-type proportions.
 ```{r, visualize_rmse}
-# RMSE between true and estimated cell-type proportions
-H_True=data$sc_ref_h
+H_True=vignette_simulation$sc_ref_h
 H=H_annot
 
 rmse=NULL
@@ -155,6 +169,3 @@ In case of real data, where ground truth is not available, we can do certain dia
 ```{r}
 sessionInfo()
 ```
-
-
-

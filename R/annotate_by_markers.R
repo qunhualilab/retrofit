@@ -56,7 +56,7 @@ annotate_by_markers <- function(marker_ref,
     K = length(cell_types)
   }
   if(dim(decomp_w)[2]<K){
-    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overrided to ", dim(decomp_w)[2]))
+    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overriden by ", dim(decomp_w)[2]))
     K = dim(decomp_w)[2]
   }
   

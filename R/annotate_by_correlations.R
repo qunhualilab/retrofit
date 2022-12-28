@@ -28,6 +28,10 @@ annotate_by_correlations <- function(sc_ref,
                                      K,
                                      decomp_w, 
                                      decomp_h) {
+  testit::assert(!is.null(sc_ref))
+  testit::assert(is.numeric(K))
+  testit::assert(!is.null(decomp_w))
+  testit::assert(!is.null(decomp_h))
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
     stop("decomp_w and decomp_h dimensions not matched")
   }
@@ -39,11 +43,11 @@ annotate_by_correlations <- function(sc_ref,
     cell_types = paste('sc_ref', array(1:col_length), sep='')
   }
   if(length(cell_types)<K){
-    warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, "). K is overrided to ", length(cell_types)))
+    warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, "). K is overriden by ", length(cell_types)))
     K = length(cell_types)
   }
   if(dim(decomp_w)[2]<K){
-    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overrided to ", dim(decomp_w)[2]))
+    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overriden by ", dim(decomp_w)[2]))
     K = dim(decomp_w)[2]
   }
   
