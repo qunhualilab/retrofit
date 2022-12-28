@@ -33,10 +33,10 @@
 #'                              decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
-RetrofitMapByMarkers <- function(marker_ref, 
-                                 K,
-                                 decomp_w, 
-                                 decomp_h) {
+annotate_by_markers <- function(marker_ref, 
+                                K,
+                                decomp_w, 
+                                decomp_h) {
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
     stop("decomp_w and decomp_h dimensions not matched")
   }

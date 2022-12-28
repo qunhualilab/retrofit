@@ -40,7 +40,7 @@ LazyData: FALSE
 URL: https://github.com/qunhualilab/retrofit
 BugReports: https://github.com/qunhualilab/retrofit/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Depends:
     R (>= 4.2)
 LinkingTo: 
@@ -50,7 +50,7 @@ Imports:
 Suggests:
     ggplot2,
     cowplot,
-    ggcorrplot
+    ggcorrplot,
     knitr,
     BiocStyle,
     rmarkdown,

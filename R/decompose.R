@@ -38,19 +38,19 @@
 #'                           L=L)
 #'@seealso papers reference
 #'@export
-RetrofitDecompose <- function(x, 
-                              L           = 16,
-                              iterations  = 4000,
-                              lambda      = 0.01,
-                              seed        = NULL,
-                              alpha_w_0   = 0.05, 
-                              beta_w_0    = 0.0001, 
-                              alpha_h_0   = 0.2,
-                              beta_h_0    = 0.2,
-                              alpha_th_0  = 1.25,
-                              beta_th_0   = 10,
-                              kappa       = 0.5,
-                              verbose     = FALSE) {
+decompose <- function(x, 
+                      L           = 16,
+                      iterations  = 4000,
+                      lambda      = 0.01,
+                      seed        = NULL,
+                      alpha_w_0   = 0.05, 
+                      beta_w_0    = 0.0001, 
+                      alpha_h_0   = 0.2,
+                      beta_h_0    = 0.2,
+                      alpha_th_0  = 1.25,
+                      beta_th_0   = 10,
+                      kappa       = 0.5,
+                      verbose     = FALSE) {
   if (!is.null(seed)){
     set.seed(seed)  
   }

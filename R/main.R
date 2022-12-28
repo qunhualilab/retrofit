@@ -57,7 +57,7 @@
 #'result = retrofit_decompose(x)
 #'@seealso papers reference
 #'@export
-Retrofit <- function(x,
+retrofit <- function(x,
                      sc_ref      = NULL,
                      marker_ref   = NULL,
                      L           = 16,
@@ -74,36 +74,36 @@ Retrofit <- function(x,
                      kappa       = 0.5,
                      verbose     = FALSE) {
   # Decompose
-  decomposed = RetrofitDecompose(x,
-                                 L           = L,
-                                 iterations  = iterations, 
-                                 lambda      = lambda,
-                                 seed        = seed,
-                                 alpha_w_0   = alpha_w_0, 
-                                 beta_w_0    = beta_w_0, 
-                                 alpha_h_0   = alpha_h_0,
-                                 beta_h_0    = beta_h_0,
-                                 alpha_th_0  = alpha_th_0,
-                                 beta_th_0   = beta_th_0,
-                                 kappa       = kappa,
-                                 verbose     = verbose)
+  decomposed = decompose(x,
+                         L           = L,
+                         iterations  = iterations, 
+                         lambda      = lambda,
+                         seed        = seed,
+                         alpha_w_0   = alpha_w_0, 
+                         beta_w_0    = beta_w_0, 
+                         alpha_h_0   = alpha_h_0,
+                         beta_h_0    = beta_h_0,
+                         alpha_th_0  = alpha_th_0,
+                         beta_th_0   = beta_th_0,
+                         kappa       = kappa,
+                         verbose     = verbose)
   ret = list(
-    decomposed=decomposed
+    decomposed = decomposed
   )
   
-  # Map
+  # Annotate
   if(!is.null(sc_ref)){
-    annotated = RetrofitMapByCorrelation(sc_ref=sc_ref, 
-                                         K=K, 
-                                         decomp_w=decomposed$w, 
-                                         decomp_h=decomposed$h)
+    annotated = annotate_by_correlations(sc_ref   = sc_ref, 
+                                         K        = K, 
+                                         decomp_w = decomposed$w, 
+                                         decomp_h = decomposed$h)
     ret$annotated_correlation = annotated 
   }
   if(!is.null(marker_ref)){
-    annotated = RetrofitMapByMarkers(marker_ref=marker_ref, 
-                                     K=K, 
-                                     decomp_w=decomposed$w, 
-                                     decomp_h=decomposed$h)
+    annotated = annotate_by_markers(marker_ref = marker_ref, 
+                                    K          = K, 
+                                    decomp_w   = decomposed$w, 
+                                    decomp_h   = decomposed$h)
     ret$annotated_marker = annotated
   }
   return(ret)
