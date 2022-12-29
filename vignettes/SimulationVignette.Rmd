@@ -12,11 +12,11 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE, results = 'hide')
 ```
 
-## Introduction
+# Introduction
 
 RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. We will annotate cell types using an annotated single cell reference.
 
-## Package Installation
+# Package Installation
 
 Install and load the package using the following steps:
 ```{r, eval=FALSE}
@@ -30,7 +30,7 @@ The main functionalities of RETROFIT are covered in this tutorial.
 library(retrofit)
 ```
 
-## Spatial Transcriptomics Data
+# Spatial Transcriptomics Data
 
 First load the ST data, using the following command:
 ```{r, data}
@@ -39,7 +39,7 @@ x = data$n10m3_x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
-## Reference-free Deconvolution
+# Deconvolution
 
 Initialize the following parameters for deconvolution:
 iterations: Number of iterations (default = 4000)
@@ -57,7 +57,7 @@ W           = result$w
 Theta       = result$th
 ```
 
-### Deconvolution with more iterations for reproducibility
+## Deconvolution with many iterations (for reproducibility)
 
 For reproducing the exact results introduced in the paper, 
 4000 iterations are required to stabilize the decomposed matrices.
@@ -73,7 +73,7 @@ Theta       = data$results_4k_iterations$decompose$th
 ################################################################################
 ```
 
-## Cell-type Annotation via annotated single cell reference
+# Cell-type Annotation
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
 Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
@@ -85,16 +85,16 @@ sc_ref_w = data$sc_ref_w
 
 This file contains average gene expression values for G genes in K cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 ```{r, annotate}
-K         = 10
-result  = retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K, decomp_w=W, 
-                                             decomp_h=H)
-H_annot = result$h
-W_annot = result$w
-ranked_cells        = result$ranked_cells
+K             = 10
+result        = retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K, 
+                                                   decomp_w=W, decomp_h=H)
+H_annotated   = result$h
+W_annotated   = result$w
+ranked_cells  = result$ranked_cells
 ```
 Above code assigns components to the cell type it has maximum correlation with.
 
-## Deconvolution with annotation (Optional)
+# Deconvolution and annotation in one hand (Optional)
 
 We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
 ```{r, retrofit}
@@ -102,28 +102,29 @@ iterations  = 10
 L           = 20
 K           = 10 
 seed        = 12 
-result = retrofit::retrofit(x, 
-                            sc_ref=sc_ref_w,
-                            iterations=iterations, 
-                            L=L, 
-                            K=K,
-                            seed=seed)
+result      = retrofit::retrofit(x, 
+                                 sc_ref=sc_ref_w,
+                                 iterations=iterations, 
+                                 L=L, 
+                                 K=K,
+                                 seed=seed)
 ```
 
-## Results and visualization
+# Results 
+
+# Visualization
 
 Since this is synthetic data, true cell type proportions are known. We can visualize the correlation and RMSE between true and estimated cell-type proportions as follows:
 
 Below code plots the correlation matrix.
 ```{r, visualize_correlation_matrix}
-correlations = cor(sc_ref_w[ranked_cells], W_annot[,ranked_cells])
+correlations = cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
 ggcorrplot::ggcorrplot(correlations)
 ```
 
 Below code plots the correlation values between each cell type and the chosen component.
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
-library(ggplot2)
 ranked_correlations = sort(diag(correlations), decreasing=T)
 df=data.frame(x=1:length(ranked_correlations), 
               y=ranked_correlations, 
@@ -133,32 +134,36 @@ df=data.frame(x=1:length(ranked_correlations),
               label_cell=ranked_cells,
               label_corr=format(round(ranked_correlations, digits=4)))
 
-gg <- ggplot(df,aes(x=x, y=y, group=1)) + 
-  geom_line(aes(x=x, y=y)) + geom_point(aes(x=x, y=y)) + theme_bw() + ylim(0, 1.05) +
-  geom_text(data=df, aes(x=label_x1, y=label_y, label=label_corr), size=4, hjust=0) +
-  geom_text(data=df, aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
+gg <- ggplot2::ggplot(df,ggplot2::aes(x=x, y=y, group=1)) + 
+  ggplot2::geom_line(ggplot2::aes(x=x, y=y)) + 
+  ggplot2::geom_point(ggplot2::aes(x=x, y=y)) + 
+  ggplot2::theme_bw() + 
+  ggplot2::theme(axis.text.x=ggplot2::element_blank()) +
+  ggplot2::ylim(0, 1.05) +
+  ggplot2::ylab(expression(paste("Correlation (",W^0,",",widetilde(W),")"))) +
+  ggplot2::geom_text(data=df, ggplot2::aes(x=label_x1, y=label_y, label=label_corr), size=4, hjust=0) +
+  ggplot2::geom_text(data=df, ggplot2::aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
 plot(gg)
 ```
 
 Below code visualize RMSE between true and estimated cell-type proportions.
 ```{r, visualize_rmse}
-H_True=data$sc_ref_h
-H=H_annot
+H_true  = data$sc_ref_h
+H_est   = H_annotated
+corrH   = sort(diag(cor(H_true,H_est)), decreasing=T, na.last=T)
+df      = data.frame(x=seq(0,1,length.out = 1000), 
+                     y=corrH)
+df_text = data.frame(x=0.2,
+                     y=0.6,
+                     label = c(paste("RETROFIT:", round(DescTools::AUC(x=seq(0,1,length.out = 1000), y=corrH),digits=3))))
 
-rmse=NULL
-for(i in 1:ncol(H_True)){
-  H_True_i=H_True[,i]/sum(H_True[,i])
-  H_i=H[,i]/sum(H[,i])
-  rmse=c(rmse,sqrt(mean((H_True_i-H_i)^2)))
-}
-df=data.frame(x=1, y=rmse)
-
-gg <- ggplot(df,aes(x=x,y=y, fill=x)) + 
-  geom_violin(lwd=0) + theme_bw() + xlim(0,5) + ylim(0, 0.75) +
-  theme(legend.position = "None",
-        axis.title=element_blank(),
-        axis.text.x=element_blank(),
-        axis.text.y=element_text(size=10))
+gg   <- ggplot2::ggplot(df, ggplot2::aes(x=x,y=y)) +
+  ggplot2::geom_line() + 
+  ggplot2::scale_color_manual('gray30') + 
+  ggplot2::xlab("Normalized Rank") +
+  ggplot2::ylab(expression(paste("Correlation (",H,",",widetilde(H),")"))) +
+  ggplot2::theme_bw() +
+  ggplot2::geom_text(data = df_text, ggplot2::aes(label = label)) 
 plot(gg)
 ```
 
