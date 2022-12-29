@@ -33,7 +33,7 @@
 #'                              decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
-annotate_by_markers <- function(marker_ref, 
+annotateWithMarkers <- function(marker_ref, 
                                 K,
                                 decomp_w, 
                                 decomp_h) {

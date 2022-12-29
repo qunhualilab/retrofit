@@ -24,7 +24,7 @@
 #'                                  decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
-annotate_by_correlations <- function(sc_ref, 
+annotateWithCorrelations <- function(sc_ref, 
                                      K,
                                      decomp_w, 
                                      decomp_h) {

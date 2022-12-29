@@ -88,23 +88,23 @@ retrofit <- function(x,
                          kappa       = kappa,
                          verbose     = verbose)
   ret = list(
-    decomposed = decomposed
+    decompose = decomposed
   )
   
   # Annotate
   if(!is.null(sc_ref)){
-    annotated = annotate_by_correlations(sc_ref   = sc_ref, 
+    annotated = annotateWithCorrelations(sc_ref   = sc_ref, 
                                          K        = K, 
                                          decomp_w = decomposed$w, 
                                          decomp_h = decomposed$h)
-    ret$annotated_correlation = annotated 
+    ret$annotateWithCorrelations = annotated 
   }
   if(!is.null(marker_ref)){
-    annotated = annotate_by_markers(marker_ref = marker_ref, 
+    annotated = annotateWithMarkers(marker_ref = marker_ref, 
                                     K          = K, 
                                     decomp_w   = decomposed$w, 
                                     decomp_h   = decomposed$h)
-    ret$annotated_marker = annotated
+    ret$annotateWithMarkers = annotated
   }
   return(ret)
 }
