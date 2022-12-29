@@ -92,6 +92,7 @@ annotateWithMarkers <- function(marker_ref,
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)
+  cell_sel=rep(NA, K)
   for(i in 1:K){
     r2=which(sums == max(sums2), arr.ind=TRUE)[1]
     c2=which(sums == max(sums2), arr.ind=TRUE)[2]
@@ -100,6 +101,7 @@ annotateWithMarkers <- function(marker_ref,
     
     row_sel[i]=r2
     col_sel[i]=c2
+    cell_sel[i]=cell_types[r2]
     
     if(i<K){
       sums2=sums2[-r1,-c1]
@@ -128,6 +130,6 @@ annotateWithMarkers <- function(marker_ref,
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   
-  ret <- list(w=w_mod, h=h_mod, c=cell_mod)
+  ret <- list(w=w_mod, h=h_mod, ranked_cells=cell_sel)
   return(ret)
 }

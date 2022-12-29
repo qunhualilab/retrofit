@@ -1,52 +1,55 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+"Retrofit One sentence (with paper link)"
 
-# retrofit
+## Overview
 
-<!-- badges: start -->
-<!-- badges: end -->
+"`retrofit` overview"
 
-The goal of retrofit is to …
+![Figure1](https://user-images.githubusercontent.com/90921267/209952993-4a4a5e49-9638-4dee-acdc-ce6a1f18d870.png)
 
 ## Installation
 
-You can install the released version of retrofit from
-[CRAN](https://CRAN.R-project.org) with:
+Install `retrofit` from github:
 
 ``` r
-install.packages("retrofit")
-```
-
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
+install.packages("devtools") 
 devtools::install_github("qunhualilab/retrofit")
+```
+Install `retrofit` from [Bioconductor](https://bioconductor.org/packages/devel/bioc/html/retrofit.html).
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install(version='devel')
+BiocManager::install("retrofit")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
 library(retrofit)
-## basic example code
+## load built in data
+data(ReadmeData)
+x           = data$extra5_loc_x
+sc_ref      = data$sc_ref
+marker_ref  = data$marker_ref
+
+## decompose 
+res         = retrofit::decompose(x, L=16, iterations=100, verbose=TRUE)
+W           = res$w
+H           = res$h
+TH          = res$th
+
+## annotate with correlations
+res         = retrofit::annotateWithCorrelations(sc_ref, K=8, decomp_w=W, decomp_h=H)
+W_annotated = res$w
+H_annotated = res$h
+cells       = res$ranked_cells
+
+## annotate with markers
+res         = retrofit::annotateWithMarkers(marker_ref, K=8, decomp_w=W, decomp_h=H)
+W_annotated = res$w
+H_annotated = res$h
+cells       = res$ranked_cells	  
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
