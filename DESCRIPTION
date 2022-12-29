@@ -21,8 +21,8 @@ Authors@R:
       person(given = "Qunhua",
            family = "Li",
            role = c("aut"),
-           email = "",
-           comment = c(ORCID = ""))
+           email = "qunhua.li@psu.edu",
+           comment = c(ORCID = "0000-0003-0675-7648"))
     )
 Description: RETROFIT is a Bayesian non-negative matrix factorization framework 
     to decompose cell type mixtures in ST data without using external single-cell 
