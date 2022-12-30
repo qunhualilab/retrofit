@@ -52,11 +52,16 @@ Suggests:
     ggplot2,
     cowplot,
     ggcorrplot,
+    grid,
+    colorspace,
     magick,
     knitr,
     BiocStyle,
     rmarkdown,
     testthat,
-    DescTools
+    DescTools,
+    png,
+    pals,
+    RCurl
 VignetteBuilder:
     knitr

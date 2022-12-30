@@ -26,10 +26,10 @@ BiocManager::install("retrofit")
 
 ```{r, load_library}
 library(retrofit)
-library(ggplot2)
-library(grid)
-library(cowplot)
-library(colorspace)
+# library(ggplot2)
+# library(grid)
+# library(cowplot)
+# library(colorspace)
 ```
 
 ## Spatial Transcriptomics Data
@@ -37,7 +37,8 @@ library(colorspace)
 First load the ST data, using the following command:
 
 ```{r, data}
-X         =read.csv("data/Colon_A4_X.csv", row.names = 1, check.names = FALSE)
+data("VignetteColonData")
+X = data$colon_a4_x
 ```
 
 ## Pre-processing ST data 
@@ -62,12 +63,12 @@ Initialize the required parameters for deconvolution. We set the number of itera
 After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
-Iter = 4000
+Iter = 20
 L = 20
-result = RetrofitDecompose(X, L=L, iterations=Iter, seed=12)
-H = result["h"]
-W = result["w"]
-Theta =result["th"]
+result = retrofit::decompose(X, L=L, iterations=Iter, seed=12, verbose=TRUE)
+H = result$h
+W = result$w
+TH =result$th
 ```
 
 Now we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
@@ -79,16 +80,16 @@ Next, we need to annotate the components, to get the proportion of K cell types.
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
 ```{r, data}
-marker_ref   =read.csv("data/Colon_marker_ref.csv", row.names = 1, check.names = FALSE)
+marker_ref = data$marker_ref
 ```
 
 This file contains the list of marker genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate}
-K = unique(marker_ref$Celltype) # number of cell types
-result = RetrofitMapByMarkers(marker_ref, K, W, H)
-H_mark = result["h"]
-W_mark = result["w"]
+K = length(marker_ref) # number of cell types
+result = annotateWithMarkers(marker_ref, K, W, H)
+H_mark = result$h
+W_mark = result$w
 ```
 <!-- Adam: this function should also give mapping maatrix visualization -->
 We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark of order K x S.
@@ -99,15 +100,15 @@ We assign components to the cell type it has maximum average marker expression i
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
 ```{r, data}
-sc_ref   =read.csv("data/Colon_sc_ref.csv", row.names = 1, check.names = FALSE)
+sc_ref = data$sc_ref
 ```
 This file contains average gene expression values for G genes in K=8 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate}
 K = ncol(sc_ref) # number of cell types
-result = RetrofitMapByCorrelation(sc_ref, K, W, H)
-H_sc = result["h"]
-W_sc = result["w"]
+result = annotateWithCorrelations(sc_ref, K, W, H)
+H_sc = result$h
+W_sc = result$w
 ```
 <!-- Adam: this function should also give mapping maatrix visualization -->
 We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_sc of order K x S.
@@ -127,9 +128,9 @@ Figure 4C:
 
 Load the coordinates for the spots in the tissue and the tissue image:
 ```{r}
-coords=read.csv("data/Colon_A4_coords.csv")
-img <- png::readPNG("Colon_A4_tissue.png")
-t <- rasterGrob(img1, width=unit(1,"npc"), height=unit(1,"npc"), interpolate = FALSE)
+coords=data$colon_a4_coords
+img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210040419-8cd1871a-fc64-43aa-9b1d-308f3a73dbe8.png"))
+t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
 ```
 
 Find the cell-type with maximum proportion in each spot and plot:
@@ -137,65 +138,67 @@ Find the cell-type with maximum proportion in each spot and plot:
 dat=as.data.frame(cbind(coords,t(H_mark)))
 colnames(dat)=c(colnames(coords),rownames(H_mark))
 
-df=dat[,-c(2:4)]
+df=dat[,-c(1:3)]
 df$CellType=NA
 for(i in 1:nrow(df)){
-  df$CellType[i]=names(which.max(df[i,-c(1:3)]))
+  df$CellType[i]=names(which.max(df[i,-c(1:2)]))
 }
 df$CellType=factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Muscle",
                                         "Neural", "Endothelium", "Pericytes","Fibroblasts"))
                                         
-ggplot(df, aes(x=imagerow, y=imagecol))  +
-  annotation_custom(t, 700, 6400, 990, 6550) + 
-  geom_point(size=1.8, shape=21, aes(fill=CellType))+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#009E73", "#CC79A7",
+ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
+  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
+  ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#009E73", "#CC79A7",
                              "#0072B2", "#D55E00" ,"#F0E442"),
                     labels=c("Epithelial", "Immune","Myofibroblasts/\nMesothelium",
                              "Muscle","Neural","Endothelium",
                              "Pericytes","Fibroblasts"))+
-  xlab("") + ylab("") +theme_classic()+
-  theme(legend.position = "none",
-        axis.line = element_blank(),
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"), 
-        axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.x=element_blank(),axis.ticks.y=element_blank())                   
+  ggplot2::xlab("") + ggplot2::ylab("") + ggplot2::theme_classic()+
+  ggplot2::theme(legend.position = "none",
+                 axis.line = ggplot2::element_blank(),
+                 plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"), 
+                 axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
+                 axis.ticks.x = ggplot2::element_blank(),  axis.ticks.y = ggplot2::element_blank())                   
 ```
 
 Figure 4D and E:
 
 Plot the spatial expression for Epithelial markers:
 ```{r}
-df=cbind(coords,t(X4[as.character(marker_ref$Gene[marker_ref$Celltype=="Epithelial"]),]))
-df$metagene=rowSums(df[,-c(1:6)])
+df = as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
+df$metagene = unname(rowSums(df[,-c(1:5)])) 
 df$metagene[df$metagene>quantile(df$metagene,0.95)]=quantile(df$metagene,0.95)
 
-ggplot(df, aes(x=imagerow, y=imagecol))  +
-  annotation_custom(t, 700, 6400, 990, 6550) + 
-  geom_point(size=1.5,aes(color=metagene))+
-  scale_color_gradientn(name="Epithelial Markers ",
-                        colors=adjust_transparency("grey20",
-                                                   alpha = c(0,0.5,1)),
-                        n.breaks=3) +
-  xlab("") + ylab("") +
-  theme_classic()+
-  theme(legend.key.height = unit(0.2, 'cm'), #change legend key size
-        legend.key.width = unit(0.8, 'cm'),
-        legend.title = element_text(size=10),
-        legend.position = "bottom",
-        legend.box.margin=margin(-20,-10,-5,-10),
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"), 
-        axis.line=element_blank(),
-        legend.text=element_text(size=8),
-        axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.x=element_blank(),axis.ticks.y=element_blank())
+ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
+  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  ggplot2::geom_point(size=1.5, ggplot2::aes(color=metagene))+
+  ggplot2::scale_color_gradientn(name="Epithelial Markers ",
+                                 colors=colorspace::adjust_transparency("grey20",
+                                                                        alpha = c(0,0.5,1)),
+                                 n.breaks=3) +
+  ggplot2::xlab("") + ggplot2::ylab("") +
+  ggplot2::theme_classic()+
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.2, 'cm'), #change legend key size
+                 legend.key.width = ggplot2::unit(0.8, 'cm'),
+                 legend.title = ggplot2::element_text(size=10),
+                 legend.position = "bottom",
+                 legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
+                 plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"),
+                 axis.line=ggplot2::element_blank(),
+                 legend.text=ggplot2::element_text(size=8),
+                 axis.text.x = ggplot2::element_blank(), 
+                 axis.text.y = ggplot2::element_blank(),
+                 axis.ticks.x=ggplot2::element_blank(),
+                 axis.ticks.y=ggplot2::element_blank())
 ```
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r}
 df=dat[,-c(2:4)]
 ggplot(df, aes(x=imagerow, y=imagecol))  +
-  annotation_custom(t, 700, 6400, 990, 6550) + 
-  geom_point(size=1.5,aes(color=Epithelial))+
+  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  geom_point(size=1.5, aes(color=Epithelial))+
   scale_color_gradientn(name="Epithelial ",
                         colors=adjust_transparency("grey20",
                                                    alpha = c(0,0.5,1)),
@@ -207,7 +210,7 @@ ggplot(df, aes(x=imagerow, y=imagecol))  +
         legend.title = element_text(size=10),
         legend.position = "bottom",
         legend.box.margin=margin(-20,-10,-5,-10),
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"), 
+        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"),
         axis.line=element_blank(),
         legend.text=element_text(size=8),
         axis.text.x = element_blank(), axis.text.y = element_blank(),
