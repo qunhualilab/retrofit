@@ -41,12 +41,12 @@ The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matr
 
 # Deconvolution
 
-Initialize the following parameters for deconvolution:
-iterations: Number of iterations (default = 4000)
-L: Number of components required
-seed: Seed for controlling random number generation of R
-
-After initialization, run retrofit on the data (X) as follows:
+Initialize the following parameters for deconvolution:\
+iterations: Number of iterations (default = 4000)\
+L: Number of components required\
+seed: Seed for controlling random number generation\
+\
+After initialization, run RETROFIT on the data (X) as follows:
 ```{r, decompose}
 iterations  = 10
 L           = 20
@@ -56,12 +56,8 @@ H           = result$h
 W           = result$w
 Theta       = result$th
 ```
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonnstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
-## Deconvolution with many iterations (for reproducibility)
-
-For reproducing the exact results introduced in the paper, 
-4000 iterations are required to stabilize the decomposed matrices.
-The whole computation is omitted here due to time complexity (> 10min)
 ```{r, load_retrofit_results}
 H           = data$results_4k_iterations$decompose$h
 W           = data$results_4k_iterations$decompose$w
@@ -75,7 +71,6 @@ Theta       = data$results_4k_iterations$decompose$th
 
 # Cell-type Annotation
 
-After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
 Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
 
 Get the single cell reference data:
@@ -83,7 +78,7 @@ Get the single cell reference data:
 sc_ref_w = data$sc_ref_w
 ```
 
-This file contains average gene expression values for G genes in K cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
+This file contains average gene expression values for G = 500 genes in K = 10 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 ```{r, annotate}
 K             = 10
 result        = retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K, 
@@ -94,7 +89,7 @@ ranked_cells  = result$ranked_cells
 ```
 Above code assigns components to the cell type it has maximum correlation with.
 
-# Deconvolution and annotation in one hand (Optional)
+# Deconvolution and annotation in one step (Optional)
 
 We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
 ```{r, retrofit}
@@ -112,17 +107,7 @@ result      = retrofit::retrofit(x,
 
 # Results 
 
-# Visualization
-
-Since this is synthetic data, true cell type proportions are known. We can visualize the correlation and RMSE between true and estimated cell-type proportions as follows:
-
-Below code plots the correlation matrix.
-```{r, visualize_correlation_matrix}
-correlations = cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
-ggcorrplot::ggcorrplot(correlations)
-```
-
-Below code plots the correlation values between each cell type and the chosen component.
+Visualize the correlation values between each cell type and the chosen component, as follows:
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
 ranked_correlations = sort(diag(correlations), decreasing=T)
@@ -145,8 +130,9 @@ gg <- ggplot2::ggplot(df,ggplot2::aes(x=x, y=y, group=1)) +
   ggplot2::geom_text(data=df, ggplot2::aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
 plot(gg)
 ```
-
-Below code visualize RMSE between true and estimated cell-type proportions.
+All mapped cell types have greater than 0.75 correlation with the component they are matched with.\
+\
+Since this is synthetic data, true cell type proportions are known. We can visualize the RMSE between the true and the estimated cell-type proportions as follows:
 ```{r, visualize_rmse}
 H_true  = data$sc_ref_h
 H_est   = H_annotated
