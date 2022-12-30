@@ -1,9 +1,10 @@
-
-"Retrofit One sentence (with paper link)"
+RETROFIT enables reference-free cell-type deconvolution of spatial transcriptomics data. The overall approach is detailed in the paper script. [Link to paper]
 
 ## Overview
 
 "`retrofit` overview"
+
+Figure below shows the method schematic for RETROFIT. RETROFIT (Reference-freE spatial TRanscriptOmic FactorIzaTion) only takes as input a ST count matrix $X$ of $G$ genes at $S$ spots, and then projects $X$ to a low-dimension space spanned by L non-negative latent components in an unsupervised manner, where the expression of each gene at each spot for each component is further decomposed into (1) expression specific to this gene and (2) background expression shared by all genes. A tuning parameter $\lamda \ge 0$ controls the size of background expression. Like any unsupervised learning, RETROFIT produces unlabeled results. To annotate them, we develop two simple post hoc strategies of matching the latent components inferred by RETROFIT to known cell types. The first annotation strategy requires a single-cell expression reference and the second strategy requires a curated list of cell-type-specific marker genes for all K cell types present in the ST data. Read more about the strategies in Methods section of the paper.
 
 ![Figure1](https://user-images.githubusercontent.com/90921267/209952993-4a4a5e49-9638-4dee-acdc-ce6a1f18d870.png)
 
@@ -53,3 +54,5 @@ W_annotated = res$w
 H_annotated = res$h
 cells       = res$ranked_cells	  
 ```
+
+More details can be found in the vignettes.
