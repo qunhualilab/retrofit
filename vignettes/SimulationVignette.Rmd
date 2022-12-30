@@ -110,6 +110,7 @@ result      = retrofit::retrofit(x,
 Visualize the correlation values between each cell type and the chosen component, as follows:
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
+correlations = cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
 ranked_correlations = sort(diag(correlations), decreasing=T)
 df=data.frame(x=1:length(ranked_correlations), 
               y=ranked_correlations, 
