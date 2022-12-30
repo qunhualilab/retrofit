@@ -9,12 +9,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Introduction
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results = 'hide')
+```
+
+# Introduction
 
 RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a Colon dataset. We will annotate cell types using marker gene lists as well as single cell reference. 
 We will also reproduce some of the results from the paper for illustration.
 
-## Package Installation and other requirements
+# Package Installation and other requirements
 
 Install and load the packages using the following steps:
 <!-- adam: this is not usable before submitting to and accepted by Bioconductor -->
@@ -26,13 +30,9 @@ BiocManager::install("retrofit")
 
 ```{r, load_library}
 library(retrofit)
-# library(ggplot2)
-# library(grid)
-# library(cowplot)
-# library(colorspace)
 ```
 
-## Spatial Transcriptomics Data
+# Spatial Transcriptomics Data
 
 First load the ST data, using the following command:
 
@@ -41,7 +41,7 @@ data("VignetteColonData")
 X = data$colon_a4_x
 ```
 
-## Pre-processing ST data 
+# Pre-processing ST data 
 
 You may also pre-process the ST data, similar to STdeconvolve, using the following steps:
 <!-- Xi: need the pre-processing steps done by Xi using STdeconvolve package -->
@@ -54,7 +54,7 @@ This code will do the following:
 
 In the end, the ST data matrix will consist of G genes and S spots i.e., a matrix of order G x S.
 
-## Reference-free Deconvolution
+# Reference-free Deconvolution
 
 Initialize the required parameters for deconvolution. We set the number of iterations, Iter = 4000 and number of components, L = 20. Lamda is kept at the default value of 0.01. 
 
@@ -66,6 +66,7 @@ After initialization, run retrofit on the data (X) as follows:
 Iter = 20
 L = 20
 result = retrofit::decompose(X, L=L, iterations=Iter, seed=12, verbose=TRUE)
+
 H = result$h
 W = result$w
 TH =result$th
@@ -75,36 +76,48 @@ Now we have our estimates of W (a matrix of order G x L), H (a matrix of order L
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
 
 
-## Cell-type Annotation via known marker genes
+# Cell-type Annotation via known marker genes
 
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
-```{r, data}
+```{r, marker}
 marker_ref = data$marker_ref
 ```
 
 This file contains the list of marker genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
-```{r, annotate}
+```{r, annotate with marker}
 K = length(marker_ref) # number of cell types
 result = annotateWithMarkers(marker_ref, K, W, H)
 H_mark = result$h
 W_mark = result$w
 ```
+
+```{r, normalize}
+# normalize
+H_est <- H_mark
+for(i in 1:ncol(H_mark)){
+    H_est[,i]=H_mark[,i]/sum(H_mark[,i])
+}
+W_est <- W_mark
+for(i in 1:nrow(W_mark)){
+    W_est[i,]=W_mark[i,]/sum(W_mark[i,])
+}
+```
 <!-- Adam: this function should also give mapping maatrix visualization -->
 We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark of order K x S.
 
 
-## Cell-type Annotation via annotated single cell reference
+# Cell-type Annotation via annotated single cell reference
 
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
-```{r, data}
+```{r, sc}
 sc_ref = data$sc_ref
 ```
 This file contains average gene expression values for G genes in K=8 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 
-```{r, annotate}
+```{r, annotate with sc}
 K = ncol(sc_ref) # number of cell types
 result = annotateWithCorrelations(sc_ref, K, W, H)
 H_sc = result$h
@@ -114,14 +127,14 @@ W_sc = result$w
 We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_sc of order K x S.
 You can verify that the mappings from both methods are largely similar.
 
-## Results and visualization
+# Results and visualization
 
 Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
 
 Figure 4A: Proportion of cell-types in this tisse:
 
 ```{r}
-rowSums(H_mark)/ncol(H_mark)
+rowSums(H_est)/ncol(H_est)
 ```
 
 Figure 4C: 
@@ -135,8 +148,8 @@ t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,
 
 Find the cell-type with maximum proportion in each spot and plot:
 ```{r}
-dat=as.data.frame(cbind(coords,t(H_mark)))
-colnames(dat)=c(colnames(coords),rownames(H_mark))
+dat=as.data.frame(cbind(coords,t(H_est)))
+colnames(dat)=c(colnames(coords),rownames(H_est))
 
 df=dat[,-c(1:3)]
 df$CellType=NA
@@ -195,26 +208,26 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r}
-df=dat[,-c(2:4)]
-ggplot(df, aes(x=imagerow, y=imagecol))  +
+df=dat[,-c(1:3)]
+ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
   ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
-  geom_point(size=1.5, aes(color=Epithelial))+
-  scale_color_gradientn(name="Epithelial ",
-                        colors=adjust_transparency("grey20",
-                                                   alpha = c(0,0.5,1)),
-                        n.breaks=3, limits=c(0,1)) +
-  xlab("") + ylab("") +
-  theme_classic()+
-  theme(legend.key.height = unit(0.2, 'cm'), #change legend key size
-        legend.key.width = unit(0.8, 'cm'),
-        legend.title = element_text(size=10),
+  ggplot2::geom_point(size=1.5, ggplot2::aes(color=Epithelial))+
+  ggplot2::scale_color_gradientn(name="Epithelial ",
+                                 colors=colorspace::adjust_transparency("grey20",
+                                                                        alpha = c(0,0.5,1)),
+                                 n.breaks=3, limits=c(0,1)) +
+  ggplot2::xlab("") + ggplot2::ylab("") +
+  ggplot2::theme_classic()+
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.2, 'cm'), #change legend key size
+        legend.key.width = ggplot2::unit(0.8, 'cm'),
+        legend.title = ggplot2::element_text(size=10),
         legend.position = "bottom",
-        legend.box.margin=margin(-20,-10,-5,-10),
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"),
-        axis.line=element_blank(),
-        legend.text=element_text(size=8),
-        axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.x=element_blank(),axis.ticks.y=element_blank())
+        legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
+        plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"),
+        axis.line=ggplot2::element_blank(),
+        legend.text=ggplot2::element_text(size=8),
+        axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
+        axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
 Figure 5A:
@@ -230,25 +243,25 @@ plotfn <- function(df=NULL)
   df1 <- df1[rev(1:nrow(df1)),]
   
   #plot
-  p <- ggplot(df1,aes(x=num,y=value,fill=variable))+
-    geom_bar(stat="identity",position="fill",width = 1, space = 0)+
-    scale_x_continuous(expand = c(0, 0))+
-    scale_y_continuous(expand = c(0, 0))+
-    labs(x = NULL, y = NULL)+
-    theme_grey(base_size=7)+
-    theme(legend.text = element_text(size = 8),legend.position = "bottom",
-          legend.key.size = unit(0.4, "cm"),
-          legend.title = element_blank(),
-          axis.ticks = element_blank(),
-          axis.text.x = element_blank())+
-    scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9", 
+  p <- ggplot2::ggplot(df1, ggplot2::aes(x=num,y=value,fill=variable))+
+    ggplot2::geom_bar(stat="identity",position="fill",width = 1, space = 0)+
+    ggplot2::scale_x_continuous(expand = c(0, 0))+
+    ggplot2::scale_y_continuous(expand = c(0, 0))+
+    ggplot2::labs(x = NULL, y = NULL)+
+    ggplot2::theme_grey(base_size=7)+
+    ggplot2::theme(legend.text = ggplot2::element_text(size = 8),legend.position = "bottom",
+          legend.key.size = ggplot2::unit(0.4, "cm"),
+          legend.title = ggplot2::element_blank(),
+          axis.ticks = ggplot2::element_blank(),
+          axis.text.x = ggplot2::element_blank())+
+    ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9", 
                                "#009E73", "#CC79A7", "#0072B2",
                                "#D55E00", "#F0E442"))
   
   p
 }
 
-df=as.data.frame(t(H_mark[c(2,4,6,5,7,1,8,3),]))
+df=as.data.frame(t(H_est[c(2,4,6,5,7,1,8,3),]))
 #pick max cluster, match max to cluster
 maxval <- apply(df,1,max)
 matchval <- vector(length=nrow(df))
@@ -263,7 +276,11 @@ df_q <- df_q[with(df_q, order(matchval,-maxval)), ]
 df_q$maxval <- NULL
 df_q$matchval <- NULL
 
-plotfn(df=df_q)+theme(legend.position="bottom")+ggtitle("Fetal 19 PCW (C)")+ theme(plot.title = element_text(hjust=0.5,size=9))
+
+plotfn(df=df_q)+
+  ggplot2::theme(legend.position="bottom")+
+  ggplot2::ggtitle("Fetal 19 PCW (C)")+ 
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=9))
 ```
 
 Figure 5D: Plotting proportion of only dominant cell types
@@ -272,33 +289,33 @@ Figure 5D: Plotting proportion of only dominant cell types
 df=dat
 df_new=df[df$Epithelial>0.5 | df$Fibroblasts>0.5 | df$Myo.Meso>0.5 |
             df$Endothelium>0.5 | df$Pericytes>0.5 | df$Neural>0.5 |
-            df$Immune>0.5 | df$Muscle>0.5,-c(2:4)]
+            df$Immune>0.5 | df$Muscle>0.5,-c(1:3)]
 df_new$CellType=1*(df_new$Epithelial>0.5) + 2*(df_new$Immune>0.5) +
   3*(df_new$Myo.Meso>0.5) + 4*(df_new$Muscle>0.5) + 5*(df_new$Neural>0.5)+
   6*(df_new$Endothelium>0.5) + 7*(df_new$Pericytes>0.5) + 8*(df_new$Fibroblasts>0.5)
 df_new$CellType=factor(df_new$CellType)
 
-ggplot(df_new, aes(x=imagerow, y=imagecol))  + 
-  annotation_custom(t4, 700, 6400, 990, 6550) + 
-  geom_point(size=1.8, shape=21, aes(fill=CellType))+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
+ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
+  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) + 
+  ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
+  ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
                              "#009E73", "#CC79A7", "#0072B2", 
                              "#D55E00", "#F0E442"),
                     labels=c("Epithelial","Immune", 
                              "Myofibroblasts/\nMesothelium",
                              "Muscle", "Neural", "Endothelium", 
                              "Pericytes", "Fibroblasts"))+ 
-  xlab("") + ylab("") +
-  theme_classic()+
-  theme(legend.key.height = unit(0.5, 'cm'), #change legend key size
-        legend.key.width = unit(1, 'cm'), 
-        legend.title = element_blank(),
+  ggplot2::xlab("") + ggplot2::ylab("") +
+  ggplot2::theme_classic()+
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.5, 'cm'), #change legend key size
+        legend.key.width = ggplot2::unit(1, 'cm'), 
+        legend.title = ggplot2::element_blank(),
         legend.position = "none",
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"), 
-        axis.line=element_blank(),
-        legend.text=element_text(size=9),
-        axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.x=element_blank(),axis.ticks.y=element_blank())
+        plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"), 
+        axis.line=ggplot2::element_blank(),
+        legend.text=ggplot2::element_text(size=9),
+        axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
+        axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
 Figure 5E: Plotting spots with cell types co-localized with Epithelial cells
@@ -308,7 +325,7 @@ df=dat
 df_new=df[df$Epithelial>0.25,] 
 df_new=df_new[  df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
               df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
-              df_new$Immune>0.25 | df_new$Muscle>0.25,-c(2:4)]
+              df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
 
 df_new$CellType=NA
 for(i in 1:nrow(df_new)){
@@ -317,28 +334,28 @@ for(i in 1:nrow(df_new)){
 df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso", "Muscle","Neural", "Endothelium", 
                                          "Pericytes","Fibroblasts"))     
 
-ggplot(df_new, aes(x=imagerow, y=imagecol))  + 
-  ylim(min(df$imagecol),max(df$imagecol)) +
-  xlim(min(df$imagerow),max(df$imagerow))+
-  annotation_custom(t4, 700, 6400, 990, 6550) + 
-  geom_point(size=1.8, shape=21, aes(fill=CellType))+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
+ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
+  ggplot2::ylim(min(df$imagecol),max(df$imagecol)) +
+  ggplot2::xlim(min(df$imagerow),max(df$imagerow))+
+  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) + 
+  ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
+  ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
                              "#009E73", "#CC79A7", "#0072B2", 
                              "#D55E00", "#F0E442"),
                     labels=c("Epithelial","Immune", 
                              "Myofibroblasts/\nMesothelium",
                              "Muscle", "Neural", "Endothelium", 
                              "Pericytes", "Fibroblasts"))+ 
-  xlab("") + ylab("") +
-  theme_classic()+
-  theme(legend.key.height = unit(0.5, 'cm'), #change legend key size
-        legend.key.width = unit(1, 'cm'), 
-        legend.title = element_blank(),
+  ggplot2::xlab("") + ggplot2::ylab("") +
+  ggplot2::theme_classic()+
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.5, 'cm'), #change legend key size
+        legend.key.width = ggplot2::unit(1, 'cm'), 
+        legend.title = ggplot2::element_blank(),
         legend.position = "none",
-        plot.margin = margin(-0.2, -0.2, 0.2, -1, "cm"), 
-        axis.line = element_blank(),
-        axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.x=element_blank(),axis.ticks.y=element_blank())
+        plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"), 
+        axis.line = ggplot2::element_blank(),
+        axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
+        axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
 Figure 6B and C:
@@ -352,42 +369,41 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
-genes=as.character(read.csv("Fetal12-relevantgenes.csv",header = F)[,1])
+genes=data$fetal12_genes
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-W_prop=W_mark/rowSums(W_mark)
-df=as.matrix(W_prop[genes,])
-df=df[order(row.names(df)),]
-
-dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
-                                 rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
-                                 rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
-                                 rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
-                               levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
-                                        "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
-               genes=factor(genes,levels=genes),
-               val=c(df[,"Epithelial"],df[,"Fibroblasts"],
-                     df[,"Myo.Meso"],df[,"Endothelium"],
-                     df[,"Pericytes"],df[,"Neural"],
-                     df[,"Immune"],df[,"Muscle"]))
-  
-ggplot(dat, aes(celltype, genes, fill= val)) +  
-  geom_tile() +theme_classic() +
-  scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
-                       name="Normalized\nGene Expression   ",
-                       limit=c(0,1), na.value="grey87"
-  )+ 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1,size=8),
-        legend.key.height = unit(0.2, 'cm'), 
-        legend.key.width = unit(1, 'cm'), 
-        legend.title = element_text(size=7),
-        legend.justification="center",
-        legend.box.margin=margin(-20,-10,-5,-10),
-        legend.text=element_text(size=7)) +
-  xlab('')+ ylab('')+ 
-  theme(legend.position="bottom")
+# df=as.matrix(W_est[genes,])
+# df=df[order(row.names(df)),]
+# 
+# dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
+#                                  rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
+#                                  rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
+#                                  rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
+#                                levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
+#                                         "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
+#                genes=factor(genes,levels=genes),
+#                val=c(df[,"Epithelial"],df[,"Fibroblasts"],
+#                      df[,"Myo.Meso"],df[,"Endothelium"],
+#                      df[,"Pericytes"],df[,"Neural"],
+#                      df[,"Immune"],df[,"Muscle"]))
+#   
+# ggplot(dat, aes(celltype, genes, fill= val)) +  
+#   geom_tile() +theme_classic() +
+#   scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
+#                        name="Normalized\nGene Expression   ",
+#                        limit=c(0,1), na.value="grey87"
+#   )+ 
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1,size=8),
+#         legend.key.height = unit(0.2, 'cm'), 
+#         legend.key.width = unit(1, 'cm'), 
+#         legend.title = element_text(size=7),
+#         legend.justification="center",
+#         legend.box.margin=margin(-20,-10,-5,-10),
+#         legend.text=element_text(size=7)) +
+#   xlab('')+ ylab('')+ 
+#   theme(legend.position="bottom")
 ```
 
 
