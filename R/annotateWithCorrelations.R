@@ -21,10 +21,11 @@ annotateWithCorrelations <- function(sc_ref,
                                      K,
                                      decomp_w, 
                                      decomp_h) {
-  testit::assert(!is.null(sc_ref))
-  testit::assert(is.numeric(K))
-  testit::assert(!is.null(decomp_w))
-  testit::assert(!is.null(decomp_h))
+  stopifnot(!is.null(sc_ref))
+  stopifnot(is.numeric(K))
+  stopifnot(!is.null(decomp_w))
+  stopifnot(!is.null(decomp_h))
+  
   if(dim(decomp_w)[2] != dim(decomp_h)[1]){
     stop("decomp_w and decomp_h dimensions not matched")
   }

@@ -46,8 +46,6 @@ Depends:
     Rcpp
 LinkingTo: 
     Rcpp
-Imports:
-    testit
 Suggests:
     BiocStyle,
     knitr,
