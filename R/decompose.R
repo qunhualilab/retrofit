@@ -31,11 +31,6 @@
 #'
 #'@examples
 #'iterations = 10
-#'L = 16
-#'x=read.csv(paste("../data", "sample_x.csv", sep="/"), row.names = 1, check.names = FALSE)
-#'result = RetrofitDecompose(x,
-#'                           iterations=iterations,
-#'                           L=L)
 #'@seealso papers reference
 #'@export
 decompose <- function(x, 

@@ -15,13 +15,6 @@
 #'
 #'@examples
 #'K = 8
-#'ref_w=read.csv(paste("../data", "sample_sc_ref.csv", sep="/"), row.names = 1, check.names = FALSE)
-#'decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
-#'decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
-#'result = RetrofitMapByCorrelation(sc_ref=ref_w, 
-#'                                  K=K,
-#'                                  decomp_w = decomp_w,
-#'                                  decomp_h = decomp_h)
 #'@seealso papers reference
 #'@export
 annotateWithCorrelations <- function(sc_ref, 

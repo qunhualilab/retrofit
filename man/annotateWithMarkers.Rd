@@ -27,22 +27,6 @@ Match cell types based on correlations with reference. decomp_w   between matchi
 }
 \examples{
 K = 8
-decomp_w=read.csv(paste("../data/sample_results", "sample_x__decomp_w.csv", sep="/"), row.names = 1, check.names = FALSE)
-decomp_h=read.csv(paste("../data/sample_results", "sample_x__decomp_h.csv", sep="/"), check.names = FALSE)
-marker_ref_d=read.csv(paste("../data", "sample_marker_ref.csv", sep="/"), check.names = FALSE)
-marker_ref = list()
-for(r in 1:nrow(marker_ref_d)){
- gene = marker_ref_d[[1]][r]
- cell_type = marker_ref_d[[2]][r]
- if(is.null(marker_ref[[cell_type]])){
-   marker_ref[[cell_type]] = c()
- }
- marker_ref[[cell_type]] = c(marker_ref[[cell_type]], gene)
-}
-result = RetrofitMapByMarkers(marker_ref = marker_ref, 
-                             K=K,
-                             decomp_w = decomp_w,
-                             decomp_h = decomp_h)
 }
 \seealso{
 papers reference

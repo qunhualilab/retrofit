@@ -49,18 +49,18 @@ LinkingTo:
 Imports:
     testit
 Suggests:
-    ggplot2,
-    cowplot,
-    ggcorrplot,
-    grid,
-    colorspace,
-    magick,
-    knitr,
     BiocStyle,
+    knitr,
     rmarkdown,
     testthat,
     DescTools,
+    ggplot2,
+    ggcorrplot,
+    cowplot,
+    grid,
+    colorspace,
     png,
+    reshape2,
     pals,
     RCurl
 VignetteBuilder:

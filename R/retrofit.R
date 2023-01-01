@@ -33,28 +33,6 @@
 #'iterations = 10
 #'L = 16
 #'K = 8
-#'
-#'ref_w=read.csv(paste("../data", "sample_ref_cor.csv", sep="/"), row.names = 1, check.names = FALSE)
-#'ref_marker_d=read.csv(paste("../data", "sample_ref_marker.csv", sep="/"), check.names = FALSE)
-#'ref_marker = list()
-#'for(r in 1:nrow(ref_marker_d)){
-#'  gene = ref_marker_d[[1]][r]
-#'  cell_type = ref_marker_d[[2]][r]
-#'  if(is.null(ref_marker[[cell_type]])){
-#'  ref_marker[[cell_type]] = c()
-#'}
-#'  ref_marker[[cell_type]] = c(ref_marker[[cell_type]], gene)
-#'}
-#'
-#'x=read.csv(paste("../data", "sample_x.csv", sep="/"), row.names = 1, check.names = FALSE)
-#'
-#'result = Retrofit(x, 
-#'                  ref_cor=ref_w, 
-#'                  ref_marker=ref_marker, 
-#'                  iterations=iterations, 
-#'                  L=L, 
-#'                  K=K)
-#'result = retrofit_decompose(x)
 #'@seealso papers reference
 #'@export
 retrofit <- function(x,
