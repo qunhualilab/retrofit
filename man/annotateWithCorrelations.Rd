@@ -7,13 +7,13 @@
 annotateWithCorrelations(sc_ref, K, decomp_w, decomp_h)
 }
 \arguments{
+\item{sc_ref}{A Matrix or Array with two dimensions (GeneExpressions, Cell types).}
+
 \item{K}{integer: The number of cell types to be selected}
 
 \item{decomp_w}{Matrix(GeneExpressions, Components): Decomposed w matrix}
 
 \item{decomp_h}{Matrix(Components, Spots): Decomposed h matrix}
-
-\item{ref_w}{A Matrix or Array with two dimensions (GeneExpressions, Cell types).}
 }
 \value{
 A list of

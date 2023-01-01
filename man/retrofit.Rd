@@ -24,47 +24,54 @@ retrofit(
 )
 }
 \arguments{
-\item{x}{Matrix or Array with two dimensions (GeneExpressions, Spots).
-This is the main spatial transciptomics data.}
+\item{x}{A matrix or array with dimension (GeneExpressions, Spots). This is the main spatial transciptomics data.}
 
-\item{L}{integer: The number of components to be decomposed}
+\item{sc_ref}{A matrix or array with two dimensions (GeneExpressions, Cell types).}
+
+\item{marker_ref}{A list with (keys, values) = (cell types, an array of genes).}
+
+\item{L}{integer (default:16)    The number of components to be decomposed}
 
 \item{K}{integer: The number of cell types to be selected}
 
-\item{iterations}{integer: The number of maximum iterations to be executed}
+\item{iterations}{integer (default:4000)  The number of maximum iterations to be executed}
 
-\item{lambda}{double: Background expression profile control}
+\item{lambda}{double  (default:0.01)  Background expression profile control}
 
-\item{seed}{double: Random variable seed in case the output should be deterministic}
+\item{seed}{double  (default:NULL)  Random variable seed in case the output should be deterministic}
 
-\item{alpha_w_0}{double: Variational initial parameter for vector alpha_w}
+\item{alpha_w_0}{double  (default:0.05)  Variational initial parameter for vector alpha_w}
 
-\item{beta_w_0}{double:  Variational initial parameter for vector beta_w}
+\item{beta_w_0}{double  (default:0.0001)Variational initial parameter for vector beta_w}
 
-\item{alpha_h_0}{double: Variational initial parameter for vector alpha_h}
+\item{alpha_h_0}{double  (default:0.2)   Variational initial parameter for vector alpha_h}
 
-\item{beta_h_0}{double:  Variational initial parameter for vector beta_h}
+\item{beta_h_0}{double  (default:0.2)   Variational initial parameter for vector beta_h}
 
-\item{alpha_th_0}{double:Variational initial parameter for vector alpha_th}
+\item{alpha_th_0}{double  (default:1.25)  Variational initial parameter for vector alpha_th}
 
-\item{beta_th_0}{double: Variational initial parameter for vector beta_th}
+\item{beta_th_0}{double  (default:10)    Variational initial parameter for vector beta_th}
 
-\item{kappa}{double: Learning rate factor}
+\item{kappa}{double  (default:0.5)   Learning rate factor}
 
-\item{ref_w}{A Matrix or Array with two dimensions (GeneExpressions, Cell types).}
-
-\item{tolerance}{double: tolerance factor for convergence of the algorithm}
-
-\item{plot}{boolean: Plot relative errors}
+\item{verbose}{boolean (default:FALSE)}
 }
 \value{
 A list of decomposed vectors that contains
 \itemize{
-\item w: 2d array with GeneExpressions, Components
-\item h: 2d array with Components, Spots
-\item th: an array with Components
-\item w_match: 2d array filtered from 'w' with columns labeled as selected cell types (from ref_w)
-\item h_match: 2d array filtered from 'h' with rows labeled as selected cell types (from ref_w)
+\item decompose: \itemize{
+\item w:  Decomposed 2d array with GeneExpressions, Components
+\item h:  Decomposed 2d array with Components, Spots
+\item th: 1d array with Components
+}
+\item annotateWithCorrelations: \itemize{
+\item w:  Filtered 2d array with GeneExpressions, Cell types
+\item h:  Filtered2d array with Cell types, Spots
+}
+\item annotateWithMarkers: \itemize{
+\item w:  Filtered 2d array with GeneExpressions, Cell types
+\item h:  Filtered2d array with Cell types, Spots
+}
 }
 }
 \description{

@@ -2,7 +2,7 @@
 #' 
 #' @description Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 #'
-#' @param ref_w A Matrix or Array with two dimensions (GeneExpressions, Cell types).
+#' @param sc_ref A Matrix or Array with two dimensions (GeneExpressions, Cell types).
 #' @param K integer: The number of cell types to be selected
 #' @param decomp_w Matrix(GeneExpressions, Components): Decomposed w matrix
 #' @param decomp_h Matrix(Components, Spots): Decomposed h matrix
@@ -74,8 +74,8 @@ annotateWithCorrelations <- function(sc_ref,
     }
   }
   
-  correlations = cor(sc_ref_normalized, w_normalized)
-  correlations2 = cor(sc_ref_normalized, w_normalized)
+  correlations = stats::cor(sc_ref_normalized, w_normalized)
+  correlations2 = stats::cor(sc_ref_normalized, w_normalized)
   
   col_sel=rep(NA,K)
   row_sel=rep(NA,K)

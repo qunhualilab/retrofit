@@ -110,15 +110,15 @@ result      = retrofit::retrofit(x,
 Visualize the correlation values between each cell type and the chosen component, as follows:
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
-correlations = cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
+correlations        = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
 ranked_correlations = sort(diag(correlations), decreasing=T)
-df=data.frame(x=1:length(ranked_correlations), 
-              y=ranked_correlations, 
-              label_x1=1, 
-              label_x2=2, 
-              label_y=seq(from=0.5, by=-0.05, length.out=10),
-              label_cell=ranked_cells,
-              label_corr=format(round(ranked_correlations, digits=4)))
+df                  = data.frame(x=1:length(ranked_correlations), 
+                                 y=ranked_correlations, 
+                                 label_x1=1, 
+                                 label_x2=2, 
+                                 label_y=seq(from=0.5, by=-0.05, length.out=10),
+                                 label_cell=ranked_cells,
+                                 label_corr=format(round(ranked_correlations, digits=4)))
 
 gg <- ggplot2::ggplot(df,ggplot2::aes(x=x, y=y, group=1)) + 
   ggplot2::geom_line(ggplot2::aes(x=x, y=y)) + 
@@ -137,7 +137,7 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 ```{r, visualize_rmse}
 H_true  = data$sc_ref_h
 H_est   = H_annotated
-corrH   = sort(diag(cor(H_true,H_est)), decreasing=T, na.last=T)
+corrH   = sort(diag(stats::cor(H_true,H_est)), decreasing=T, na.last=T)
 df      = data.frame(x=seq(0,1,length.out = 1000), 
                      y=corrH)
 df_text = data.frame(x=0.2,

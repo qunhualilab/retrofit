@@ -3,6 +3,13 @@
 \name{decompose}
 \alias{decompose}
 \title{RETROFIT decomposition algorithm}
+\format{
+TestDecomposeData
+A list supporting decompose testing
+\describe{
+\item{x}
+}
+}
 \usage{
 decompose(
   x,
@@ -21,41 +28,40 @@ decompose(
 )
 }
 \arguments{
-\item{x}{Matrix or Array with dimension (GeneExpressions, Spots).
-This is the main spatial transciptomics data.}
+\item{x}{matrix or array with dimension (GeneExpressions, Spots). This is the main spatial transciptomics data.}
 
-\item{L}{integer: The number of components to be decomposed}
+\item{L}{integer (default:16)    The number of components to be decomposed}
 
-\item{iterations}{integer: The number of maximum iterations to be executed}
+\item{iterations}{integer (default:4000)  The number of maximum iterations to be executed}
 
-\item{lambda}{double: Background expression profile control}
+\item{lambda}{double  (default:0.01)  Background expression profile control}
 
-\item{seed}{double: Random variable seed in case the output should be deterministic}
+\item{seed}{double  (default:NULL)  Random variable seed in case the output should be deterministic}
 
-\item{alpha_w_0}{double: Variational initial parameter for vector alpha_w}
+\item{alpha_w_0}{double  (default:0.05)  Variational initial parameter for vector alpha_w}
 
-\item{beta_w_0}{double:  Variational initial parameter for vector beta_w}
+\item{beta_w_0}{double  (default:0.0001)Variational initial parameter for vector beta_w}
 
-\item{alpha_h_0}{double: Variational initial parameter for vector alpha_h}
+\item{alpha_h_0}{double  (default:0.2)   Variational initial parameter for vector alpha_h}
 
-\item{beta_h_0}{double:  Variational initial parameter for vector beta_h}
+\item{beta_h_0}{double  (default:0.2)   Variational initial parameter for vector beta_h}
 
-\item{alpha_th_0}{double:Variational initial parameter for vector alpha_th}
+\item{alpha_th_0}{double  (default:1.25)  Variational initial parameter for vector alpha_th}
 
-\item{beta_th_0}{double: Variational initial parameter for vector beta_th}
+\item{beta_th_0}{double  (default:10)    Variational initial parameter for vector beta_th}
 
-\item{kappa}{double: Learning rate factor}
+\item{kappa}{double  (default:0.5)   Learning rate factor}
 
-\item{tolerance}{double: tolerance factor for convergence of the algorithm}
-
-\item{plot}{boolean: Plot relative errors}
+\item{verbose}{boolean (default:FALSE)}
 }
 \value{
 A list of decomposed vectors that contains
 \itemize{
-\item w: 2d array with GeneExpressions, Components
-\item h: 2d array with Components, Spots
-\item th: an array with Components
+\item w:             2d array with GeneExpressions, Components
+\item h:             2d array with Components, Spots
+\item th:            an array with Components
+\item durations:     (verbose) durations vector (unit: second)
+\item relative_error:(verbose) errors with pre-defined norm vector
 }
 }
 \description{
@@ -66,7 +72,12 @@ Since exact Bayesian inference is infeasible and considering the large number of
 variational inference was adopted to approximately estimate the parameters in performant manner.
 }
 \examples{
-iterations = 10
+data("TestDecomposeData")
+x   = data$extra5_x
+res = retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
+W   = res$w
+H   = res$h
+TH  = res$th
 }
 \seealso{
 papers reference

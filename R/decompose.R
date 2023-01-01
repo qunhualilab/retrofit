@@ -28,7 +28,7 @@
 #' \item durations:     (verbose) durations vector (unit: second)
 #' \item relative_error:(verbose) errors with pre-defined norm vector 
 #' }
-#'
+#' 
 #'@examples
 #' data("TestDecomposeData")
 #' x   = data$extra5_x
