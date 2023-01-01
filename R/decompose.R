@@ -80,7 +80,7 @@ decompose <- function(x,
   S   = dim(x)[2] # Spots
   K   = L # alias the component number
   dim = c(G,K,S)
-  if (G*K*S > 1e+7){
+  if (G*K*S > 1e+8){
     warning(paste('The dimension ( G,K,S =>', toString(dim), ') can be too large to handle in this function.'))
   }
   if(G*K*S == 0){
