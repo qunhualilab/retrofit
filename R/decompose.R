@@ -6,31 +6,36 @@
 #'  Since exact Bayesian inference is infeasible and considering the large number of spots and genes,
 #'  variational inference was adopted to approximately estimate the parameters in performant manner.
 #'
-#' @param x Matrix or Array with dimension (GeneExpressions, Spots). 
-#'          This is the main spatial transciptomics data.
-#' @param iterations integer: The number of maximum iterations to be executed
-#' @param tolerance double: tolerance factor for convergence of the algorithm 
-#' @param L integer: The number of components to be decomposed
-#' @param alpha_w_0 double: Variational initial parameter for vector alpha_w
-#' @param beta_w_0 double:  Variational initial parameter for vector beta_w
-#' @param alpha_h_0 double: Variational initial parameter for vector alpha_h
-#' @param beta_h_0 double:  Variational initial parameter for vector beta_h
-#' @param alpha_th_0 double:Variational initial parameter for vector alpha_th
-#' @param beta_th_0 double: Variational initial parameter for vector beta_th
-#' @param lambda double: Background expression profile control
-#' @param kappa double: Learning rate factor
-#' @param seed double: Random variable seed in case the output should be deterministic
-#' @param plot boolean: Plot relative errors
+#' @param x matrix or array with dimension (GeneExpressions, Spots). This is the main spatial transciptomics data.
+#' @param L           integer (default:16)    The number of components to be decomposed
+#' @param iterations  integer (default:4000)  The number of maximum iterations to be executed
+#' @param lambda      double  (default:0.01)  Background expression profile control
+#' @param seed        double  (default:NULL)  Random variable seed in case the output should be deterministic
+#' @param alpha_w_0   double  (default:0.05)  Variational initial parameter for vector alpha_w
+#' @param beta_w_0    double  (default:0.0001)Variational initial parameter for vector beta_w
+#' @param alpha_h_0   double  (default:0.2)   Variational initial parameter for vector alpha_h
+#' @param beta_h_0    double  (default:0.2)   Variational initial parameter for vector beta_h
+#' @param alpha_th_0  double  (default:1.25)  Variational initial parameter for vector alpha_th
+#' @param beta_th_0   double  (default:10)    Variational initial parameter for vector beta_th
+#' @param kappa       double  (default:0.5)   Learning rate factor
+#' @param verbose     boolean (default:FALSE)
 #'
 #' @return A list of decomposed vectors that contains
 #' \itemize{
-#' \item w: 2d array with GeneExpressions, Components
-#' \item h: 2d array with Components, Spots
-#' \item th: an array with Components
+#' \item w:             2d array with GeneExpressions, Components
+#' \item h:             2d array with Components, Spots
+#' \item th:            an array with Components
+#' \item durations:     (verbose) durations vector (unit: second)
+#' \item relative_error:(verbose) errors with pre-defined norm vector 
 #' }
 #'
 #'@examples
-#'iterations = 10
+#' data("TestDecomposeData")
+#' x   = data$extra5_x
+#' res = retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
+#' W   = res$w
+#' H   = res$h
+#' TH  = res$th
 #'@seealso papers reference
 #'@export
 decompose <- function(x, 
@@ -46,6 +51,22 @@ decompose <- function(x,
                       beta_th_0   = 10,
                       kappa       = 0.5,
                       verbose     = FALSE) {
+  stopifnot(!is.null(x))
+  stopifnot(!is.null(L))
+  stopifnot(!is.null(lambda))
+  stopifnot(!is.null(iterations))
+  stopifnot(!is.null(alpha_w_0))
+  stopifnot(!is.null(beta_w_0))
+  stopifnot(!is.null(alpha_h_0))
+  stopifnot(!is.null(beta_h_0))
+  stopifnot(!is.null(alpha_th_0))
+  stopifnot(!is.null(beta_th_0))
+  stopifnot(!is.null(kappa))
+  
+  stopifnot(L > 0)
+  stopifnot(iterations > 0)
+  stopifnot(kappa > 0)
+  
   if (!is.null(seed)){
     set.seed(seed)  
   }
@@ -54,15 +75,16 @@ decompose <- function(x,
   x_rownames = rownames(x)
   x_colnames = colnames(x)
   x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
-  
   # dimensions
   G   = dim(x)[1] # Gene expressions
   S   = dim(x)[2] # Spots
   K   = L # alias the component number
   dim = c(G,K,S)
-  if (G*K*S > 4*1e+7){
-    warning(paste('The dimension ( G,K,S =>', toString(dim), ') can be too 
-                  large to handle in this function.'))
+  if (G*K*S > 1e+7){
+    warning(paste('The dimension ( G,K,S =>', toString(dim), ') can be too large to handle in this function.'))
+  }
+  if(G*K*S == 0){
+    stop("Dimensions cannot be 0")
   }
   
   # W/H/Th from Gamma dist
@@ -139,9 +161,9 @@ decompose <- function(x,
     }
   }
   
-  w_hat=matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
-  h_hat=matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
-  th_hat=matrix(param$alpha_th_k/param$beta_th_k, nrow=K)
+  w_hat  = matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
+  h_hat  = matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
+  th_hat = matrix(param$alpha_th_k/param$beta_th_k, nrow=K)
   
   rownames(w_hat) = x_rownames
   colnames(h_hat) = x_colnames

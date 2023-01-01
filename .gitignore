@@ -10,3 +10,4 @@
 *.so
 /doc/
 /Meta/
+inst/doc
