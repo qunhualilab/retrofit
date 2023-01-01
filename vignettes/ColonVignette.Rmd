@@ -38,7 +38,7 @@ First load the ST data, using the following command:
 
 ```{r, data}
 data("VignetteColonData")
-X = data$colon_a3_x
+X = VignetteColonData$colon_a3_x
 ```
 
 # Pre-processing ST data 
@@ -81,7 +81,7 @@ Next, we need to annotate the components, to get the proportion of K cell types.
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
 ```{r, marker}
-marker_ref = data$marker_ref
+marker_ref = VignetteColonData$marker_ref
 ```
 
 This file contains the list of marker genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
@@ -113,7 +113,7 @@ We assign components to the cell type it has maximum average marker expression i
 Here, we will annotate using single cell reference. Load the single cell reference data:
 
 ```{r, sc}
-sc_ref = data$sc_ref
+sc_ref = VignetteColonData$sc_ref
 ```
 This file contains average gene expression values for G genes in K=8 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 
@@ -141,7 +141,7 @@ Figure 4C:
 
 Load the coordinates for the spots in the tissue and the tissue image:
 ```{r}
-coords=data$colon_a3_coords
+coords=VignetteColonData$colon_a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
 ```
@@ -369,7 +369,7 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
-genes=data$fetal12_genes
+genes=VignetteColonData$fetal12_genes
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:

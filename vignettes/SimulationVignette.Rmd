@@ -35,7 +35,7 @@ library(retrofit)
 First load the ST data, using the following command:
 ```{r, data}
 data("VignetteSimulationData")
-x = data$n10m3_x
+x = VignetteSimulationData$n10m3_x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
@@ -59,9 +59,9 @@ Theta       = result$th
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonnstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
-H           = data$results_4k_iterations$decompose$h
-W           = data$results_4k_iterations$decompose$w
-Theta       = data$results_4k_iterations$decompose$th
+H           = VignetteSimulationData$results_4k_iterations$decompose$h
+W           = VignetteSimulationData$results_4k_iterations$decompose$w
+Theta       = VignetteSimulationData$results_4k_iterations$decompose$th
 ################################################################################
 # The above results are obtained by running the code below.
 # iterations = 4000
@@ -75,7 +75,7 @@ Next, we need to annotate the components, to get the proportion of, say K, cell 
 
 Get the single cell reference data:
 ```{r, reference}
-sc_ref_w = data$sc_ref_w
+sc_ref_w = VignetteSimulationData$sc_ref_w
 ```
 
 This file contains average gene expression values for G = 500 genes in K = 10 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
@@ -135,7 +135,7 @@ All mapped cell types have greater than 0.75 correlation with the component they
 \
 Since this is synthetic data, true cell type proportions are known. We can visualize the RMSE between the true and the estimated cell-type proportions as follows:
 ```{r, visualize_rmse}
-H_true  = data$sc_ref_h
+H_true  = VignetteSimulationData$sc_ref_h
 H_est   = H_annotated
 corrH   = sort(diag(stats::cor(H_true,H_est)), decreasing=T, na.last=T)
 df      = data.frame(x=seq(0,1,length.out = 1000), 
