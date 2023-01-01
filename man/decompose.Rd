@@ -60,7 +60,7 @@ A list of decomposed vectors that contains
 }
 \description{
 Receiving the input with 2d spatial transcriptomics matrix,
-the function returns factorized {W, H, θ}.
+the function returns factorized {W, H, Theta}.
 This function fulfills Structured Stochastic Variational Inference Algorithm for RETROFIT.
 Since exact Bayesian inference is infeasible and considering the large number of spots and genes,
 variational inference was adopted to approximately estimate the parameters in performant manner.
