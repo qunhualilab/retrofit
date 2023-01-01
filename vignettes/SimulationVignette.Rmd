@@ -3,7 +3,7 @@ title: "Retrofit Simulation Vignette"
 author: "Adam Keebum Park, Roopali Singh"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Retrofit Vignette}
+  %\VignetteIndexEntry{Retrofit Simulation Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

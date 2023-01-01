@@ -4,7 +4,7 @@ author: "Adam Keebum Park, Roopali Singh"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Retrofit Vignette}
+  %\VignetteIndexEntry{Retrofit Colon Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -38,7 +38,7 @@ First load the ST data, using the following command:
 
 ```{r, data}
 data("VignetteColonData")
-X = data$colon_a4_x
+X = data$colon_a3_x
 ```
 
 # Pre-processing ST data 
@@ -141,8 +141,8 @@ Figure 4C:
 
 Load the coordinates for the spots in the tissue and the tissue image:
 ```{r}
-coords=data$colon_a4_coords
-img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210040419-8cd1871a-fc64-43aa-9b1d-308f3a73dbe8.png"))
+coords=data$colon_a3_coords
+img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
 ```
 
@@ -374,36 +374,36 @@ genes=data$fetal12_genes
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-# df=as.matrix(W_est[genes,])
-# df=df[order(row.names(df)),]
-# 
-# dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
-#                                  rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
-#                                  rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
-#                                  rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
-#                                levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
-#                                         "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
-#                genes=factor(genes,levels=genes),
-#                val=c(df[,"Epithelial"],df[,"Fibroblasts"],
-#                      df[,"Myo.Meso"],df[,"Endothelium"],
-#                      df[,"Pericytes"],df[,"Neural"],
-#                      df[,"Immune"],df[,"Muscle"]))
-#   
-# ggplot(dat, aes(celltype, genes, fill= val)) +  
-#   geom_tile() +theme_classic() +
-#   scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
-#                        name="Normalized\nGene Expression   ",
-#                        limit=c(0,1), na.value="grey87"
-#   )+ 
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1,size=8),
-#         legend.key.height = unit(0.2, 'cm'), 
-#         legend.key.width = unit(1, 'cm'), 
-#         legend.title = element_text(size=7),
-#         legend.justification="center",
-#         legend.box.margin=margin(-20,-10,-5,-10),
-#         legend.text=element_text(size=7)) +
-#   xlab('')+ ylab('')+ 
-#   theme(legend.position="bottom")
+df=as.matrix(W_est[genes,])
+df=df[order(row.names(df)),]
+
+dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
+                                 rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
+                                 rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
+                                 rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
+                               levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
+                                        "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
+               genes=factor(genes,levels=genes),
+               val=c(df[,"Epithelial"],df[,"Fibroblasts"],
+                     df[,"Myo.Meso"],df[,"Endothelium"],
+                     df[,"Pericytes"],df[,"Neural"],
+                     df[,"Immune"],df[,"Muscle"]))
+
+ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +
+  ggplot2::geom_tile() + ggplot2::theme_classic() +
+  ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20],
+                                name="Normalized\nGene Expression   ",
+                                limit=c(0,1), na.value="grey87"
+  )+
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1,size=8),
+                 legend.key.height = ggplot2::unit(0.2, 'cm'),
+                 legend.key.width = ggplot2::unit(1, 'cm'),
+                 legend.title = ggplot2::element_text(size=7),
+                 legend.justification="center",
+                 legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
+                 legend.text=ggplot2::element_text(size=7)) +
+  ggplot2::xlab('')+ ggplot2::ylab('')+
+  ggplot2::theme(legend.position="bottom")
 ```
 
 
