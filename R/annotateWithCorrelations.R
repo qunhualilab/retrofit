@@ -7,10 +7,12 @@
 #' @param decomp_w Matrix(GeneExpressions, Components): Decomposed w matrix
 #' @param decomp_h Matrix(Components, Spots): Decomposed h matrix
 #'
-#' @return A list of 
+#' @return A list of selected components, cells, and correlations
 #' \itemize{
-#' \item w
-#' \item h
+#'        \item w:  Filtered 2d array with GeneExpressions, Cell types
+#'        \item h:  Filtered2d array with Cell types, Spots
+#'        \item ranked_cells: The list of cell names 
+#'        \item ranked_correlations: The list of correlations
 #' }
 #'
 #'@examples
