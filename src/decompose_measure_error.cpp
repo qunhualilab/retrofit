@@ -8,6 +8,7 @@ double decompose_compute_error_two_norm(NumericVector original, NumericVector in
   double sum = 0;
   NumericVector::iterator original_iter = original.begin();
   NumericVector::iterator inferred_iter = inferred.begin();
+  Rcout << "[Rcpp] first original: " << *original_iter << std::endl;
   int length = original.length();
   
   for(int i=0; i<length; ++i){

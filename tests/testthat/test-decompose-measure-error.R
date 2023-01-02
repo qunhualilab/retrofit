@@ -23,6 +23,7 @@ test_that("measure-error-two-norm-randomly", {
   original = array(runif(K*S, 0, 6),   c(K, S))
   inferred = array(runif(K*S, 0, 6), c(K, S))
   
+  print(paste("[R] First original:",original[1,1]))
   norm = decompose_compute_error_two_norm(original, inferred)
   norm_expected = 0
   for (k in 1:K){
