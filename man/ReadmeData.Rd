@@ -15,7 +15,7 @@ A dataset supporting readme example
 }
 \details{
 \itemize{
-\item data
+\item ReadmeData
 }
 }
 \keyword{datasets}

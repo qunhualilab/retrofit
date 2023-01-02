@@ -15,7 +15,7 @@ A dataset with input and output of "decompose" for reproducibility tests.
 }
 \details{
 \itemize{
-\item data
+\item TestDecomposeData
 }
 }
 \keyword{datasets}

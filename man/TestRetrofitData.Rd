@@ -15,7 +15,7 @@ A dataset with input and output of "retrofit" for reproducibility tests.
 }
 \details{
 \itemize{
-\item data
+\item TestRetrofitData
 }
 }
 \keyword{datasets}

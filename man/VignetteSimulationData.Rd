@@ -15,7 +15,7 @@ A dataset supporting the simulation vignette process
 }
 \details{
 \itemize{
-\item data
+\item VignetteSimulationData
 }
 }
 \keyword{datasets}

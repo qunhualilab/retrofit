@@ -16,10 +16,12 @@ annotateWithCorrelations(sc_ref, K, decomp_w, decomp_h)
 \item{decomp_h}{Matrix(Components, Spots): Decomposed h matrix}
 }
 \value{
-A list of
+A list of selected components, cells, and correlations
 \itemize{
-\item w
-\item h
+\item w:  Filtered 2d array with GeneExpressions, Cell types
+\item h:  Filtered2d array with Cell types, Spots
+\item ranked_cells: The list of cell names
+\item ranked_correlations: The list of correlations
 }
 }
 \description{

@@ -15,7 +15,7 @@ A dataset supporting the colon vignette process
 }
 \details{
 \itemize{
-\item data
+\item VignetteColonData
 }
 }
 \keyword{datasets}

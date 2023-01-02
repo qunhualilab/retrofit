@@ -3,7 +3,7 @@
 #' A dataset supporting the simulation vignette process
 #'
 #' \itemize{
-#'   \item data
+#'   \item VignetteSimulationData
 #' }
 #'
 #' @docType data
@@ -17,7 +17,7 @@
 #' A dataset supporting the colon vignette process
 #'
 #' \itemize{
-#'   \item data
+#'   \item VignetteColonData
 #' }
 #'
 #' @docType data
@@ -31,7 +31,7 @@
 #' A dataset with input and output of "retrofit" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item data
+#'   \item TestRetrofitData
 #' }
 #'
 #' @docType data
@@ -45,7 +45,7 @@
 #' A dataset with input and output of "decompose" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item data
+#'   \item TestDecomposeData
 #' }
 #'
 #' @docType data
@@ -59,7 +59,7 @@
 #' A dataset supporting readme example
 #'
 #' \itemize{
-#'   \item Readme
+#'   \item ReadmeData
 #' }
 #'
 #' @docType data
