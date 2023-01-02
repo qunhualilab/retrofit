@@ -12,9 +12,7 @@ double decompose_compute_error_two_norm(NumericVector original, NumericVector in
   int length = original.length();
   
   for(int i=0; i<length; ++i){
-    // sum += abs(((*inferred_iter)/(*original_iter)) - 1);
-    Rcout << "[Rcpp] error: " << abs((*inferred_iter) - (*original_iter)) << std::endl;
-    sum += abs((*inferred_iter) - (*original_iter));
+    sum += std::fabs((*inferred_iter)/(*original_iter) - 1);
     ++original_iter;
     ++inferred_iter;
   }
@@ -29,10 +27,8 @@ double decompose_compute_error_mat_norm(NumericVector original, NumericVector in
   int length = original.length();
   
   for(int i=0; i<length; ++i){
-    // if(max < abs(((*inferred_iter)/(*original_iter)) - 1)){
-    if(max < abs((*inferred_iter) - (*original_iter))){
-          // max = abs(((*inferred_iter)/(*original_iter)) - 1);
-      max = abs((*inferred_iter) - (*original_iter));
+    if(max < std::fabs((*inferred_iter)/(*original_iter) - 1)){
+      max = std::fabs((*inferred_iter)/(*original_iter) - 1);
     }
     ++original_iter;
     ++inferred_iter;
@@ -61,8 +57,7 @@ double decompose_compute_and_update_error_two_norm(NumericVector original, Numer
   int length = original.length();
   
   for(int i=0; i<length; ++i){
-    // sum += abs(((*inferred_iter)/(*original_iter)) - 1);
-    sum += abs((*inferred_iter) - (*original_iter));
+    sum += std::fabs((*inferred_iter)/(*original_iter) - 1);
     *original_iter = *inferred_iter; //update original components as a record for next iteration
     ++original_iter;
     ++inferred_iter;
@@ -78,10 +73,8 @@ double decompose_compute_and_update_error_mat_norm(NumericVector original, Numer
   int length = original.length();
   
   for(int i=0; i<length; ++i){
-    if(max < abs((*inferred_iter) - (*original_iter))){
-    // if(max < abs(((*inferred_iter)/(*original_iter)) - 1)){
-      // max = abs(((*inferred_iter)/(*original_iter)) - 1);
-      max = abs((*inferred_iter) - (*original_iter));
+    if(max < std::fabs((*inferred_iter)/(*original_iter) - 1)){
+      max = std::fabs((*inferred_iter)/(*original_iter) - 1);
     }
     *original_iter = *inferred_iter; //update original components as a record for next iteration
     ++original_iter;

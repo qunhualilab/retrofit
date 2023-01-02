@@ -3,14 +3,14 @@ test_that("measure-error-two-norm", {
   inferred = array(c(2,4))
   
   norm = decompose_compute_error_two_norm(original, inferred)
-  norm_expected = abs(1-2) + abs(2-4)
+  norm_expected = abs(2/1-1) + abs(4/2-1)
   
   expect_equal(norm, norm_expected)
   
   # include update
   original_copy = array(c(2, 4))
   norm = decompose_compute_and_update_error_two_norm(original, inferred)
-  norm_expected = abs(1-2) + abs(2-4)
+  norm_expected = abs(2/1-1) + abs(4/2-1)
   
   expect_equal(norm, norm_expected)
   expect_true(all.equal(original, original_copy))
@@ -23,15 +23,11 @@ test_that("measure-error-two-norm-randomly", {
   original = array(runif(K*S, 0, 6),   c(K, S))
   inferred = array(runif(K*S, 0, 6), c(K, S))
   
-  print(paste("[R] First original:",original[1,1]))
   norm = decompose_compute_error_two_norm(original, inferred)
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      error = abs(inferred[k,s] - original[k,s])
-      # norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
-      print(error)
-      norm_expected = norm_expected + error
+      norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
     }
   }
   
@@ -42,8 +38,7 @@ test_that("measure-error-two-norm-randomly", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      # norm_expected = norm_expected + abs(original[k,s]/inferred[k,s] - 1)
-      norm_expected = norm_expected + abs(original[k,s] - inferred[k,s])
+      norm_expected = norm_expected + abs(original[k,s]/inferred[k,s] - 1)
     }
   }
   
@@ -55,8 +50,7 @@ test_that("measure-error-two-norm-randomly", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      # norm_expected = norm_expected + abs(inferred[k,s]/original_copy[k,s] - 1)
-      norm_expected = norm_expected + abs(inferred[k,s] - original_copy[k,s])
+      norm_expected = norm_expected + abs(inferred[k,s]/original_copy[k,s] - 1)
       original_copy[k,s] = inferred[k,s]
     }
   }
@@ -71,14 +65,14 @@ test_that("measure-error-mat-norm", {
   inferred = array(c(2,4))
   
   norm = decompose_compute_error_mat_norm(original, inferred)
-  norm_expected = max(abs(1-2), abs(2-4))
+  norm_expected = max(abs(2/1-1), abs(4/2-1))
   
   expect_equal(norm, norm_expected)
   
   # include update
   original_copy = array(c(2, 4))
   norm = decompose_compute_and_update_error_mat_norm(original, inferred)
-  norm_expected = max(abs(1-2), abs(2-4))
+  norm_expected = max(abs(2/1-1), abs(4/2-1))
   
   expect_equal(norm, norm_expected)
   expect_true(all.equal(original, original_copy))
@@ -94,8 +88,7 @@ test_that("measure-error-mat-norm-randomly", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      # err =abs(inferred[k,s]/original[k,s] - 1)
-      err = abs(inferred[k,s] - original[k,s])
+      err =abs(inferred[k,s]/original[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  
       }
@@ -109,8 +102,7 @@ test_that("measure-error-mat-norm-randomly", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      # err = abs(original[k,s]/inferred[k,s] - 1)
-      err = abs(original[k,s] - inferred[k,s])
+      err = abs(original[k,s]/inferred[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  
       }
@@ -125,8 +117,7 @@ test_that("measure-error-mat-norm-randomly", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      # err =abs(inferred[k,s]/original_copy[k,s] - 1)
-      err = abs(inferred[k,s] - original_copy[k,s])
+      err = abs(inferred[k,s]/original_copy[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  
       }
