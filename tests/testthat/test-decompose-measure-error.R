@@ -8,7 +8,8 @@ test_that("measure-error-two-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
+      # norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
+      norm_expected = norm_expected + abs(inferred[k,s] - original[k,s])
     }
   }
   
@@ -19,7 +20,8 @@ test_that("measure-error-two-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      norm_expected = norm_expected + abs(original[k,s]/inferred[k,s] - 1)
+      # norm_expected = norm_expected + abs(original[k,s]/inferred[k,s] - 1)
+      norm_expected = norm_expected + abs(original[k,s] - inferred[k,s])
     }
   }
   
@@ -31,7 +33,8 @@ test_that("measure-error-two-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      norm_expected = norm_expected + abs(inferred[k,s]/original_copy[k,s] - 1)
+      # norm_expected = norm_expected + abs(inferred[k,s]/original_copy[k,s] - 1)
+      norm_expected = norm_expected + abs(inferred[k,s] - original_copy[k,s])
       original_copy[k,s] = inferred[k,s]
     }
   }
@@ -51,7 +54,8 @@ test_that("measure-error-mat-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      err =abs(inferred[k,s]/original[k,s] - 1)
+      # err =abs(inferred[k,s]/original[k,s] - 1)
+      err = abs(inferred[k,s] - original[k,s])
       if(err > norm_expected){
         norm_expected = err  
       }
@@ -65,7 +69,8 @@ test_that("measure-error-mat-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      err =abs(original[k,s]/inferred[k,s] - 1)
+      # err = abs(original[k,s]/inferred[k,s] - 1)
+      err = abs(original[k,s] - inferred[k,s])
       if(err > norm_expected){
         norm_expected = err  
       }
@@ -80,7 +85,8 @@ test_that("measure-error-mat-norm", {
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
-      err =abs(inferred[k,s]/original_copy[k,s] - 1)
+      # err =abs(inferred[k,s]/original_copy[k,s] - 1)
+      err = abs(inferred[k,s] - original_copy[k,s])
       if(err > norm_expected){
         norm_expected = err  
       }
