@@ -59,7 +59,7 @@
 #' A dataset supporting readme example
 #'
 #' \itemize{
-#'   \item data
+#'   \item Readme
 #' }
 #'
 #' @docType data
@@ -67,3 +67,31 @@
 #' @usage data(ReadmeData)
 #' @format Includes input x
 "ReadmeData"
+
+#' annotate with correlation test
+#'
+#' A dataset with input&output of "annotateWithCorrelations"
+#'
+#' \itemize{
+#'   \item TestAnnotateWithCorrelationsData
+#' }
+#'
+#' @docType data
+#' @name TestAnnotateWithCorrelationsData
+#' @usage data(TestAnnotateWithCorrelationsData)
+#' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
+"TestAnnotateWithCorrelationsData"
+
+#' annotate with markers test
+#'
+#' A dataset with input&output of "annotateWithMarkers" reproducibility
+#'
+#' \itemize{
+#'   \item TestAnnotateWithMarkersData
+#' }
+#'
+#' @docType data
+#' @name TestAnnotateWithMarkersData
+#' @usage data(TestAnnotateWithMarkersData)
+#' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
+"TestAnnotateWithMarkersData"
