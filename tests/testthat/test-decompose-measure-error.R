@@ -1,4 +1,23 @@
 test_that("measure-error-two-norm", {
+  original = array(c(1,2))
+  inferred = array(c(2,4))
+  
+  norm = decompose_compute_error_two_norm(original, inferred)
+  norm_expected = abs(1-2) + abs(2-4)
+  
+  expect_equal(norm, norm_expected)
+  
+  # include update
+  original_copy = array(c(2, 4))
+  norm = decompose_compute_and_update_error_two_norm(original, inferred)
+  norm_expected = abs(1-2) + abs(2-4)
+  
+  expect_equal(norm, norm_expected)
+  expect_true(all.equal(original, original_copy))
+})
+
+
+test_that("measure-error-two-norm-randomly", {
   K = 4
   S = 3
   original = array(runif(K*S, 0, 10),   c(K, S))
@@ -40,11 +59,29 @@ test_that("measure-error-two-norm", {
   }
   
   expect_equal(norm, norm_expected)
-  expect_true(all.equal(original, inferred))
+  expect_true(all.equal(original, original_copy))
 })
 
 
 test_that("measure-error-mat-norm", {
+  original = array(c(1,2))
+  inferred = array(c(2,4))
+  
+  norm = decompose_compute_error_mat_norm(original, inferred)
+  norm_expected = max(abs(1-2), abs(2-4))
+  
+  expect_equal(norm, norm_expected)
+  
+  # include update
+  original_copy = array(c(2, 4))
+  norm = decompose_compute_and_update_error_mat_norm(original, inferred)
+  norm_expected = max(abs(1-2), abs(2-4))
+  
+  expect_equal(norm, norm_expected)
+  expect_true(all.equal(original, original_copy))
+})
+
+test_that("measure-error-mat-norm-randomly", {
   K = 4
   S = 3
   original = array(runif(K*S, 0, 10),   c(K, S))
@@ -95,5 +132,5 @@ test_that("measure-error-mat-norm", {
   }
   
   expect_equal(norm, norm_expected)
-  expect_true(all.equal(original, inferred))
+  expect_true(all.equal(original, original_copy))
 })

@@ -1,4 +1,4 @@
-test_that("decompose-works", {
+test_that("annotateWithCorrelations-works", {
   iterations = 10
   L = 16
   seed = 1
@@ -16,7 +16,7 @@ test_that("decompose-works", {
   testthat::expect_true(all.equal(as.matrix(TestDecomposeData$results$th), res$th, check.attributes = FALSE))
 })
 
-test_that("decompose-accepts-various-x", {
+test_that("annotateWithCorrelations-various-x-are-accepted", {
   # matrix
   G   = 6
   S   = 8
@@ -44,7 +44,7 @@ test_that("decompose-accepts-various-x", {
   testthat::expect_true(TRUE)
 })
 
-test_that("decompose-validates-parameters", {
+test_that("annotatedWithCorrelations-parameters-are-validated", {
   run_decompose <- function(args,
                             no_issue_check=FALSE,
                             warning_check=FALSE,
