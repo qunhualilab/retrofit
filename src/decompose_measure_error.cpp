@@ -12,6 +12,7 @@ double decompose_compute_error_two_norm(NumericVector original, NumericVector in
   
   for(int i=0; i<length; ++i){
     // sum += abs(((*inferred_iter)/(*original_iter)) - 1);
+    Rcout << "[Rcpp] error: " << abs((*inferred_iter) - (*original_iter)) << std::endl;
     sum += abs((*inferred_iter) - (*original_iter));
     ++original_iter;
     ++inferred_iter;

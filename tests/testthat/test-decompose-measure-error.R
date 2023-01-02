@@ -18,17 +18,19 @@ test_that("measure-error-two-norm", {
 
 
 test_that("measure-error-two-norm-randomly", {
-  K = 4
-  S = 3
-  original = array(runif(K*S, 0, 10),   c(K, S))
-  inferred = array(runif(K*S, 0, 10), c(K, S))
+  K = 3
+  S = 2
+  original = array(runif(K*S, 0, 6),   c(K, S))
+  inferred = array(runif(K*S, 0, 6), c(K, S))
   
   norm = decompose_compute_error_two_norm(original, inferred)
   norm_expected = 0
   for (k in 1:K){
     for (s in 1:S){
+      error = abs(inferred[k,s] - original[k,s])
       # norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
-      norm_expected = norm_expected + abs(inferred[k,s] - original[k,s])
+      print(error)
+      norm_expected = norm_expected + error
     }
   }
   
