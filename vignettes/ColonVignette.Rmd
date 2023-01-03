@@ -35,31 +35,26 @@ library(retrofit)
 
 # Spatial Transcriptomics Data
 
-First load the ST data, using the following command:
+First load the Colon ST data from fetal 12 PCW tissue, using the following command:
 
 ```{r, data}
 data("VignetteColonData")
 X = VignetteColonData$colon_a3_x
 ```
 
-# Pre-processing ST data 
+The data used here was pre-processed, similar to STdeconvolve, which includes the following:\
+<!-- Xi: may need to add the pre-processing steps done by Xi using STdeconvolve package -->
 
-You may also pre-process the ST data, similar to STdeconvolve, using the following steps:
-<!-- Xi: need the pre-processing steps done by Xi using STdeconvolve package -->
-
-This code will do the following:
 - remove spots with too few genes
 - remove genes that are present in 100% of the spots
 - remove genes that are present in less than 5% of the spots
 - find over dispersed genes for deconvolution.
 
-In the end, the ST data matrix will consist of G genes and S spots i.e., a matrix of order G x S.
+In the end, the ST data matrix will consist of G = 722 genes and S = 1080 spots i.e., a matrix of order G x S.
 
 # Reference-free Deconvolution
 
 Initialize the required parameters for deconvolution. We set the number of iterations, Iter = 4000 and number of components, L = 20. Lamda is kept at the default value of 0.01. 
-
-<!-- Adam: please confirm the parameter settings -->
 
 After initialization, run retrofit on the data (X) as follows:
 
@@ -72,14 +67,15 @@ H = result$h
 W = result$w
 TH =result$th
 ```
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonnstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
-Now we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). 
+## Adam: Please load deconvolved results with 4000 iterations with seed 1 here (the ones we used in the paper)
+
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
-
 
 # Cell-type Annotation via known marker genes
 
-Here, we will annotate using single cell reference. Load the single cell reference data:
+Here, we will annotate using known marker genes for cell types. Load the marker gene list:
 
 ```{r, marker}
 marker_ref = VignetteColonData$marker_ref
@@ -105,18 +101,18 @@ for(i in 1:nrow(W_mark)){
     W_est[i,]=W_mark[i,]/sum(W_mark[i,])
 }
 ```
-<!-- Adam: this function should also give mapping maatrix visualization -->
-We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark of order K x S.
+<!-- Adam: this function should also give mapping matrix visualization -->
+We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
 
 
-# Cell-type Annotation via annotated single cell reference
+# Cell-type Annotation via annotated single-cell reference
 
-Here, we will annotate using single cell reference. Load the single cell reference data:
+Here, we will annotate components using single-cell reference. Load the single-cell reference data:
 
 ```{r, sc}
 sc_ref = VignetteColonData$sc_ref
 ```
-This file contains average gene expression values for G genes in K=8 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
+This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate with sc}
 K = ncol(sc_ref) # number of cell types
@@ -124,15 +120,18 @@ result = annotateWithCorrelations(sc_ref, K, W, H)
 H_sc = result$h
 W_sc = result$w
 ```
+
+## Adam: Please add normalization code here as well
+
 <!-- Adam: this function should also give mapping maatrix visualization -->
-We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_sc of order K x S.
+We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
 You can verify that the mappings from both methods are largely similar.
 
 # Results and visualization
 
 Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
 
-Figure 4A: Proportion of cell-types in this tisse:
+Figure 4A: Proportion of cell-types in this tissue:
 
 ```{r}
 rowSums(H_est)/ncol(H_est)
@@ -178,7 +177,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x = ggplot2::element_blank(),  axis.ticks.y = ggplot2::element_blank())                   
 ```
 
-Figure 4D and E:
+Figure 4D and 4E:
 
 Plot the spatial expression for Epithelial markers:
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
@@ -232,8 +231,11 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
+Verify that the spatial pattern exhibited by the epithelial markers is largely similar to that of the estimated proportion for epithelial cells.
 
 Figure 5A:
+
+Visualize the proportion of different cell types and colocalization patterns:
 
 ```{r}
 ## Structure Plots
@@ -286,7 +288,9 @@ plotfn(df=df_q)+
   ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=9))
 ```
 
-Figure 5D: Plotting proportion of only dominant cell types
+Figure 5D: 
+
+Plot the proportion of only dominant cell types i.e., cell types with proportion > 0.5 in a spot.
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 df=dat
@@ -321,7 +325,9 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 5E: Plotting spots with cell types co-localized with Epithelial cells
+Figure 5E: 
+
+Visualize the spots that contain cell types co-localized with Epithelial cells:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 # df=dat
@@ -361,9 +367,10 @@ Figure 5E: Plotting spots with cell types co-localized with Epithelial cells
 #         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 6B and C:
+Figure 6B:
 
-We found cell-type specific genes using RETROFIT estimates. We filtered genes using the following steps:
+We found cell-type specific genes using RETROFIT estimates. We filtered genes using the following steps:\
+
 - Common genes in the fetal and adult stages
 - Entropy < 1.5 for all replicates
 - Gini > 0.85 for all replicates
