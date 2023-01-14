@@ -61,7 +61,8 @@ After initialization, run retrofit on the data (X) as follows:
 ```{r, decompose}
 Iter = 20
 L = 20
-result = retrofit::decompose(X, L=L, iterations=Iter, seed=12, verbose=TRUE)
+set.seed(12)
+result = retrofit::decompose(X, L=L, iterations=Iter, verbose=TRUE)
 
 H = result$h
 W = result$w

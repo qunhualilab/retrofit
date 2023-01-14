@@ -44,14 +44,13 @@ The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matr
 Initialize the following parameters for deconvolution:\
 iterations: Number of iterations (default = 4000)\
 L: Number of components required\
-seed: Seed for controlling random number generation\
 \
 After initialization, run RETROFIT on the data (X) as follows:
 ```{r, decompose}
 iterations  = 10
 L           = 20
-seed        = 12
-result      = retrofit::decompose(x, L=L, iterations=iterations, seed=seed, verbose=TRUE)
+set.seed(12)
+result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
 H           = result$h
 W           = result$w
 Theta       = result$th
@@ -65,7 +64,7 @@ Theta       = VignetteSimulationData$results_4k_iterations$decompose$th
 ################################################################################
 # The above results are obtained by running the code below.
 # iterations = 4000
-# result      = decompose(x, L=L, iterations=iterations, seed=seed, verbose=TRUE)
+# result      = decompose(x, L=L, iterations=iterations, verbose=TRUE)
 ################################################################################
 ```
 
@@ -96,13 +95,12 @@ We can also deconvolve the ST data matrix along with cell-type annotation all in
 iterations  = 10
 L           = 20
 K           = 10 
-seed        = 12 
+set.seed(12)
 result      = retrofit::retrofit(x, 
                                  sc_ref=sc_ref_w,
                                  iterations=iterations, 
                                  L=L, 
-                                 K=K,
-                                 seed=seed)
+                                 K=K)
 ```
 
 # Results 

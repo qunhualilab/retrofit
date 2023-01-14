@@ -7,14 +7,8 @@
 #' @param L           integer (default:16)    The number of components to be decomposed
 #' @param K integer: The number of cell types to be selected
 #' @param iterations  integer (default:4000)  The number of maximum iterations to be executed
+#' @param init_param  list                    Vatirational initial parameters
 #' @param lambda      double  (default:0.01)  Background expression profile control
-#' @param seed        double  (default:NULL)  Random variable seed in case the output should be deterministic
-#' @param alpha_w_0   double  (default:0.05)  Variational initial parameter for vector alpha_w
-#' @param beta_w_0    double  (default:0.0001)Variational initial parameter for vector beta_w
-#' @param alpha_h_0   double  (default:0.2)   Variational initial parameter for vector alpha_h
-#' @param beta_h_0    double  (default:0.2)   Variational initial parameter for vector beta_h
-#' @param alpha_th_0  double  (default:1.25)  Variational initial parameter for vector alpha_th
-#' @param beta_th_0   double  (default:10)    Variational initial parameter for vector beta_th
 #' @param kappa       double  (default:0.5)   Learning rate factor
 #' @param verbose     boolean (default:FALSE)
 #'
@@ -47,28 +41,16 @@ retrofit <- function(x,
                      L           = 16,
                      K           = 8,
                      iterations  = 4000,
+                     init_param  = NULL,
                      lambda      = 0.01,
-                     seed        = NULL,
-                     alpha_w_0   = 0.05, 
-                     beta_w_0    = 0.0001, 
-                     alpha_h_0   = 0.2,
-                     beta_h_0    = 0.2,
-                     alpha_th_0  = 1.25,
-                     beta_th_0   = 10,
                      kappa       = 0.5,
                      verbose     = FALSE) {
   # Decompose
   decomposed = decompose(x,
                          L           = L,
                          iterations  = iterations, 
+                         init_param  = init_param,
                          lambda      = lambda,
-                         seed        = seed,
-                         alpha_w_0   = alpha_w_0, 
-                         beta_w_0    = beta_w_0, 
-                         alpha_h_0   = alpha_h_0,
-                         beta_h_0    = beta_h_0,
-                         alpha_th_0  = alpha_th_0,
-                         beta_th_0   = beta_th_0,
                          kappa       = kappa,
                          verbose     = verbose)
   ret = list(

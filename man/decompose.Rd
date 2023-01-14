@@ -8,14 +8,8 @@ decompose(
   x,
   L = 16,
   iterations = 4000,
+  init_param = NULL,
   lambda = 0.01,
-  seed = NULL,
-  alpha_w_0 = 0.05,
-  beta_w_0 = 1e-04,
-  alpha_h_0 = 0.2,
-  beta_h_0 = 0.2,
-  alpha_th_0 = 1.25,
-  beta_th_0 = 10,
   kappa = 0.5,
   verbose = FALSE
 )
@@ -27,21 +21,9 @@ decompose(
 
 \item{iterations}{integer (default:4000)  The number of maximum iterations to be executed}
 
+\item{init_param}{list                    Vatirational initial parameters}
+
 \item{lambda}{double  (default:0.01)  Background expression profile control}
-
-\item{seed}{double  (default:NULL)  Random variable seed in case the output should be deterministic}
-
-\item{alpha_w_0}{double  (default:0.05)  Variational initial parameter for vector alpha_w}
-
-\item{beta_w_0}{double  (default:0.0001)Variational initial parameter for vector beta_w}
-
-\item{alpha_h_0}{double  (default:0.2)   Variational initial parameter for vector alpha_h}
-
-\item{beta_h_0}{double  (default:0.2)   Variational initial parameter for vector beta_h}
-
-\item{alpha_th_0}{double  (default:1.25)  Variational initial parameter for vector alpha_th}
-
-\item{beta_th_0}{double  (default:10)    Variational initial parameter for vector beta_th}
 
 \item{kappa}{double  (default:0.5)   Learning rate factor}
 
@@ -63,6 +45,23 @@ the function returns factorized {W, H, Theta}.
 This function fulfills Structured Stochastic Variational Inference Algorithm for RETROFIT.
 Since exact Bayesian inference is infeasible and considering the large number of spots and genes,
 variational inference was adopted to approximately estimate the parameters in performant manner.
+}
+\details{
+init_param specification
+\itemize{
+\item alpha_w_0   double  (default:0.05)
+\item beta_w_0    double  (default:0.0001)
+\item alpha_h_0   double  (default:0.2)
+\item beta_h_0    double  (default:0.2)
+\item alpha_th_0  double  (default:1.25)
+\item beta_th_0   double  (default:10)
+\item alpha_th_k  array   (default:array with dim c(K))
+\item beta_th_k   array   (default:array with dim c(K)),
+\item alpha_w_gk  array   (default:array with dim c(G,K)),
+\item beta_w_gk   array   (default:array with dim c(G,K)),
+\item alpha_h_ks  array   (default:array with dim c(K,S)),
+\item beta_h_ks   array   (default:array with dim c(K,S))
+}
 }
 \examples{
 data("TestDecomposeData")

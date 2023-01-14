@@ -10,13 +10,22 @@
 #' @param L           integer (default:16)    The number of components to be decomposed
 #' @param iterations  integer (default:4000)  The number of maximum iterations to be executed
 #' @param lambda      double  (default:0.01)  Background expression profile control
-#' @param seed        double  (default:NULL)  Random variable seed in case the output should be deterministic
-#' @param alpha_w_0   double  (default:0.05)  Variational initial parameter for vector alpha_w
-#' @param beta_w_0    double  (default:0.0001)Variational initial parameter for vector beta_w
-#' @param alpha_h_0   double  (default:0.2)   Variational initial parameter for vector alpha_h
-#' @param beta_h_0    double  (default:0.2)   Variational initial parameter for vector beta_h
-#' @param alpha_th_0  double  (default:1.25)  Variational initial parameter for vector alpha_th
-#' @param beta_th_0   double  (default:10)    Variational initial parameter for vector beta_th
+#' @param init_param  list                    Vatirational initial parameters
+#' @details init_param specification
+#' \itemize{
+#'  \item alpha_w_0   double  (default:0.05)
+#'  \item beta_w_0    double  (default:0.0001) 
+#'  \item alpha_h_0   double  (default:0.2)   
+#'  \item beta_h_0    double  (default:0.2)   
+#'  \item alpha_th_0  double  (default:1.25)
+#'  \item beta_th_0   double  (default:10)
+#'  \item alpha_th_k  array   (default:array with dim c(K))
+#'  \item beta_th_k   array   (default:array with dim c(K)),
+#'  \item alpha_w_gk  array   (default:array with dim c(G,K)),
+#'  \item beta_w_gk   array   (default:array with dim c(G,K)),
+#'  \item alpha_h_ks  array   (default:array with dim c(K,S)),
+#'  \item beta_h_ks   array   (default:array with dim c(K,S))
+#' }
 #' @param kappa       double  (default:0.5)   Learning rate factor
 #' @param verbose     boolean (default:FALSE)
 #'
@@ -41,35 +50,25 @@
 decompose <- function(x, 
                       L           = 16,
                       iterations  = 4000,
+                      init_param  = NULL,
                       lambda      = 0.01,
-                      seed        = NULL,
-                      alpha_w_0   = 0.05, 
-                      beta_w_0    = 0.0001, 
-                      alpha_h_0   = 0.2,
-                      beta_h_0    = 0.2,
-                      alpha_th_0  = 1.25,
-                      beta_th_0   = 10,
                       kappa       = 0.5,
                       verbose     = FALSE) {
   stopifnot(!is.null(x))
   stopifnot(!is.null(L))
   stopifnot(!is.null(lambda))
   stopifnot(!is.null(iterations))
-  stopifnot(!is.null(alpha_w_0))
-  stopifnot(!is.null(beta_w_0))
-  stopifnot(!is.null(alpha_h_0))
-  stopifnot(!is.null(beta_h_0))
-  stopifnot(!is.null(alpha_th_0))
-  stopifnot(!is.null(beta_th_0))
+  # stopifnot(!is.null(alpha_w_0))
+  # stopifnot(!is.null(beta_w_0))
+  # stopifnot(!is.null(alpha_h_0))
+  # stopifnot(!is.null(beta_h_0))
+  # stopifnot(!is.null(alpha_th_0))
+  # stopifnot(!is.null(beta_th_0))
   stopifnot(!is.null(kappa))
   
   stopifnot(L > 0)
   stopifnot(iterations > 0)
   stopifnot(kappa > 0)
-  
-  if (!is.null(seed)){
-    set.seed(seed)  
-  }
   
   # copy and 'purify' the matrix
   x_rownames = rownames(x)
@@ -100,12 +99,18 @@ decompose <- function(x,
   )
   # parameter vectors
   param = list(
-    alpha_th_k = array(stats::runif(K,  0,1)    +alpha_th_0,c(K)),
-    beta_th_k  = array(stats::runif(K,  0,1)    +beta_th_0, c(K)),
-    alpha_w_gk = array(stats::runif(G*K,0,0.5)  +alpha_w_0, c(G,K)),
-    beta_w_gk  = array(stats::runif(G*K,0,0.005)+beta_w_0,  c(G,K)),
-    alpha_h_ks = array(stats::runif(K*S,0,0.1)  +alpha_h_0, c(K,S)),
-    beta_h_ks  = array(stats::runif(K*S,0,0.5)  +beta_h_0,  c(K,S))
+    alpha_w_0  = 0.05, 
+    beta_w_0   = 0.0001, 
+    alpha_h_0  = 0.2,
+    beta_h_0   = 0.2,
+    alpha_th_0 = 1.25,
+    beta_th_0  = 10,
+    alpha_th_k = array(stats::runif(K,  0,1)    +1.25,   c(K)),
+    beta_th_k  = array(stats::runif(K,  0,1)    +10,     c(K)),
+    alpha_w_gk = array(stats::runif(G*K,0,0.5)  +0.05,   c(G,K)),
+    beta_w_gk  = array(stats::runif(G*K,0,0.005)+0.0001, c(G,K)),
+    alpha_h_ks = array(stats::runif(K*S,0,0.1)  +0.2,    c(K,S)),
+    beta_h_ks  = array(stats::runif(K*S,0,0.5)  +0.2,    c(K,S))
   )
   
   # variables for verbose mode
@@ -136,8 +141,8 @@ decompose <- function(x,
     decompose_step3_beta(dist, lambda, dim, prob$phi_b_gk)
     
     # step (4) - Calculate new parameters
-    alpha_asterisk = decompose_step4_alpha(x, prob, alpha_w_0, alpha_h_0, alpha_th_0, dim)
-    beta_asterisk  = decompose_step4_beta(dist, beta_w_0, beta_h_0, beta_th_0, lambda, dim)
+    alpha_asterisk = decompose_step4_alpha(x, prob, param$alpha_w_0, param$alpha_h_0, param$alpha_th_0, dim)
+    beta_asterisk  = decompose_step4_beta(dist, param$beta_w_0, param$beta_h_0, param$beta_th_0, lambda, dim)
     
     # step (5) - Update parameters
     decompose_step5(param$alpha_w_gk, alpha_asterisk$w, rho)

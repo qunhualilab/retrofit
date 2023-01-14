@@ -1,14 +1,13 @@
 test_that("decompose-works", {
   iterations = 10
   L = 16
-  seed = 1
   
   data("TestDecomposeData")
   x   = TestDecomposeData$extra5_x
+  set.seed(1)
   res = retrofit::decompose(x, 
                             L=L, 
                             iterations=iterations, 
-                            seed=seed,
                             verbose=TRUE)
 
   testthat::expect_true(all.equal(as.matrix(TestDecomposeData$results$h),  res$h,  check.attributes = FALSE))
@@ -56,13 +55,6 @@ test_that("decompose-validates-parameters", {
                   L           = args$L,
                   iterations  = args$iterations,
                   lambda      = args$lambda,
-                  seed        = args$seed,
-                  alpha_w_0   = args$alpha_w_0, 
-                  beta_w_0    = args$beta_w_0, 
-                  alpha_h_0   = args$alpha_h_0,
-                  beta_h_0    = args$beta_h_0,
-                  alpha_th_0  = args$alpha_th_0,
-                  beta_th_0   = args$beta_th_0,
                   kappa       = args$kappa,
                   verbose     = args$verbose)
         
@@ -85,16 +77,12 @@ test_that("decompose-validates-parameters", {
     L           = 16,
     iterations  = 10,
     lambda      = 0.01,
-    seed        = 1,
-    alpha_w_0   = 0.05, 
-    beta_w_0    = 0.0001, 
-    alpha_h_0   = 0.2,
-    beta_h_0    = 0.2,
-    alpha_th_0  = 1.25,
-    beta_th_0   = 10,
     kappa       = 0.5,
     verbose     = FALSE
   )
+  
+  # seed for reproducibility
+  set.seed(1)
   
   # default run
   args = base_args
@@ -105,8 +93,8 @@ test_that("decompose-validates-parameters", {
   testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
   
   # seed can be null
-  args = utils::modifyList(base_args, list(seed=NULL))
-  testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
+  # args = utils::modifyList(base_args, list(seed=NULL))
+  # testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
   
   # warning: dimensions are large
   args = utils::modifyList(base_args, list(x = array(0, c(10000, 1000))))
@@ -134,23 +122,23 @@ test_that("decompose-validates-parameters", {
   testthat::expect_true(run_decompose(args, error_check = TRUE))
   
   # params are null
-  args = utils::modifyList(base_args, list(alpha_w_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
-  
-  args = utils::modifyList(base_args, list(beta_w_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
-  
-  args = utils::modifyList(base_args, list(alpha_h_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
-  
-  args = utils::modifyList(base_args, list(beta_h_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
-  
-  args = utils::modifyList(base_args, list(alpha_th_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
-  
-  args = utils::modifyList(base_args, list(beta_th_0 = NULL))
-  testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # args = utils::modifyList(base_args, list(alpha_w_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # 
+  # args = utils::modifyList(base_args, list(beta_w_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # 
+  # args = utils::modifyList(base_args, list(alpha_h_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # 
+  # args = utils::modifyList(base_args, list(beta_h_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # 
+  # args = utils::modifyList(base_args, list(alpha_th_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
+  # 
+  # args = utils::modifyList(base_args, list(beta_th_0 = NULL))
+  # testthat::expect_true(run_decompose(args, error_check = TRUE))
   
   # L is 0
   args = utils::modifyList(base_args, list(L = 0))
