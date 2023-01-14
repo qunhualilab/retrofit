@@ -109,7 +109,7 @@ Visualize the correlation values between each cell type and the chosen component
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
 correlations        = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
-ranked_correlations = sort(diag(correlations), decreasing=T)
+ranked_correlations = sort(diag(correlations), decreasing=TRUE)
 df                  = data.frame(x=1:length(ranked_correlations), 
                                  y=ranked_correlations, 
                                  label_x1=1, 
@@ -135,7 +135,7 @@ Since this is synthetic data, true cell type proportions are known. We can visua
 ```{r, visualize_rmse}
 H_true  = VignetteSimulationData$sc_ref_h
 H_est   = H_annotated
-corrH   = sort(diag(stats::cor(H_true,H_est)), decreasing=T, na.last=T)
+corrH   = sort(diag(stats::cor(H_true,H_est)), decreasing=TRUE, na.last=TRUE)
 df      = data.frame(x=seq(0,1,length.out = 1000), 
                      y=corrH)
 df_text = data.frame(x=0.2,
