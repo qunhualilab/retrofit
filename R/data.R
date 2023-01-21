@@ -31,67 +31,67 @@
 #' A dataset with input and output of "retrofit" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item TestRetrofitData
+#'   \item testRetrofitObj
 #' }
 #'
 #' @docType data
-#' @name TestRetrofitData
-#' @usage data(TestRetrofitData)
+#' @name testRetrofitObj
+#' @usage data(testRetrofitObj)
 #' @format Includes input x, references and results with large iterations
-"TestRetrofitData"
+"testRetrofitObj"
 
 #' decompose test
 #'
 #' A dataset with input and output of "decompose" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item TestDecomposeData
+#'   \item testDecomposeObj
 #' }
 #'
 #' @docType data
-#' @name TestDecomposeData
-#' @usage data(TestDecomposeData)
+#' @name testDecomposeObj
+#' @usage data(testDecomposeObj)
 #' @format Includes input x and output w, h, and th
-"TestDecomposeData"
+"testDecomposeObj"
 
 #' Readme
 #'
 #' A dataset supporting readme example
 #'
 #' \itemize{
-#'   \item ReadmeData
+#'   \item readmeObj
 #' }
 #'
 #' @docType data
-#' @name ReadmeData
-#' @usage data(ReadmeData)
+#' @name readmeObj
+#' @usage data(readmeObj)
 #' @format Includes input x
-"ReadmeData"
+"readmeObj"
 
 #' annotate with correlation test
 #'
 #' A dataset with input&output of "annotateWithCorrelations"
 #'
 #' \itemize{
-#'   \item TestAnnotateWithCorrelationsData
+#'   \item testAnnotateWithCorrelationsObj
 #' }
 #'
 #' @docType data
-#' @name TestAnnotateWithCorrelationsData
-#' @usage data(TestAnnotateWithCorrelationsData)
+#' @name testAnnotateWithCorrelationsObj
+#' @usage data(testAnnotateWithCorrelationsObj)
 #' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
-"TestAnnotateWithCorrelationsData"
+"testAnnotateWithCorrelationsObj"
 
 #' annotate with markers test
 #'
 #' A dataset with input&output of "annotateWithMarkers" reproducibility
 #'
 #' \itemize{
-#'   \item TestAnnotateWithMarkersData
+#'   \item testAnnotateWithMarkersObj
 #' }
 #'
 #' @docType data
-#' @name TestAnnotateWithMarkersData
-#' @usage data(TestAnnotateWithMarkersData)
+#' @name testAnnotateWithMarkersObj
+#' @usage data(testAnnotateWithMarkersObj)
 #' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
-"TestAnnotateWithMarkersData"
+"testAnnotateWithMarkersObj"

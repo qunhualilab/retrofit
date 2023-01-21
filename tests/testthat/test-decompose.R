@@ -2,17 +2,17 @@ test_that("decompose-works", {
   iterations = 10
   L = 16
   
-  data("TestDecomposeData")
-  x   = TestDecomposeData$extra5_x
+  data("testDecomposeObj")
+  x   = testDecomposeObj$extra5_x
   set.seed(1)
   res = retrofit::decompose(x, 
                             L=L, 
                             iterations=iterations, 
                             verbose=TRUE)
 
-  testthat::expect_true(all.equal(as.matrix(TestDecomposeData$results$h),  res$h,  check.attributes = FALSE))
-  testthat::expect_true(all.equal(as.matrix(TestDecomposeData$results$w),  res$w,  check.attributes = FALSE))
-  testthat::expect_true(all.equal(as.matrix(TestDecomposeData$results$th), res$th, check.attributes = FALSE))
+  testthat::expect_true(all.equal(as.matrix(testDecomposeObj$results$h),  res$h,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(as.matrix(testDecomposeObj$results$w),  res$w,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(as.matrix(testDecomposeObj$results$th), res$th, check.attributes = FALSE))
 })
 
 test_that("decompose-accepts-various-x", {

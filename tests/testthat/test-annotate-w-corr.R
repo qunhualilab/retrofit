@@ -1,6 +1,6 @@
 test_that("annotateWithCorrelations-works", {
-  data("TestAnnotateWithCorrelationsData")
-  d = TestAnnotateWithCorrelationsData
+  data("testAnnotateWithCorrelationsObj")
+  d = testAnnotateWithCorrelationsObj
   res = retrofit::annotateWithCorrelations(
     sc_ref   = d$sc_ref,
     K        = 10,
