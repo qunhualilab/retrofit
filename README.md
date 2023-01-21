@@ -55,3 +55,4 @@ cells       = res$ranked_cells
 
 More details can be found in the vignettes.
 [Link to vignettes]
+ 
