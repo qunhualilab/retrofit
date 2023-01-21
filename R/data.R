@@ -3,14 +3,14 @@
 #' A dataset supporting the simulation vignette process
 #'
 #' \itemize{
-#'   \item VignetteSimulationData
+#'   \item vignetteSimulationObj
 #' }
 #'
 #' @docType data
-#' @name VignetteSimulationData
-#' @usage data(VignetteSimulationData)
+#' @name vignetteSimulationObj
+#' @usage data(vignetteSimulationObj)
 #' @format Includes n10m3 scenario x, references, a large iterations results.
-"VignetteSimulationData"
+"vignetteSimulationObj"
 
 #' colon vignette
 #'
