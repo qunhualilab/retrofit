@@ -6,24 +6,14 @@
 \title{simulation vignette}
 \format{
 Includes n10m3 scenario x, references, a large iterations results.
-
-Includes n10m3 scenario x, references, a large iterations results.
 }
 \usage{
-data(vignetteSimulationObj)
-
 data(vignetteSimulationObj)
 }
 \description{
 A dataset supporting the simulation vignette process
-
-A dataset supporting the simulation vignette process
 }
 \details{
-\itemize{
-\item vignetteSimulationObj
-}
-
 \itemize{
 \item vignetteSimulationObj
 }

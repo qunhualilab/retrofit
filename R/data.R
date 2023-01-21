@@ -17,14 +17,14 @@
 #' A dataset supporting the colon vignette process
 #'
 #' \itemize{
-#'   \item VignetteColonData
+#'   \item vignetteColonObj
 #' }
 #'
 #' @docType data
-#' @name VignetteColonData
-#' @usage data(VignetteColonData)
+#' @name vignetteColonObj
+#' @usage data(vignetteColonObj)
 #' @format Includes colon scenario x, references, a large iterations results.
-"VignetteColonData"
+"vignetteColonObj"
 
 #' retrofit test
 #'
