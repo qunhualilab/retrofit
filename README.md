@@ -29,10 +29,10 @@ BiocManager::install("retrofit")
 ``` r
 library(retrofit)
 ## load built in data
-data(readmeObj)
-x           = readmeObj$extra5_loc_x
-sc_ref      = readmeObj$sc_ref
-marker_ref  = readmeObj$marker_ref
+data(readmeData)
+x           = readmeData$extra5_loc_x
+sc_ref      = readmeData$sc_ref
+marker_ref  = readmeData$marker_ref
 
 ## decompose 
 res         = retrofit::decompose(x, L=16, iterations=100, verbose=TRUE)

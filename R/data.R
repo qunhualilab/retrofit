@@ -3,95 +3,95 @@
 #' A dataset supporting the simulation vignette process
 #'
 #' \itemize{
-#'   \item vignetteSimulationObj
+#'   \item vignetteSimulationData
 #' }
 #'
 #' @docType data
-#' @name vignetteSimulationObj
-#' @usage data(vignetteSimulationObj)
+#' @name vignetteSimulationData
+#' @usage data(vignetteSimulationData)
 #' @format Includes n10m3 scenario x, references, a large iterations results.
-"vignetteSimulationObj"
+"vignetteSimulationData"
 
 #' colon vignette
 #'
 #' A dataset supporting the colon vignette process
 #'
 #' \itemize{
-#'   \item vignetteColonObj
+#'   \item vignetteColonData
 #' }
 #'
 #' @docType data
-#' @name vignetteColonObj
-#' @usage data(vignetteColonObj)
+#' @name vignetteColonData
+#' @usage data(vignetteColonData)
 #' @format Includes colon scenario x, references, a large iterations results.
-"vignetteColonObj"
+"vignetteColonData"
 
 #' retrofit test
 #'
 #' A dataset with input and output of "retrofit" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item testRetrofitObj
+#'   \item testRetrofitData
 #' }
 #'
 #' @docType data
-#' @name testRetrofitObj
-#' @usage data(testRetrofitObj)
+#' @name testRetrofitData
+#' @usage data(testRetrofitData)
 #' @format Includes input x, references and results with large iterations
-"testRetrofitObj"
+"testRetrofitData"
 
 #' decompose test
 #'
 #' A dataset with input and output of "decompose" for reproducibility tests.
 #'
 #' \itemize{
-#'   \item testDecomposeObj
+#'   \item testDecomposeData
 #' }
 #'
 #' @docType data
-#' @name testDecomposeObj
-#' @usage data(testDecomposeObj)
+#' @name testDecomposeData
+#' @usage data(testDecomposeData)
 #' @format Includes input x and output w, h, and th
-"testDecomposeObj"
+"testDecomposeData"
 
 #' Readme
 #'
 #' A dataset supporting readme example
 #'
 #' \itemize{
-#'   \item readmeObj
+#'   \item readmeData
 #' }
 #'
 #' @docType data
-#' @name readmeObj
-#' @usage data(readmeObj)
+#' @name readmeData
+#' @usage data(readmeData)
 #' @format Includes input x
-"readmeObj"
+"readmeData"
 
 #' annotate with correlation test
 #'
 #' A dataset with input&output of "annotateWithCorrelations"
 #'
 #' \itemize{
-#'   \item testAnnotateWithCorrelationsObj
+#'   \item testAnnotateWithCorrelationsData
 #' }
 #'
 #' @docType data
-#' @name testAnnotateWithCorrelationsObj
-#' @usage data(testAnnotateWithCorrelationsObj)
+#' @name testAnnotateWithCorrelationsData
+#' @usage data(testAnnotateWithCorrelationsData)
 #' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
-"testAnnotateWithCorrelationsObj"
+"testAnnotateWithCorrelationsData"
 
 #' annotate with markers test
 #'
 #' A dataset with input&output of "annotateWithMarkers" reproducibility
 #'
 #' \itemize{
-#'   \item testAnnotateWithMarkersObj
+#'   \item testAnnotateWithMarkersData
 #' }
 #'
 #' @docType data
-#' @name testAnnotateWithMarkersObj
-#' @usage data(testAnnotateWithMarkersObj)
+#' @name testAnnotateWithMarkersData
+#' @usage data(testAnnotateWithMarkersData)
 #' @format Includes input decomp_w, decomp_h, sc_ref and output cell types
-"testAnnotateWithMarkersObj"
+"testAnnotateWithMarkersData"

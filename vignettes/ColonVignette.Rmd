@@ -38,8 +38,8 @@ library(retrofit)
 First load the Colon ST data from fetal 12 PCW tissue, using the following command:
 
 ```{r, data}
-data("vignetteColonObj")
-X = vignetteColonObj$colon_a3_x
+data("vignetteColonData")
+X = vignetteColonData$colon_a3_x
 ```
 
 The data used here was pre-processed, similar to STdeconvolve, which includes the following:\
@@ -79,7 +79,7 @@ Next, we need to annotate the components, to get the proportion of K cell types.
 Here, we will annotate using known marker genes for cell types. Load the marker gene list:
 
 ```{r, marker}
-marker_ref = vignetteColonObj$marker_ref
+marker_ref = vignetteColonData$marker_ref
 ```
 
 This file contains the list of marker genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
@@ -111,7 +111,7 @@ We assign components to the cell type it has maximum average marker expression i
 Here, we will annotate components using single-cell reference. Load the single-cell reference data:
 
 ```{r, sc}
-sc_ref = vignetteColonObj$sc_ref
+sc_ref = vignetteColonData$sc_ref
 ```
 This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
@@ -142,7 +142,7 @@ Figure 4C:
 
 Load the coordinates for the spots in the tissue and the tissue image:
 ```{r}
-coords=vignetteColonObj$colon_a3_coords
+coords=vignetteColonData$colon_a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
 # img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210296599-83b1b839-4680-495e-81db-be172ae41d45.png"))
@@ -380,7 +380,7 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
-genes=vignetteColonObj$fetal12_genes
+genes=vignetteColonData$fetal12_genes
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
