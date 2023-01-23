@@ -22,7 +22,6 @@ We will also reproduce some of the results from the paper for illustration.
 # Package Installation and other requirements
 
 Install and load the packages using the following steps:
-<!-- adam: this is not usable before submitting to and accepted by Bioconductor -->
 ```{r, eval=FALSE}
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -42,8 +41,9 @@ data("vignetteColonData")
 X = vignetteColonData$colon_a3_x
 ```
 
-The data used here was pre-processed, similar to STdeconvolve, which includes the following:\
-<!-- Xi: may need to add the pre-processing steps done by Xi using STdeconvolve package -->
+The data used here was pre-processed, similar to STdeconvolve, which includes the following:
+
+## Xi: may need to add the pre-processing steps done by Xi using STdeconvolve package 
 
 - remove spots with too few genes
 - remove genes that are present in 100% of the spots
@@ -61,16 +61,25 @@ After initialization, run retrofit on the data (X) as follows:
 ```{r, decompose}
 Iter = 20
 L = 20
-set.seed(12)
 result = retrofit::decompose(X, L=L, iterations=Iter, verbose=TRUE)
 
 H = result$h
 W = result$w
 TH =result$th
 ```
-After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonnstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
-## Adam: Please load deconvolved results with 4000 iterations with seed 1 here (the ones we used in the paper)
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+```{r, load_retrofit_results}
+H           = vignetteColonData$results_4k_iterations$decompose$h
+W           = vignetteColonData$results_4k_iterations$decompose$w
+Theta       = vignetteColonData$results_4k_iterations$decompose$th
+################################################################################
+# The above results are obtained by running the code below.
+# iterations = 4000
+# set.seed(1)
+# result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
+################################################################################
+```
 
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
 
@@ -86,11 +95,12 @@ This file contains the list of marker genes for K = 8 cell types. Run the follow
 
 ```{r, annotate with marker}
 K = length(marker_ref) # number of cell types
-result = annotateWithMarkers(marker_ref, K, W, H)
+result = retrofit::annotateWithMarkers(marker_ref, K, W, H)
 H_mark = result$h
 W_mark = result$w
 ```
 
+## Adam: Please add normalization code here
 ```{r, normalize}
 # normalize
 H_est <- H_mark
@@ -102,7 +112,13 @@ for(i in 1:nrow(W_mark)){
     W_est[i,]=W_mark[i,]/sum(W_mark[i,])
 }
 ```
-<!-- Adam: this function should also give mapping matrix visualization -->
+
+## Adam: this function should also give mapping maatrix visualization 
+```{r, visualize correlation matrix}
+# correlations = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
+# ggcorrplot::ggcorrplot(correlations)
+```
+
 We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
 
 
@@ -163,7 +179,7 @@ df$CellType=factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Musc
                                         "Neural", "Endothelium", "Pericytes","Fibroblasts"))
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
-  ggplot2::annotation_custom(t) +
+  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
   ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
   ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#009E73", "#CC79A7",
                              "#0072B2", "#D55E00" ,"#F0E442"),
@@ -187,7 +203,7 @@ df$metagene = unname(rowSums(df[,-c(1:5)]))
 df$metagene[df$metagene>quantile(df$metagene,0.95)]=quantile(df$metagene,0.95)
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
-  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
   ggplot2::geom_point(size=1.5, ggplot2::aes(color=metagene))+
   ggplot2::scale_color_gradientn(name="Epithelial Markers ",
                                  colors=colorspace::adjust_transparency("grey20",
@@ -213,7 +229,7 @@ Plot the estimated proportions for Epithelial cell-type:
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 df=dat[,-c(1:3)]
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
-  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
   ggplot2::geom_point(size=1.5, ggplot2::aes(color=Epithelial))+
   ggplot2::scale_color_gradientn(name="Epithelial ",
                                  colors=colorspace::adjust_transparency("grey20",
@@ -304,7 +320,7 @@ df_new$CellType=1*(df_new$Epithelial>0.5) + 2*(df_new$Immune>0.5) +
 df_new$CellType=factor(df_new$CellType)
 
 ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
-  ggplot2::annotation_custom(t, 700, 6400, 990, 6550) + 
+  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) + 
   ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
   ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
                              "#009E73", "#CC79A7", "#0072B2", 
@@ -331,41 +347,41 @@ Figure 5E:
 Visualize the spots that contain cell types co-localized with Epithelial cells:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-# df=dat
-# df_new=df[df$Epithelial>0.25,] 
-# df_new=df_new[  df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
-#               df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
-#               df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
-# 
-# df_new$CellType=NA
-# for(i in 1:nrow(df_new)){
-#   df_new$CellType[i]=names(which.max(df_new[i,-c(1:3,5)]))
-# }
-# df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso", "Muscle","Neural", "Endothelium", 
-#                                          "Pericytes","Fibroblasts"))     
-# 
-# ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
-#   ggplot2::ylim(min(df$imagecol),max(df$imagecol)) +
-#   ggplot2::xlim(min(df$imagerow),max(df$imagerow))+
-#   ggplot2::annotation_custom(t, 700, 6400, 990, 6550) + 
-#   ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
-#   ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
-#                              "#009E73", "#CC79A7", "#0072B2", 
-#                              "#D55E00", "#F0E442"),
-#                     labels=c("Epithelial","Immune", 
-#                              "Myofibroblasts/\nMesothelium",
-#                              "Muscle", "Neural", "Endothelium", 
-#                              "Pericytes", "Fibroblasts"))+ 
-#   ggplot2::xlab("") + ggplot2::ylab("") +
-#   ggplot2::theme_classic()+
-#   ggplot2::theme(legend.key.height = ggplot2::unit(0.5, 'cm'), #change legend key size
-#         legend.key.width = ggplot2::unit(1, 'cm'), 
-#         legend.title = ggplot2::element_blank(),
-#         legend.position = "none",
-#         plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"), 
-#         axis.line = ggplot2::element_blank(),
-#         axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
-#         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
+df=dat
+df_new=df[df$Epithelial>0.25,]
+df_new=df_new[  df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
+              df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
+              df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
+
+df_new$CellType=NA
+for(i in 1:nrow(df_new)){
+  df_new$CellType[i]=names(which.max(df_new[i,-c(1:3,5)]))
+}
+df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso", "Muscle","Neural", "Endothelium",
+                                         "Pericytes","Fibroblasts"))
+
+ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
+  ggplot2::ylim(min(df$imagecol),max(df$imagecol)) +
+  ggplot2::xlim(min(df$imagerow),max(df$imagerow))+
+  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
+  ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
+  ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
+                             "#009E73", "#CC79A7", "#0072B2",
+                             "#D55E00", "#F0E442"),
+                    labels=c("Epithelial","Immune",
+                             "Myofibroblasts/\nMesothelium",
+                             "Muscle", "Neural", "Endothelium",
+                             "Pericytes", "Fibroblasts"))+
+  ggplot2::xlab("") + ggplot2::ylab("") +
+  ggplot2::theme_classic()+
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.5, 'cm'), #change legend key size
+        legend.key.width = ggplot2::unit(1, 'cm'),
+        legend.title = ggplot2::element_blank(),
+        legend.position = "none",
+        plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"),
+        axis.line = ggplot2::element_blank(),
+        axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
+        axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
 Figure 6B:
@@ -385,36 +401,36 @@ genes=vignetteColonData$fetal12_genes
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-# df=as.matrix(W_est[genes,])
-# df=df[order(row.names(df)),]
-# 
-# dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
-#                                  rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
-#                                  rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
-#                                  rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
-#                                levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
-#                                         "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
-#                genes=factor(genes,levels=genes),
-#                val=c(df[,"Epithelial"],df[,"Fibroblasts"],
-#                      df[,"Myo.Meso"],df[,"Endothelium"],
-#                      df[,"Pericytes"],df[,"Neural"],
-#                      df[,"Immune"],df[,"Muscle"]))
-# 
-# ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +
-#   ggplot2::geom_tile() + ggplot2::theme_classic() +
-#   ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20],
-#                                 name="Normalized\nGene Expression   ",
-#                                 limit=c(0,1), na.value="grey87"
-#   )+
-#   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1,size=8),
-#                  legend.key.height = ggplot2::unit(0.2, 'cm'),
-#                  legend.key.width = ggplot2::unit(1, 'cm'),
-#                  legend.title = ggplot2::element_text(size=7),
-#                  legend.justification="center",
-#                  legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
-#                  legend.text=ggplot2::element_text(size=7)) +
-#   ggplot2::xlab('')+ ggplot2::ylab('')+
-#   ggplot2::theme(legend.position="bottom")
+df=as.matrix(W_est[genes,])
+df=df[order(row.names(df)),]
+
+dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
+                                 rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
+                                 rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
+                                 rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
+                               levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
+                                        "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
+               genes=factor(genes,levels=genes),
+               val=c(df[,"Epithelial"],df[,"Fibroblasts"],
+                     df[,"Myo.Meso"],df[,"Endothelium"],
+                     df[,"Pericytes"],df[,"Neural"],
+                     df[,"Immune"],df[,"Muscle"]))
+
+ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +
+  ggplot2::geom_tile() + ggplot2::theme_classic() +
+  ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20],
+                                name="Normalized\nGene Expression   ",
+                                limit=c(0,1), na.value="grey87"
+  )+
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1,size=8),
+                 legend.key.height = ggplot2::unit(0.2, 'cm'),
+                 legend.key.width = ggplot2::unit(1, 'cm'),
+                 legend.title = ggplot2::element_text(size=7),
+                 legend.justification="center",
+                 legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
+                 legend.text=ggplot2::element_text(size=7)) +
+  ggplot2::xlab('')+ ggplot2::ylab('')+
+  ggplot2::theme(legend.position="bottom")
 ```
 
 
