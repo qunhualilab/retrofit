@@ -49,13 +49,12 @@ After initialization, run RETROFIT on the data (X) as follows:
 ```{r, decompose}
 iterations  = 10
 L           = 20
-set.seed(12)
 result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
 H           = result$h
 W           = result$w
 Theta       = result$th
 ```
-After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonnstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
 H           = vignetteSimulationData$results_4k_iterations$decompose$h
@@ -64,7 +63,8 @@ Theta       = vignetteSimulationData$results_4k_iterations$decompose$th
 ################################################################################
 # The above results are obtained by running the code below.
 # iterations = 4000
-# result      = decompose(x, L=L, iterations=iterations, verbose=TRUE)
+# set.seed(12)
+# result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
 ################################################################################
 ```
 
@@ -95,7 +95,6 @@ We can also deconvolve the ST data matrix along with cell-type annotation all in
 iterations  = 10
 L           = 20
 K           = 10 
-set.seed(12)
 result      = retrofit::retrofit(x, 
                                  sc_ref=sc_ref_w,
                                  iterations=iterations, 
