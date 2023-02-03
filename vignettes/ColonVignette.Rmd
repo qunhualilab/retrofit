@@ -113,7 +113,7 @@ for(i in 1:nrow(W_sc)){
 ```
 
 <!-- Adam: this function should also give mapping maatrix visualization -->
-We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
+We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_norm of order K x S.
 You can verify that the mappings from both methods are largely similar.
 
 ```{r, visualize correlation matrix between the sc reference and W}
@@ -145,13 +145,13 @@ W_mark = result$w
 ## Adam: Please add normalization code here
 ```{r, normalize2}
 # normalize
-H_est <- H_mark
+H_mark_norm <- H_mark
 for(i in 1:ncol(H_mark)){
-    H_est[,i]=H_mark[,i]/sum(H_mark[,i])
+    H_mark_norm[,i]=H_mark[,i]/sum(H_mark[,i])
 }
-W_est <- W_mark
+W_mark_norm <- W_mark
 for(i in 1:nrow(W_mark)){
-    W_est[i,]=W_mark[i,]/sum(W_mark[i,])
+    W_mark_norm[i,]=W_mark[i,]/sum(W_mark[i,])
 }
 ```
 
@@ -161,7 +161,7 @@ for(i in 1:nrow(W_mark)){
 # ggcorrplot::ggcorrplot(correlations)
 ```
 
-We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
+We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_norm of order K x S.
 
 
 # Results and visualization
@@ -171,7 +171,7 @@ Hereon, we will be reproducing some of the analysis from the paper using marker-
 Figure 4A: Proportion of cell-types in this tissue:
 
 ```{r}
-rowSums(H_est)/ncol(H_est)
+rowSums(H_mark_norm)/ncol(H_mark_norm)
 ```
 
 Figure 4C: 
@@ -187,8 +187,8 @@ t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,
 
 Find the cell-type with maximum proportion in each spot and plot:
 ```{r}
-dat=as.data.frame(cbind(coords,t(H_est)))
-colnames(dat)=c(colnames(coords),rownames(H_est))
+dat=as.data.frame(cbind(coords,t(H_mark_norm)))
+colnames(dat)=c(colnames(coords),rownames(H_mark_norm))
 
 df=dat[,-c(1:3)]
 df$CellType=NA
@@ -303,7 +303,7 @@ plotfn <- function(df=NULL)
   p
 }
 
-df=as.data.frame(t(H_est[c(2,4,6,5,7,1,8,3),]))
+df=as.data.frame(t(H_mark_norm[c(2,4,6,5,7,1,8,3),]))
 #pick max cluster, match max to cluster
 maxval <- apply(df,1,max)
 matchval <- vector(length=nrow(df))
@@ -421,7 +421,7 @@ genes=vignetteColonData$fetal12_genes
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-df=as.matrix(W_est[genes,])
+df=as.matrix(W_mark_norm[genes,])
 df=df[order(row.names(df)),]
 
 dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
