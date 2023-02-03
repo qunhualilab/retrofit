@@ -83,6 +83,48 @@ Theta       = vignetteColonData$results_4k_iterations$decompose$th
 
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
 
+# Cell-type Annotation via annotated single-cell reference
+
+Here, we will annotate components using single-cell reference. Load the single-cell reference data:
+
+```{r, sc}
+sc_ref = vignetteColonData$sc_ref
+```
+This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
+
+```{r, annotate with sc}
+K = ncol(sc_ref) # number of cell types
+result = annotateWithCorrelations(sc_ref, K, W, H)
+H_sc = result$h
+W_sc = result$w
+```
+
+## Adam: Please add normalization code here as well
+```{r, normalize2}
+# normalize
+W_norm <- W
+for(i in 1:nrow(W)){
+    W_norm[i,]=W[i,]/sum(W[i,])
+}
+W_sc_norm <- W_sc
+for(i in 1:nrow(W_sc)){
+    W_sc_norm[i,]=W_sc[i,]/sum(W_sc[i,])
+}
+```
+
+<!-- Adam: this function should also give mapping maatrix visualization -->
+We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
+You can verify that the mappings from both methods are largely similar.
+
+```{r, visualize correlation matrix between the sc reference and W}
+correlations = stats::cor(sc_ref, W_norm)
+corrplot::corrplot(correlations, 
+         is.corr = F, 
+         mar=c(0,0,1,0), 
+         col = colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
+         main="Correlation-based Mapping Matrix")
+```
+
 # Cell-type Annotation via known marker genes
 
 Here, we will annotate using known marker genes for cell types. Load the marker gene list:
@@ -101,7 +143,7 @@ W_mark = result$w
 ```
 
 ## Adam: Please add normalization code here
-```{r, normalize}
+```{r, normalize2}
 # normalize
 H_est <- H_mark
 for(i in 1:ncol(H_mark)){
@@ -114,35 +156,13 @@ for(i in 1:nrow(W_mark)){
 ```
 
 ## Adam: this function should also give mapping maatrix visualization 
-```{r, visualize correlation matrix}
-# correlations = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
+```{r, visualize correlation matrix between the marker reference and W}
+# correlations = stats::cor(sc_ref_w, W)
 # ggcorrplot::ggcorrplot(correlations)
 ```
 
 We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
 
-
-# Cell-type Annotation via annotated single-cell reference
-
-Here, we will annotate components using single-cell reference. Load the single-cell reference data:
-
-```{r, sc}
-sc_ref = vignetteColonData$sc_ref
-```
-This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
-
-```{r, annotate with sc}
-K = ncol(sc_ref) # number of cell types
-result = annotateWithCorrelations(sc_ref, K, W, H)
-H_sc = result$h
-W_sc = result$w
-```
-
-## Adam: Please add normalization code here as well
-
-<!-- Adam: this function should also give mapping maatrix visualization -->
-We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
-You can verify that the mappings from both methods are largely similar.
 
 # Results and visualization
 
