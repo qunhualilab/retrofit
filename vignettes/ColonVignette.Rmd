@@ -99,7 +99,7 @@ H_sc = result$h
 W_sc = result$w
 ```
 
-## Adam: Please add normalization code here as well
+
 ```{r, normalize2}
 # normalize
 W_norm <- W
@@ -112,17 +112,15 @@ for(i in 1:nrow(W_sc)){
 }
 ```
 
-<!-- Adam: this function should also give mapping maatrix visualization -->
 We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_norm of order K x S.
 You can verify that the mappings from both methods are largely similar.
 
 ```{r, visualize correlation matrix between the sc reference and W}
-correlations = stats::cor(sc_ref, W_norm)
-corrplot::corrplot(correlations, 
-         is.corr = F, 
-         mar=c(0,0,1,0), 
-         col = colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
-         main="Correlation-based Mapping Matrix")
+corrplot::corrplot(stats::cor(sc_ref, W_norm), 
+                   is.corr = F, 
+                   mar=c(0,0,1,0), 
+                   col = colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
+                   main="Correlation-based Mapping Matrix")
 ```
 
 # Cell-type Annotation via known marker genes
@@ -140,10 +138,10 @@ K = length(marker_ref) # number of cell types
 result = retrofit::annotateWithMarkers(marker_ref, K, W, H)
 H_mark = result$h
 W_mark = result$w
+gene_sums = result$gene_sums
 ```
 
-## Adam: Please add normalization code here
-```{r, normalize2}
+```{r, normalize annotated with marker}
 # normalize
 H_mark_norm <- H_mark
 for(i in 1:ncol(H_mark)){
@@ -155,14 +153,15 @@ for(i in 1:nrow(W_mark)){
 }
 ```
 
-## Adam: this function should also give mapping maatrix visualization 
-```{r, visualize correlation matrix between the marker reference and W}
-# correlations = stats::cor(sc_ref_w, W)
-# ggcorrplot::ggcorrplot(correlations)
+```{r, visualize correlation matrix marker}
+corrplot::corrplot(gene_sums, 
+                   is.corr=F, 
+                   mar=c(0,0,1,0), 
+                   col=colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
+                   main="Marker-based Mapping Matrix")
 ```
 
-We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_norm of order K x S.
-
+We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
 
 # Results and visualization
 

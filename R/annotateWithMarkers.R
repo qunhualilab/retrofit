@@ -114,6 +114,6 @@ annotateWithMarkers <- function(marker_ref,
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   
-  ret <- list(w=w_mod, h=h_mod, ranked_cells=cell_sel)
+  ret <- list(w=w_mod, h=h_mod, ranked_cells=cell_sel, gene_sums=sums)
   return(ret)
 }
