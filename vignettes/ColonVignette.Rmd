@@ -415,7 +415,10 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
-genes=vignetteColonData$fetal12_genes
+fetal12_genes = vignetteColonData$fetal12_genes
+adult_genes   = vignetteColonData$adult_genes
+genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing = F)
+genes         = genes[genes %in% row.names(W_mark_norm)]
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
@@ -451,7 +454,6 @@ ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +
   ggplot2::xlab('')+ ggplot2::ylab('')+
   ggplot2::theme(legend.position="bottom")
 ```
-
 
 # Session information
 
