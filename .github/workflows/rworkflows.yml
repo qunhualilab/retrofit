@@ -2,13 +2,11 @@ name: rworkflows
 'on':
   push:
     branches:
-    - master
-    - main
+    - package
     - RELEASE_**
   pull_request:
     branches:
-    - master
-    - main
+    - package
     - RELEASE_**
 jobs:
   rworkflows:
