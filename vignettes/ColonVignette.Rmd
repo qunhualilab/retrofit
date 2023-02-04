@@ -41,17 +41,6 @@ data("vignetteColonData")
 X = vignetteColonData$colon_a3_x
 ```
 
-The data used here was pre-processed, similar to STdeconvolve, which includes the following:
-
-## Xi: may need to add the pre-processing steps done by Xi using STdeconvolve package 
-
-- remove spots with too few genes
-- remove genes that are present in 100% of the spots
-- remove genes that are present in less than 5% of the spots
-- find over dispersed genes for deconvolution.
-
-In the end, the ST data matrix will consist of G = 722 genes and S = 1080 spots i.e., a matrix of order G x S.
-
 # Reference-free Deconvolution
 
 Initialize the required parameters for deconvolution. We set the number of iterations, Iter = 4000 and number of components, L = 20. Lamda is kept at the default value of 0.01. 
@@ -90,6 +79,7 @@ Here, we will annotate components using single-cell reference. Load the single-c
 ```{r, sc}
 sc_ref = vignetteColonData$sc_ref
 ```
+
 This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate with sc}
@@ -198,7 +188,6 @@ df$CellType=factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Musc
                                         "Neural", "Endothelium", "Pericytes","Fibroblasts"))
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
-  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
   ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
   ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#009E73", "#CC79A7",
                              "#0072B2", "#D55E00" ,"#F0E442"),
