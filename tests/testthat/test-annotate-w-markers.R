@@ -16,123 +16,62 @@ test_that("annotateWithMarkers-works-in-simple-model", {
 })
 
 test_that("annotateWithMarkers-parameters-are-validated", {
-  # run_decompose <- function(args,
-  #                           no_issue_check=FALSE,
-  #                           warning_check=FALSE,
-  #                           error_check=FALSE) {
-  #   out <- tryCatch(
-  #     {
-  #       # don't use do.call!! it has different expression evaluation.
-  #       decompose(x           = args$x,
-  #                 L           = args$L,
-  #                 iterations  = args$iterations,
-  #                 lambda      = args$lambda,
-  #                 seed        = args$seed,
-  #                 alpha_w_0   = args$alpha_w_0, 
-  #                 beta_w_0    = args$beta_w_0, 
-  #                 alpha_h_0   = args$alpha_h_0,
-  #                 beta_h_0    = args$beta_h_0,
-  #                 alpha_th_0  = args$alpha_th_0,
-  #                 beta_th_0   = args$beta_th_0,
-  #                 kappa       = args$kappa,
-  #                 verbose     = args$verbose)
-  #       
-  #       if(no_issue_check) return(TRUE)
-  #     },
-  #     warning=function(cond) {
-  #       print(cond$message)
-  #       if(warning_check) return(TRUE)
-  #     },
-  #     error=function(cond) {
-  #       print(cond$message)
-  #       if(error_check) return(TRUE)
-  #     }
-  #   )
-  #   return(out)
-  # }
-  # 
-  # base_args = list(
-  #   x           = array(runif(4*3, 0, 1), c(4, 3)),
-  #   L           = 16,
-  #   iterations  = 10,
-  #   lambda      = 0.01,
-  #   seed        = 1,
-  #   alpha_w_0   = 0.05, 
-  #   beta_w_0    = 0.0001, 
-  #   alpha_h_0   = 0.2,
-  #   beta_h_0    = 0.2,
-  #   alpha_th_0  = 1.25,
-  #   beta_th_0   = 10,
-  #   kappa       = 0.5,
-  #   verbose     = FALSE
-  # )
-  # 
-  # # default run
-  # args = base_args
-  # testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
-  # 
-  # # verbose true
-  # args = utils::modifyList(base_args, list(verbose=TRUE))
-  # testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
-  # 
-  # # seed can be null
-  # args = utils::modifyList(base_args, list(seed=NULL))
-  # testthat::expect_true(run_decompose(args, no_issue_check = TRUE))
-  # 
-  # # warning: dimensions are large
-  # args = utils::modifyList(base_args, list(x = array(0, c(10000, 1000))))
-  # testthat::expect_true(run_decompose(args, warning_check = TRUE))
-  # 
-  # # error: nulls
-  # # x is null
-  # args = utils::modifyList(base_args, list(x = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # L is null
-  # args = utils::modifyList(base_args, list(L = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # iterations is null
-  # args = utils::modifyList(base_args, list(iterations = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # lambda is null
-  # args = utils::modifyList(base_args, list(lambda = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # kappa is null
-  # args = utils::modifyList(base_args, list(kappa = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # params are null
-  # args = utils::modifyList(base_args, list(alpha_w_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # args = utils::modifyList(base_args, list(beta_w_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # args = utils::modifyList(base_args, list(alpha_h_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # args = utils::modifyList(base_args, list(beta_h_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # args = utils::modifyList(base_args, list(alpha_th_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # args = utils::modifyList(base_args, list(beta_th_0 = NULL))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # L is 0
-  # args = utils::modifyList(base_args, list(L = 0))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # iterations is 0
-  # args = utils::modifyList(base_args, list(iterations = 0))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  # 
-  # # kappa is 0
-  # args = utils::modifyList(base_args, list(kappa = 0))
-  # testthat::expect_true(run_decompose(args, error_check = TRUE))
-  testthat::expect_true(TRUE)
+  run <- function(args,
+                  no_issue_check=FALSE,
+                  warning_check=FALSE,
+                  error_check=FALSE) {
+    out <- tryCatch(
+      {
+        # don't use do.call!! it has different expression evaluation.
+        retrofit::annotateWithMarkers(
+          marker_ref= args$marker_ref,
+          K         = args$K,
+          decomp_w  = args$decomp_w,
+          decomp_h  = args$decomp_h)
+        
+        if(no_issue_check) return(TRUE)
+      },
+      warning=function(cond) {
+        print(cond$message)
+        if(warning_check) return(TRUE)
+      },
+      error=function(cond) {
+        print(cond$message)
+        if(error_check) return(TRUE)
+      }
+    )
+    return(out)
+  }
+  
+  get_args <- function() {
+    marker_ref   = list("1"=1:10, "2"=2:5, "3"=1:7, "4"=1:7, "5"=1:7)
+    decomp_w = array(runif(4*10, 0, 1), c(4, 10))
+    rownames(decomp_w) = c(1:4)
+    colnames(decomp_w) = c(1:10)
+    decomp_h = array(runif(10*2, 0, 1), c(10, 2))
+    rownames(decomp_h) = c(1:10)
+    colnames(decomp_h) = c(1:2)
+    return(list(
+      marker_ref= marker_ref,
+      K         = 5,
+      decomp_w  = decomp_w,
+      decomp_h  = decomp_h
+    ))
+  }
+  
+  # default run
+  args = get_args()
+  testthat::expect_true(run(args, no_issue_check = TRUE))
+  # fewer cell types
+  args = get_args()
+  args$marker_ref = list("1"=1:10, "2"=2:5)
+  testthat::expect_true(run(args, warning_check = TRUE))
+  # decomp_w no rownames
+  # args = get_args()
+  # args$decomp_w = array(runif(4*10, 0, 1), c(4, 10))
+  # testthat::expect_true(run(args, error_check = TRUE))
+  # decomp_w - decomp_h dimension
+  args = get_args()
+  args$decomp_w = array(runif(4*11, 0, 1), c(3, 11))
+  testthat::expect_true(run(args, error_check = TRUE))
 })

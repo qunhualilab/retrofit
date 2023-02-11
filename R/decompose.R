@@ -55,35 +55,76 @@ decompose <- function(x,
                       kappa       = 0.5,
                       verbose     = FALSE) {
   stopifnot(!is.null(x))
+  stopifnot((is.matrix(x) || is.array(x) || is.list(x)))
+  stopifnot(length(dim(x)) == 2)
   stopifnot(!is.null(L))
   stopifnot(!is.null(lambda))
   stopifnot(!is.null(iterations))
-  # stopifnot(!is.null(alpha_w_0))
-  # stopifnot(!is.null(beta_w_0))
-  # stopifnot(!is.null(alpha_h_0))
-  # stopifnot(!is.null(beta_h_0))
-  # stopifnot(!is.null(alpha_th_0))
-  # stopifnot(!is.null(beta_th_0))
   stopifnot(!is.null(kappa))
+  stopifnot(is.numeric(L) && as.integer(L) > 0)
+  stopifnot(is.numeric(iterations) && as.integer(iterations) > 0)
+  stopifnot(is.numeric(kappa) && kappa > 0)
+  if(!is.null(init_param)){
+    stopifnot(is.list(init_param))
+    stopifnot("alpha_w_0" %in% names(init_param) && is.numeric(init_param$alpha_w_0))
+    stopifnot("beta_w_0" %in% names(init_param) && is.numeric(init_param$beta_w_0))
+    stopifnot("alpha_h_0" %in% names(init_param) && is.numeric(init_param$alpha_h_0))
+    stopifnot("beta_h_0" %in% names(init_param) && is.numeric(init_param$beta_h_0))
+    stopifnot("alpha_th_0" %in% names(init_param) && is.numeric(init_param$alpha_th_0))
+    stopifnot("beta_th_0" %in% names(init_param) && is.numeric(init_param$beta_th_0))
+    stopifnot("alpha_th_k" %in% names(init_param))
+    stopifnot("beta_th_k" %in% names(init_param))
+    stopifnot("alpha_w_gk" %in% names(init_param))
+    stopifnot("beta_w_gk" %in% names(init_param))
+    stopifnot("alpha_h_ks" %in% names(init_param))
+    stopifnot("beta_h_ks" %in% names(init_param))
+    stopifnot(is.array(init_param$alpha_th_k))
+    stopifnot(is.array(init_param$beta_th_k))
+    stopifnot(is.array(init_param$alpha_w_gk))
+    stopifnot(is.array(init_param$beta_w_gk))
+    stopifnot(is.array(init_param$alpha_h_ks))
+    stopifnot(is.array(init_param$beta_h_ks))
+    stopifnot(all(dim(init_param$alpha_th_k) == c(L)))
+    stopifnot(all(dim(init_param$beta_th_k)  == c(L)))
+    stopifnot(all(dim(init_param$alpha_w_gk) == c(dim(x)[1],L)))
+    stopifnot(all(dim(init_param$beta_w_gk)  == c(dim(x)[1],L)))
+    stopifnot(all(dim(init_param$alpha_h_ks) == c(L,dim(x)[2])))
+    stopifnot(all(dim(init_param$beta_h_ks)  == c(L,dim(x)[2])))
+  }
   
-  stopifnot(L > 0)
-  stopifnot(iterations > 0)
-  stopifnot(kappa > 0)
+  # change type.
+  L = as.integer(L)
+  iterations = as.integer(iterations)
   
   # copy and 'purify' the matrix
   x_rownames = rownames(x)
   x_colnames = colnames(x)
   x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
+  
   # dimensions
   G   = dim(x)[1] # Gene expressions
   S   = dim(x)[2] # Spots
   K   = L # alias the component number
   dim = c(G,K,S)
-  if (G*K*S > 1e+8){
-    warning(paste('The dimension ( G,K,S =>', toString(dim), ') can be too large to handle in this function.'))
-  }
-  if(G*K*S == 0){
-    stop("Dimensions cannot be 0")
+  
+  # parameter vectors
+  if(is.null(init_param)){
+    param = list(
+      alpha_w_0  = 0.05, 
+      beta_w_0   = 0.0001, 
+      alpha_h_0  = 0.2,
+      beta_h_0   = 0.2,
+      alpha_th_0 = 1.25,
+      beta_th_0  = 10,
+      alpha_th_k = array(stats::runif(K,  0,1)    +1.25,   c(K)),
+      beta_th_k  = array(stats::runif(K,  0,1)    +10,     c(K)),
+      alpha_w_gk = array(stats::runif(G*K,0,0.5)  +0.05,   c(G,K)),
+      beta_w_gk  = array(stats::runif(G*K,0,0.005)+0.0001, c(G,K)),
+      alpha_h_ks = array(stats::runif(K*S,0,0.1)  +0.2,    c(K,S)),
+      beta_h_ks  = array(stats::runif(K*S,0,0.5)  +0.2,    c(K,S))
+    )
+  } else {
+    param=init_param
   }
   
   # W/H/Th from Gamma dist
@@ -96,21 +137,6 @@ decompose <- function(x,
   prob = list(
     phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S)),
     phi_b_gk  = array(rep(0, len=G*K),  c(G,K))
-  )
-  # parameter vectors
-  param = list(
-    alpha_w_0  = 0.05, 
-    beta_w_0   = 0.0001, 
-    alpha_h_0  = 0.2,
-    beta_h_0   = 0.2,
-    alpha_th_0 = 1.25,
-    beta_th_0  = 10,
-    alpha_th_k = array(stats::runif(K,  0,1)    +1.25,   c(K)),
-    beta_th_k  = array(stats::runif(K,  0,1)    +10,     c(K)),
-    alpha_w_gk = array(stats::runif(G*K,0,0.5)  +0.05,   c(G,K)),
-    beta_w_gk  = array(stats::runif(G*K,0,0.005)+0.0001, c(G,K)),
-    alpha_h_ks = array(stats::runif(K*S,0,0.1)  +0.2,    c(K,S)),
-    beta_h_ks  = array(stats::runif(K*S,0,0.5)  +0.2,    c(K,S))
   )
   
   # variables for verbose mode
