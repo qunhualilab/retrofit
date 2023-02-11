@@ -24,13 +24,20 @@ annotateWithCorrelations <- function(sc_ref,
                                      decomp_w, 
                                      decomp_h) {
   stopifnot(!is.null(sc_ref))
+  stopifnot((is.matrix(sc_ref) || is.array(sc_ref) || is.list(sc_ref)))
+  stopifnot(length(dim(sc_ref)) == 2)
+  stopifnot(!is.null(rownames(sc_ref)))
   stopifnot(is.numeric(K))
   stopifnot(!is.null(decomp_w))
+  stopifnot((is.matrix(decomp_w) || is.array(decomp_w) || is.list(decomp_w)))
+  stopifnot(length(dim(decomp_w)) == 2)
+  # stopifnot(!is.null(rownames(decomp_w)) && !is.null(colnames(decomp_w)))
   stopifnot(!is.null(decomp_h))
-  
-  if(dim(decomp_w)[2] != dim(decomp_h)[1]){
-    stop("decomp_w and decomp_h dimensions not matched")
-  }
+  stopifnot((is.matrix(decomp_h) || is.array(decomp_h) || is.list(decomp_h)))
+  stopifnot(length(dim(decomp_h)) == 2)
+  # stopifnot(!is.null(rownames(decomp_h)) && !is.null(colnames(decomp_h)))
+  stopifnot(dim(decomp_w)[2] == dim(decomp_h)[1])
+  stopifnot(dim(decomp_w)[1] == dim(sc_ref)[1])
   
   cell_types = colnames(sc_ref)
   

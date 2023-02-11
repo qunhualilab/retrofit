@@ -21,9 +21,19 @@ annotateWithMarkers <- function(marker_ref,
                                 K,
                                 decomp_w, 
                                 decomp_h) {
-  if(dim(decomp_w)[2] != dim(decomp_h)[1]){
-    stop("decomp_w and decomp_h dimensions not matched")
-  }
+  stopifnot(!is.null(marker_ref))
+  stopifnot(is.list(marker_ref))
+  stopifnot(is.numeric(K))
+  stopifnot(!is.null(decomp_w))
+  stopifnot((is.matrix(decomp_w) || is.array(decomp_w) || is.list(decomp_w)))
+  stopifnot(length(dim(decomp_w)) == 2)
+  # stopifnot(!is.null(rownames(decomp_w)) && !is.null(colnames(decomp_w)))
+  stopifnot(!is.null(decomp_h))
+  stopifnot((is.matrix(decomp_h) || is.array(decomp_h) || is.list(decomp_h)))
+  stopifnot(length(dim(decomp_h)) == 2)
+  # stopifnot(!is.null(rownames(decomp_h)) && !is.null(colnames(decomp_h)))
+  stopifnot(dim(decomp_w)[2] == dim(decomp_h)[1])
+  
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
   w = matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
   h = matrix(as.numeric(unlist(decomp_h)), nrow=nrow(decomp_h), ncol=ncol(decomp_h))
