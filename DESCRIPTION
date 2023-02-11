@@ -53,7 +53,7 @@ Suggests:
     testthat,
     DescTools,
     ggplot2,
-    ggcorrplot,
+    corrplot,
     cowplot,
     grid,
     colorspace,
