@@ -107,26 +107,38 @@ annotateWithCorrelations <- function(sc_ref,
   }
   
   # order selections following the reference
-  sel <- data.frame(
-    r = row_sel,
-    c = col_sel
-  )
-  sel <- sel[
-    with(sel, order(r)),
-  ]
+  sel <- data.frame(r=row_sel, c=col_sel)
+  sel <- sel[with(sel, order(r)),]
+  
   row_sel = sel$r
   col_sel = sel$c
   
-  w_mod = w[,col_sel]
-  h_mod = h[col_sel,]
   cell_mod = rep(NA, K)
   for (i in 1:K) {
     cell_mod[i] = cell_types[row_sel[i]]
   }
   
+  w_mod = w[,col_sel]
+  h_mod = h[col_sel,]
   colnames(w_mod) = cell_mod
   rownames(h_mod) = cell_mod
   
-  ret <- list(w=w_mod, h=h_mod, ranked_cells=cell_sel, ranked_correlations=cor_sel)
+  # weight to proportion
+  w_mod_prop <- w_mod
+  for(i in 1:nrow(w_mod)){
+    w_mod_prop[i,]=w_mod[i,]/sum(w_mod[i,])
+  }
+  h_mod_prop <- h_mod
+  for(i in 1:ncol(h_mod)){
+    h_mod_prop[,i]=h_mod[,i]/sum(h_mod[,i])
+  }
+  
+  ret <- list(w=w_mod, 
+              h=h_mod, 
+              w_prop=w_mod_prop, 
+              h_prop=h_mod_prop,
+              ranked_cells=cell_sel, 
+              ranked_correlations=cor_sel,
+              sc_ref_prop=sc_ref_normalized)
   return(ret)
 }
