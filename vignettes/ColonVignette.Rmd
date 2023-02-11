@@ -84,28 +84,22 @@ This file contains average gene expression values for K=8 cell types. Run the fo
 
 ```{r, annotate with sc}
 K = ncol(sc_ref) # number of cell types
-result = annotateWithCorrelations(sc_ref, K, W, H)
-H_sc = result$h
-W_sc = result$w
+result    = annotateWithCorrelations(sc_ref, K, W, H)
+H_sc      = result$h
+W_sc      = result$w
+H_sc_prop = result$h_prop
+W_sc_prop = result$w_prop
 ```
 
+We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_prop of order K x S.
+You can verify that the mappings from both methods are largely similar.
 
-```{r, normalize2}
-# normalize
+```{r, visualize correlation matrix between the sc reference and W}
 W_norm <- W
 for(i in 1:nrow(W)){
     W_norm[i,]=W[i,]/sum(W[i,])
 }
-W_sc_norm <- W_sc
-for(i in 1:nrow(W_sc)){
-    W_sc_norm[i,]=W_sc[i,]/sum(W_sc[i,])
-}
-```
 
-We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_norm of order K x S.
-You can verify that the mappings from both methods are largely similar.
-
-```{r, visualize correlation matrix between the sc reference and W}
 corrplot::corrplot(stats::cor(sc_ref, W_norm), 
                    is.corr = F, 
                    mar=c(0,0,1,0), 
@@ -125,22 +119,12 @@ This file contains the list of marker genes for K = 8 cell types. Run the follow
 
 ```{r, annotate with marker}
 K = length(marker_ref) # number of cell types
-result = retrofit::annotateWithMarkers(marker_ref, K, W, H)
-H_mark = result$h
-W_mark = result$w
-gene_sums = result$gene_sums
-```
-
-```{r, normalize annotated with marker}
-# normalize
-H_mark_norm <- H_mark
-for(i in 1:ncol(H_mark)){
-    H_mark_norm[,i]=H_mark[,i]/sum(H_mark[,i])
-}
-W_mark_norm <- W_mark
-for(i in 1:nrow(W_mark)){
-    W_mark_norm[i,]=W_mark[i,]/sum(W_mark[i,])
-}
+result      = retrofit::annotateWithMarkers(marker_ref, K, W, H)
+H_mark      = result$h
+W_mark      = result$w
+H_mark_prop = result$h_prop
+W_mark_prop = result$w_prop
+gene_sums   = result$gene_sums
 ```
 
 ```{r, visualize correlation matrix marker}
@@ -160,7 +144,7 @@ Hereon, we will be reproducing some of the analysis from the paper using marker-
 Figure 4A: Proportion of cell-types in this tissue:
 
 ```{r}
-rowSums(H_mark_norm)/ncol(H_mark_norm)
+rowSums(H_mark_prop)/ncol(H_mark_prop)
 ```
 
 Figure 4C: 
@@ -176,8 +160,8 @@ t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,
 
 Find the cell-type with maximum proportion in each spot and plot:
 ```{r}
-dat=as.data.frame(cbind(coords,t(H_mark_norm)))
-colnames(dat)=c(colnames(coords),rownames(H_mark_norm))
+dat=as.data.frame(cbind(coords,t(H_mark_prop)))
+colnames(dat)=c(colnames(coords),rownames(H_mark_prop))
 
 df=dat[,-c(1:3)]
 df$CellType=NA
@@ -291,7 +275,7 @@ plotfn <- function(df=NULL)
   p
 }
 
-df=as.data.frame(t(H_mark_norm[c(2,4,6,5,7,1,8,3),]))
+df=as.data.frame(t(H_mark_prop[c(2,4,6,5,7,1,8,3),]))
 #pick max cluster, match max to cluster
 maxval <- apply(df,1,max)
 matchval <- vector(length=nrow(df))
@@ -407,12 +391,12 @@ Now read the relevant genes for this tissue:
 fetal12_genes = vignetteColonData$fetal12_genes
 adult_genes   = vignetteColonData$adult_genes
 genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing = F)
-genes         = genes[genes %in% row.names(W_mark_norm)]
+genes         = genes[genes %in% row.names(W_mark_prop)]
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-df=as.matrix(W_mark_norm[genes,])
+df=as.matrix(W_mark_prop[genes,])
 df=df[order(row.names(df)),]
 
 dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
