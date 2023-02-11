@@ -101,7 +101,7 @@ for(i in 1:nrow(W)){
 }
 
 corrplot::corrplot(stats::cor(sc_ref, W_norm), 
-                   is.corr = F, 
+                   is.corr=FALSE, 
                    mar=c(0,0,1,0), 
                    col = colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
                    main="Correlation-based Mapping Matrix")
@@ -129,7 +129,7 @@ gene_sums   = result$gene_sums
 
 ```{r, visualize correlation matrix marker}
 corrplot::corrplot(gene_sums, 
-                   is.corr=F, 
+                   is.corr=FALSE, 
                    mar=c(0,0,1,0), 
                    col=colorRampPalette(c("white", "deepskyblue", "blue4"))(100), 
                    main="Marker-based Mapping Matrix")
@@ -390,7 +390,7 @@ Now read the relevant genes for this tissue:
 ```{r}
 fetal12_genes = vignetteColonData$fetal12_genes
 adult_genes   = vignetteColonData$adult_genes
-genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing = F)
+genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing=FALSE)
 genes         = genes[genes %in% row.names(W_mark_prop)]
 ```
 
