@@ -1,14 +1,13 @@
 test_that("annotateWithCorrelations-works", {
-  data("testAnnotateWithCorrelationsData")
-  d = testAnnotateWithCorrelationsData
+  data("testSimulationData")
+  d = testSimulationData
   res = retrofit::annotateWithCorrelations(
     sc_ref   = d$sc_ref,
     K        = 10,
     decomp_w = d$decompose$w,
     decomp_h = d$decompose$h)
-
-  testthat::expect_true(all.equal(d$results$ranked_cells,  res$ranked_cells,  check.attributes = FALSE))
-  testthat::expect_true(all.equal(d$results$ranked_cells,  res$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithCorrelations$ranked_cells,  res$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithCorrelations$h_prop,  res$h_prop,  check.attributes = FALSE))
 })
 
 test_that("annotateWithCorrelations-works-in-simple-model", {

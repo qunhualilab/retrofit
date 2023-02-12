@@ -1,13 +1,14 @@
 test_that("annotateWithMarkers-works", {
-  data("testAnnotateWithMarkersData")
-  d = testAnnotateWithMarkersData
+  data("testSimulationData")
+  d = testSimulationData
   res = retrofit::annotateWithMarkers(
     marker_ref = d$marker_ref,
     K          = 10,
     decomp_w   = d$decompose$w,
     decomp_h   = d$decompose$h)
 
-  testthat::expect_true(all.equal(d$results$ranked_cells,  res$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithMarkers$ranked_cells,  res$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithMarkers$h_prop,  res$h_prop,  check.attributes = FALSE))
 })
 
 test_that("annotateWithMarkers-works-in-simple-model", {
