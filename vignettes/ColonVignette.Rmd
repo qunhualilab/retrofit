@@ -38,7 +38,7 @@ First load the Colon ST data from fetal 12 PCW tissue, using the following comma
 
 ```{r, data}
 data("vignetteColonData")
-X = vignetteColonData$colon_a3_x
+X = vignetteColonData$a3_x
 ```
 
 # Reference-free Deconvolution
@@ -59,9 +59,9 @@ TH =result$th
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 ```{r, load_retrofit_results}
-H           = vignetteColonData$results_4k_iterations$decompose$h
-W           = vignetteColonData$results_4k_iterations$decompose$w
-Theta       = vignetteColonData$results_4k_iterations$decompose$th
+H           = vignetteColonData$a3_results_4k_iterations$decompose$h
+W           = vignetteColonData$a3_results_4k_iterations$decompose$w
+Theta       = vignetteColonData$a3_results_4k_iterations$decompose$th
 ################################################################################
 # The above results are obtained by running the code below.
 # iterations = 4000
@@ -151,7 +151,7 @@ Figure 4C:
 
 Load the coordinates for the spots in the tissue and the tissue image:
 ```{r}
-coords=vignetteColonData$colon_a3_coords
+coords=vignetteColonData$a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
 # img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210296599-83b1b839-4680-495e-81db-be172ae41d45.png"))
@@ -388,44 +388,105 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
+# fetal12_genes=as.character(read.csv("~/Downloads/fig6b/Fetal12-relevantgenes.csv",header = F)[,1])
+# adult_genes=as.character(read.csv("~/Downloads/fig6b/Adult-relevantgenes.csv",header = F)[,1])
 fetal12_genes = vignetteColonData$fetal12_genes
 adult_genes   = vignetteColonData$adult_genes
+a1_w          = vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
+a3_w          = vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
+# a3_w          = vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
+# a1_w          = vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
 genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing=FALSE)
-genes         = genes[genes %in% row.names(W_mark_prop)]
+df            = vignetteColonData$marker_ref_df
+# genes         = genes[genes %in% row.names(W_mark_prop)]
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-df=as.matrix(W_mark_prop[genes,])
-df=df[order(row.names(df)),]
+# df=read.csv("Colon_markers.csv")[,-1]
+df=vignetteColonData$marker_ref_df
 
-dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df)),rep("Fibroblasts",nrow(df)),
-                                 rep("Myofibroblasts\nMesothelium",nrow(df)),rep("Endothelium",nrow(df)),
-                                 rep("Pericytes",nrow(df)),rep("Neural",nrow(df)),
-                                 rep("Immune",nrow(df)),rep("Muscle",nrow(df))),
+# gene1=as.character(read.csv("Fetal12-relevantgenes.csv",header = F)[,1])
+gene1=vignetteColonData$fetal12_genes
+# gene3=as.character(read.csv("Adult-relevantgenes.csv",header = F)[,1])
+gene3=vignetteColonData$adult_genes
+genes=sort(unique(c(gene1,gene3)),decreasing = F)
+
+# W1=read.csv("A3_W_processed.csv",row.names = 1)
+# W3=read.csv("A1_W_processed.csv",row.names = 1)
+W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
+W3=vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
+
+df1=as.matrix(W1[genes,-c(1,2)])
+df1=df1[order(row.names(df1)),]
+
+df3=as.matrix(W3[genes,-c(1,2)])
+df3=df3[order(row.names(df3)),]
+
+genes2=genes
+genes[genes %in% df$Gene]=paste(genes[genes %in% df$Gene], "*",sep="")
+
+
+dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df1)),rep("Fibroblasts",nrow(df1)),
+                                 rep("Myofibroblasts\nMesothelium",nrow(df1)),rep("Endothelium",nrow(df1)),
+                                 rep("Pericytes",nrow(df1)),rep("Neural",nrow(df1)),
+                                 rep("Immune",nrow(df1)),rep("Muscle",nrow(df1)),
+                                 # rep("Epithelial",nrow(df2)),rep("Fibroblasts",nrow(df2)),
+                                 # rep("Myofibroblasts\nMesothelium",nrow(df2)),rep("Endothelium",nrow(df2)),
+                                 # rep("Pericytes",nrow(df2)),rep("Neural",nrow(df2)),
+                                 # rep("Immune",nrow(df2)),rep("Muscle",nrow(df2)),
+                                 rep("Epithelial",nrow(df3)),rep("Fibroblasts",nrow(df3)),
+                                 rep("Myofibroblasts\nMesothelium",nrow(df3)),rep("Endothelium",nrow(df3)),
+                                 rep("Pericytes",nrow(df3)),rep("Neural",nrow(df3)),
+                                 rep("Immune",nrow(df3)),rep("Muscle",nrow(df3))),
                                levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
                                         "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
-               genes=factor(genes,levels=genes),
-               val=c(df[,"Epithelial"],df[,"Fibroblasts"],
-                     df[,"Myo.Meso"],df[,"Endothelium"],
-                     df[,"Pericytes"],df[,"Neural"],
-                     df[,"Immune"],df[,"Muscle"]))
+               genes=factor(c(genes,genes),#factor(c(rep(genes1,8),rep(genes3,8)),#rep(gene3,8)),
+                            levels=genes),
+               stage=factor(c(rep("Fetal 12 PCW (B)",length(genes)*8),
+                              # rep("Fetal 19 PCW (C)",length(gene2)*8),
+                              rep("Adult (A1)",length(genes)*8)),
+                            levels=c("Fetal 12 PCW (B)",#"Fetal 19 PCW (C)",
+                                     "Adult (A1)")),
+               val=c(df1[,"Epithelial"],df1[,"Fibroblasts"],
+                     df1[,"Myo.Meso"],df1[,"Endothelium"],
+                     df1[,"Pericytes"],df1[,"Neural"],
+                     df1[,"Immune"],df1[,"Muscle"],
+                     # df2[,"Epithelial"],df2[,"Fibroblasts"],
+                     # df2[,"Myo.Meso"],df2[,"Endothelium"],
+                     # df2[,"Pericytes"],df2[,"Neural"],
+                     # df2[,"Immune"],df2[,"Muscle"],
+                     df3[,"Epithelial"],df3[,"Fibroblasts"],
+                     df3[,"Myo.Meso"],df3[,"Endothelium"],
+                     df3[,"Pericytes"],df3[,"Neural"],
+                     df3[,"Immune"],df3[,"Muscle"]))
 
-ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +
+genes1=gene1
+genes3=gene3
+genes1[genes1 %in% df$Gene]=paste(genes1[genes1 %in% df$Gene], "*",sep="")
+genes3[genes3 %in% df$Gene]=paste(genes3[genes3 %in% df$Gene], "*",sep="")
+
+color_list=1*(genes %in% genes1)+2*(genes %in% genes3)
+color_list=ifelse(color_list==1,"#5D3A9B",ifelse(color_list==2,"#40B0A6","#E66100"))
+
+ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +  
   ggplot2::geom_tile() + ggplot2::theme_classic() +
-  ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20],
-                                name="Normalized\nGene Expression   ",
-                                limit=c(0,1), na.value="grey87"
-  )+
+  ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
+                       name="Normalized\nGene Expression   ",
+                       limit=c(0,1), na.value="grey87"
+  )+ ggplot2::facet_grid(cols = ggplot2::vars(stage))+
   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1,size=8),
-                 legend.key.height = ggplot2::unit(0.2, 'cm'),
-                 legend.key.width = ggplot2::unit(1, 'cm'),
+                 axis.text.y = ggplot2::element_text(colour = color_list),
+                 legend.key.height = ggplot2::unit(0.2, 'cm'), #change legend key size
+                 legend.key.width = ggplot2::unit(1, 'cm'), 
                  legend.title = ggplot2::element_text(size=7),
                  legend.justification="center",
+                 #plot.margin = unit(c(0.1,0.1,-0.3,0),"cm"),
                  legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
                  legend.text=ggplot2::element_text(size=7)) +
-  ggplot2::xlab('')+ ggplot2::ylab('')+
+  ggplot2::xlab('')+ ggplot2::ylab('')+ 
   ggplot2::theme(legend.position="bottom")
+
 ```
 
 # Session information
