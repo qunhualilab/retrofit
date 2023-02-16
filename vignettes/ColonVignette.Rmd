@@ -388,45 +388,22 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 
 Now read the relevant genes for this tissue:
 ```{r}
-# fetal12_genes=as.character(read.csv("~/Downloads/fig6b/Fetal12-relevantgenes.csv",header = F)[,1])
-# adult_genes=as.character(read.csv("~/Downloads/fig6b/Adult-relevantgenes.csv",header = F)[,1])
-fetal12_genes = vignetteColonData$fetal12_genes
-adult_genes   = vignetteColonData$adult_genes
-a1_w          = vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
-a3_w          = vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
-# a3_w          = vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
-# a1_w          = vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
-genes         = sort(unique(c(fetal12_genes, adult_genes)), decreasing=FALSE)
-df            = vignetteColonData$marker_ref_df
-# genes         = genes[genes %in% row.names(W_mark_prop)]
+df=vignetteColonData$marker_ref_df
+gene1=vignetteColonData$fetal12_genes
+gene3=vignetteColonData$adult_genes
+genes=sort(unique(c(gene1,gene3)),decreasing = F)
+W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
+W3=vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
+df1=as.matrix(W1[genes,-c(1,2)])
+df1=df1[order(row.names(df1)),]
+df3=as.matrix(W3[genes,-c(1,2)])
+df3=df3[order(row.names(df3)),]
+genes2=genes
+genes[genes %in% df$Gene]=paste(genes[genes %in% df$Gene], "*",sep="")
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
 ```{r}
-# df=read.csv("Colon_markers.csv")[,-1]
-df=vignetteColonData$marker_ref_df
-
-# gene1=as.character(read.csv("Fetal12-relevantgenes.csv",header = F)[,1])
-gene1=vignetteColonData$fetal12_genes
-# gene3=as.character(read.csv("Adult-relevantgenes.csv",header = F)[,1])
-gene3=vignetteColonData$adult_genes
-genes=sort(unique(c(gene1,gene3)),decreasing = F)
-
-# W1=read.csv("A3_W_processed.csv",row.names = 1)
-# W3=read.csv("A1_W_processed.csv",row.names = 1)
-W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
-W3=vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
-
-df1=as.matrix(W1[genes,-c(1,2)])
-df1=df1[order(row.names(df1)),]
-
-df3=as.matrix(W3[genes,-c(1,2)])
-df3=df3[order(row.names(df3)),]
-
-genes2=genes
-genes[genes %in% df$Gene]=paste(genes[genes %in% df$Gene], "*",sep="")
-
-
 dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df1)),rep("Fibroblasts",nrow(df1)),
                                  rep("Myofibroblasts\nMesothelium",nrow(df1)),rep("Endothelium",nrow(df1)),
                                  rep("Pericytes",nrow(df1)),rep("Neural",nrow(df1)),
