@@ -1,27 +1,38 @@
-test_that("retrofit-works", {
+test_that("retrofit-works-correlations", {
+  data("testSimulationData")
+  d = testSimulationData
   iterations = 10
   L = 16
-  K = 8
-  
-  data("testRetrofitData")
-  x           = testRetrofitData$colon_x
-  sc_ref      = testRetrofitData$sc_ref
-  marker_ref  = testRetrofitData$marker_ref
-
+  K = 10
   set.seed(1)
-  res = retrofit::retrofit(x, 
-                           sc_ref=sc_ref, 
-                           marker_ref=marker_ref, 
-                           iterations=iterations, 
-                           L=L, 
-                           K=K,
-                           verbose=TRUE)
-
-  expect_true(all.equal(as.matrix(testRetrofitData$results$decompose$h),                res$decompose$h, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$decompose$w),                res$decompose$w, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$decompose$th),               res$decompose$th, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$annotateWithCorrelations$h), res$annotateWithCorrelations$h, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$annotateWithCorrelations$w), res$annotateWithCorrelations$w, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$annotateWithMarkers$h),      res$annotateWithMarkers$h, check.attributes = FALSE))
-  expect_true(all.equal(as.matrix(testRetrofitData$results$annotateWithMarkers$w),      res$annotateWithMarkers$w, check.attributes = FALSE))
+  
+  res = retrofit::retrofit(
+    x         = d$extra5_x,
+    sc_ref    = d$sc_ref,
+    iterations= iterations,
+    L         = L,
+    K         = K)
+  
+  testthat::expect_true(all.equal(d$annotateWithCorrelations$ranked_cells,  res$annotateWithCorrelations$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithCorrelations$h_prop,  res$annotateWithCorrelations$h_prop,  check.attributes = FALSE))
 })
+
+test_that("retrofit-works-markers", {
+  data("testSimulationData")
+  d = testSimulationData
+  iterations = 10
+  L = 16
+  K = 10
+  set.seed(1)
+  
+  res = retrofit::retrofit(
+    x         = d$extra5_x,
+    marker_ref= d$marker_ref,
+    iterations= iterations,
+    L         = L,
+    K         = K)
+  
+  testthat::expect_true(all.equal(d$annotateWithMarkers$ranked_cells,  res$annotateWithMarkers$ranked_cells,  check.attributes = FALSE))
+  testthat::expect_true(all.equal(d$annotateWithMarkers$h_prop,  res$annotateWithMarkers$h_prop,  check.attributes = FALSE))
+})
+
