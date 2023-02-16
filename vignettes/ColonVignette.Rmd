@@ -391,7 +391,7 @@ Now read the relevant genes for this tissue:
 df=vignetteColonData$marker_ref_df
 gene1=vignetteColonData$fetal12_genes
 gene3=vignetteColonData$adult_genes
-genes=sort(unique(c(gene1,gene3)),decreasing = F)
+genes=sort(unique(c(gene1,gene3)),decreasing = FALSE)
 W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
 W3=vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
 df1=as.matrix(W1[genes,-c(1,2)])
