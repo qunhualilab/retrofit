@@ -39,8 +39,8 @@
 #' }
 #' 
 #'@examples
-#' data("testDecomposeData")
-#' x   = testDecomposeData$extra5_x
+#' data("testSimulationData")
+#' x   = testSimulationData$extra5_x
 #' res = retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
 #' W   = res$w
 #' H   = res$h

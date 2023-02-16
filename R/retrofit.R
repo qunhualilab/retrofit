@@ -30,9 +30,17 @@
 #' }
 #'
 #'@examples
-#'iterations = 10
-#'L = 16
-#'K = 8
+#' data("testSimulationData")
+#' iterations  = 10
+#' L           = 16
+#' K           = 8
+#' x           = testSimulationData$extra5_x
+#' sc_ref      = testSimulationData$sc_ref
+#' 
+#' res         = retrofit::retrofit(x, sc_ref=sc_ref, L=L, K=K, iterations=iterations)
+#' W           = res$decompose$w
+#' W_annotated = res$annotateWithCorrelations$w
+#' ranked_cells= res$annotateWithCorrelations$ranked_cells
 #'@seealso papers reference
 #'@export
 retrofit <- function(x,
