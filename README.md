@@ -1,6 +1,6 @@
 RETROFIT enables reference-free cell-type deconvolution of spatial transcriptomics data.
-
-![Figure1](https://user-images.githubusercontent.com/90921267/220766755-daea9d4b-4ac0-4dd3-978c-7e71b31bc36e.png)
+##
+![Figure1](https://user-images.githubusercontent.com/90921267/220766755-daea9d4b-4ac0-4dd3-978c-7e71b31bc36e.png) <br />
 
 ## Installation
 
@@ -50,5 +50,5 @@ cells       = res$ranked_cells
 ```
 
 More details can be found in the vignettes.
-[Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd)
-[Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd)
+- [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd)
+- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd)
