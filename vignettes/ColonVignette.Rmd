@@ -43,14 +43,19 @@ X = vignetteColonData$a3_x
 
 # Reference-free Deconvolution
 
-Initialize the required parameters for deconvolution. We set the number of iterations, Iter = 4000 and number of components, L = 20. Lamda is kept at the default value of 0.01. 
+Initialize the required parameters for deconvolution. 
+
+```{r, decompose initialization}
+# iterations: Number of iterations (default = 4000)
+# L: Number of components required
+iterations  = 20
+L           = 20
+```
 
 After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
-Iter = 20
-L = 20
-result = retrofit::decompose(X, L=L, iterations=Iter, verbose=TRUE)
+result = retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
 
 H = result$h
 W = result$w
@@ -58,6 +63,7 @@ TH =result$th
 ```
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+
 ```{r, load_retrofit_results}
 H           = vignetteColonData$a3_results_4k_iterations$decompose$h
 W           = vignetteColonData$a3_results_4k_iterations$decompose$w
@@ -141,15 +147,19 @@ We assign components to the cell type it has maximum average marker expression i
 
 Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
 
-Figure 4A: Proportion of cell-types in this tissue:
+## Figure 4A 
+
+Proportion of cell-types in this tissue:
 
 ```{r}
-rowSums(H_mark_prop)/ncol(H_mark_prop)
+
+p = rowSums(H_mark_prop)/ncol(H_mark_prop)
 ```
 
-Figure 4C: 
+## Figure 4C 
 
 Load the coordinates for the spots in the tissue and the tissue image:
+
 ```{r}
 coords=vignetteColonData$a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
@@ -159,6 +169,7 @@ t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,
 ```
 
 Find the cell-type with maximum proportion in each spot and plot:
+
 ```{r}
 dat=as.data.frame(cbind(coords,t(H_mark_prop)))
 colnames(dat)=c(colnames(coords),rownames(H_mark_prop))
@@ -186,9 +197,10 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x = ggplot2::element_blank(),  axis.ticks.y = ggplot2::element_blank())                   
 ```
 
-Figure 4D and 4E:
+## Figure 4D and 4E
 
 Plot the spatial expression for Epithelial markers:
+
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 df = as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
 df$metagene = unname(rowSums(df[,-c(1:5)])) 
@@ -216,6 +228,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x=ggplot2::element_blank(),
                  axis.ticks.y=ggplot2::element_blank())
 ```
+
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
@@ -240,9 +253,10 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
+
 Verify that the spatial pattern exhibited by the epithelial markers is largely similar to that of the estimated proportion for epithelial cells.
 
-Figure 5A:
+## Figure 5A
 
 Visualize the proportion of different cell types and colocalization patterns:
 
@@ -297,7 +311,7 @@ plotfn(df=df_q)+
   ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=9))
 ```
 
-Figure 5D: 
+## Figure 5D
 
 Plot the proportion of only dominant cell types i.e., cell types with proportion > 0.5 in a spot.
 
@@ -334,7 +348,7 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 5E: 
+## Figure 5E
 
 Visualize the spots that contain cell types co-localized with Epithelial cells:
 
@@ -376,7 +390,7 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 6B:
+## Figure 6B
 
 We found cell-type specific genes using RETROFIT estimates. We filtered genes using the following steps:\
 
@@ -387,6 +401,7 @@ We found cell-type specific genes using RETROFIT estimates. We filtered genes us
 - Cell type specificity consistent across replicates 
 
 Now read the relevant genes for this tissue:
+
 ```{r}
 df=vignetteColonData$marker_ref_df
 gene1=vignetteColonData$fetal12_genes
@@ -403,6 +418,7 @@ genes[genes %in% df$Gene]=paste(genes[genes %in% df$Gene], "*",sep="")
 ```
 
 Plot the normalized gene expression for these genes estimated by RETROFIT:
+
 ```{r}
 dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df1)),rep("Fibroblasts",nrow(df1)),
                                  rep("Myofibroblasts\nMesothelium",nrow(df1)),rep("Endothelium",nrow(df1)),
