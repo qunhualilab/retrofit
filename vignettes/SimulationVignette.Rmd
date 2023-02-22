@@ -41,14 +41,16 @@ The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matr
 
 # Deconvolution
 
-Initialize the following parameters for deconvolution:\
-iterations: Number of iterations (default = 4000)\
-L: Number of components required\
-\
-After initialization, run RETROFIT on the data (X) as follows:
-```{r, decompose}
+Initialize the following parameters for deconvolution:
+```{r, decompose initialization}
+# iterations: Number of iterations (default = 4000)
+# L: Number of components required
 iterations  = 10
 L           = 20
+```
+
+After initialization, run RETROFIT on the data (X) as follows:
+```{r, decompose}
 result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
 H           = result$h
 W           = result$w
