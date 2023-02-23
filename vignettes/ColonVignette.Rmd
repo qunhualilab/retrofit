@@ -10,8 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-# knitr::opts_chunk$set(echo = TRUE, results = 'hide', fig.width = 4.5, fig.height = 4.5*(456/480))
-knitr::opts_chunk$set(echo = TRUE, results = 'hide')
+knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup')
 ```
 
 # Introduction
@@ -28,7 +27,7 @@ if(!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("retrofit")
 ```
 
-```{r, load_library}
+```{r, load_library, message=FALSE}
 library(retrofit)
 ```
 
@@ -44,11 +43,10 @@ X = vignetteColonData$a3_x
 # Reference-free Deconvolution
 
 Initialize the required parameters for deconvolution. 
-
+- iterations: Number of iterations (default = 4000)
+- L: Number of components required
 ```{r, decompose initialization}
-# iterations: Number of iterations (default = 4000)
-# L: Number of components required
-iterations  = 20
+iterations  = 10
 L           = 20
 ```
 
@@ -56,24 +54,25 @@ After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
 result = retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
-
-H = result$h
-W = result$w
-TH =result$th
+H   = result$h
+W   = result$w
+Th  = result$th
 ```
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
-H           = vignetteColonData$a3_results_4k_iterations$decompose$h
-W           = vignetteColonData$a3_results_4k_iterations$decompose$w
-Theta       = vignetteColonData$a3_results_4k_iterations$decompose$th
-################################################################################
-# The above results are obtained by running the code below.
-# iterations = 4000
-# set.seed(1)
-# result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
-################################################################################
+H   = vignetteColonData$a3_results_4k_iterations$decompose$h
+W   = vignetteColonData$a3_results_4k_iterations$decompose$w
+Th  = vignetteColonData$a3_results_4k_iterations$decompose$th
+```
+
+Above results are obtained by running the code below.
+
+```{r, reproducible codes, eval=FALSE}
+iterations = 4000
+set.seed(1)
+result = retrofit::decompose(x, L=L, iterations=iterations)
 ```
 
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
@@ -153,7 +152,7 @@ Proportion of cell-types in this tissue:
 
 ```{r}
 
-p = rowSums(H_mark_prop)/ncol(H_mark_prop)
+rowSums(H_mark_prop)/ncol(H_mark_prop)
 ```
 
 ## Figure 4C 
@@ -164,8 +163,6 @@ Load the coordinates for the spots in the tissue and the tissue image:
 coords=vignetteColonData$a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
-# img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210296599-83b1b839-4680-495e-81db-be172ae41d45.png"))
-# t <- grid::rasterGrob(img)
 ```
 
 Find the cell-type with maximum proportion in each spot and plot:
