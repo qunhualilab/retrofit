@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup')
+knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning = FALSE)
 ```
 
 # Introduction
