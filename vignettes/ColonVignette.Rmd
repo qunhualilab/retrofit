@@ -146,7 +146,7 @@ We assign components to the cell type it has maximum average marker expression i
 
 Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
 
-## Figure 4A 
+## Figure 4A: Proportion of different cell types in the tissue.
 
 Proportion of cell-types in this tissue:
 
@@ -155,7 +155,7 @@ Proportion of cell-types in this tissue:
 rowSums(H_mark_prop)/ncol(H_mark_prop)
 ```
 
-## Figure 4C 
+## Figure 4C: Localization of cell types with the dominant cell type in each spot
 
 Load the coordinates for the spots in the tissue and the tissue image:
 
@@ -194,7 +194,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x = ggplot2::element_blank(),  axis.ticks.y = ggplot2::element_blank())                   
 ```
 
-## Figure 4D and 4E
+## Figure 4D: Gene expression of Epithelial marker genes across spots
 
 Plot the spatial expression for Epithelial markers:
 
@@ -226,6 +226,8 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.y=ggplot2::element_blank())
 ```
 
+## Figure 4E: Proportion of Epithelial cells across spots
+
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
@@ -253,7 +255,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
 
 Verify that the spatial pattern exhibited by the epithelial markers is largely similar to that of the estimated proportion for epithelial cells.
 
-## Figure 5A
+## Figure 5A: Proportion of different cell types in different spots 
 
 Visualize the proportion of different cell types and colocalization patterns:
 
@@ -309,7 +311,7 @@ plotfn(df=df_q)+
   ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=25))
 ```
 
-## Figure 5D
+## Figure 5D: Spots with 1 dominant cell type i.e., proportion > 0.5
 
 Plot the proportion of only dominant cell types i.e., cell types with proportion > 0.5 in a spot.
 
@@ -346,7 +348,7 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-## Figure 5E
+## Figure 5E: Co-localized spots for Epithelial cells
 
 Visualize the spots that contain cell types co-localized with Epithelial cells:
 
@@ -360,8 +362,9 @@ df_new=df_new[df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
 
 df_new$CellType=NA
 for(i in 1:nrow(df_new)){
-  df_new$CellType[i]=names(which.max(df_new[i,-c(1:3,5)]))
+  df_new$CellType[i]=names(which.max(df_new[i,-c(1:2,4)]))
 }
+
 df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso",
                                          "Muscle","Neural",
                                          "Endothelium", 
@@ -386,7 +389,7 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-## Figure 6C
+## Figure 6C: Concordance between expression profiles of found genes obtained from RETROFIT and scRNA-seq data
 
 ```{r, fig.dim = c(12, 12)}
 df=vignetteColonData$marker_ref_df
@@ -429,14 +432,17 @@ ggplot2::ggplot(dat, ggplot2::aes(celltype, gene)) +
   ggplot2::scale_fill_gradientn(colors = pals::brewer.blues(20)[2:20],
                                 name = "Expression (RETROFIT)") + 
   ggplot2::facet_grid(cols=ggplot2::vars(stage))+
-  ggplot2::theme(axis.text.x=ggplot2::element_text(angle = 45, hjust = 1),
+  ggplot2::theme(axis.text.x=ggplot2::element_text(size=20, angle = 45, hjust = 1),
+                 axis.text.y=ggplot2::element_text(size=20),
                  legend.title=ggplot2::element_text(size=20),
                  legend.text=ggplot2::element_text(size=20),
-                 legend.key.width=ggplot2::unit(0.3,"cm")) + 
+                 legend.key.width=ggplot2::unit(0.3,"cm"),
+                 legend.position="right"
+                 ) + 
   ggplot2::guides(size=ggplot2::guide_legend("Expression (scRNA-seq)"))+
   ggplot2::xlab('')+ 
   ggplot2::ylab('Genes')+ 
-  ggplot2::theme(legend.position="right")
+  ggplot2::theme()
 ```
 
 # Session information
