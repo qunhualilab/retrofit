@@ -10,8 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-# knitr::opts_chunk$set(echo = TRUE, results = 'hide', fig.width = 4.5, fig.height = 4.5*(456/480))
-knitr::opts_chunk$set(echo = TRUE, results = 'hide')
+knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning = FALSE)
 ```
 
 # Introduction
@@ -28,7 +27,7 @@ if(!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("retrofit")
 ```
 
-```{r, load_library}
+```{r, load_library, message=FALSE}
 library(retrofit)
 ```
 
@@ -43,31 +42,37 @@ X = vignetteColonData$a3_x
 
 # Reference-free Deconvolution
 
-Initialize the required parameters for deconvolution. We set the number of iterations, Iter = 4000 and number of components, L = 20. Lamda is kept at the default value of 0.01. 
+Initialize the required parameters for deconvolution. 
+- iterations: Number of iterations (default = 4000)
+- L: Number of components required
+```{r, decompose initialization}
+iterations  = 10
+L           = 20
+```
 
 After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
-Iter = 20
-L = 20
-result = retrofit::decompose(X, L=L, iterations=Iter, verbose=TRUE)
-
-H = result$h
-W = result$w
-TH =result$th
+result = retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
+H   = result$h
+W   = result$w
+Th  = result$th
 ```
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+
 ```{r, load_retrofit_results}
-H           = vignetteColonData$a3_results_4k_iterations$decompose$h
-W           = vignetteColonData$a3_results_4k_iterations$decompose$w
-Theta       = vignetteColonData$a3_results_4k_iterations$decompose$th
-################################################################################
-# The above results are obtained by running the code below.
-# iterations = 4000
-# set.seed(1)
-# result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
-################################################################################
+H   = vignetteColonData$a3_results_4k_iterations$decompose$h
+W   = vignetteColonData$a3_results_4k_iterations$decompose$w
+Th  = vignetteColonData$a3_results_4k_iterations$decompose$th
+```
+
+Above results are obtained by running the code below.
+
+```{r, reproducible codes, eval=FALSE}
+iterations = 4000
+set.seed(1)
+result = retrofit::decompose(x, L=L, iterations=iterations)
 ```
 
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
@@ -141,25 +146,28 @@ We assign components to the cell type it has maximum average marker expression i
 
 Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
 
-Figure 4A: Proportion of cell-types in this tissue:
+## Figure 4A: Proportion of different cell types in the tissue.
+
+Proportion of cell-types in this tissue:
 
 ```{r}
+
 rowSums(H_mark_prop)/ncol(H_mark_prop)
 ```
 
-Figure 4C: 
+## Figure 4C: Localization of cell types with the dominant cell type in each spot
 
 Load the coordinates for the spots in the tissue and the tissue image:
+
 ```{r}
 coords=vignetteColonData$a3_coords
 img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"))
 t <- grid::rasterGrob(img, width=ggplot2::unit(1,"npc"), height=ggplot2::unit(1,"npc"), interpolate = FALSE)
-# img <- png::readPNG(RCurl::getURLContent("https://user-images.githubusercontent.com/90921267/210296599-83b1b839-4680-495e-81db-be172ae41d45.png"))
-# t <- grid::rasterGrob(img)
 ```
 
 Find the cell-type with maximum proportion in each spot and plot:
-```{r}
+
+```{r, fig.dim = c(4.5, 4.5*(456/480))}
 dat=as.data.frame(cbind(coords,t(H_mark_prop)))
 colnames(dat)=c(colnames(coords),rownames(H_mark_prop))
 
@@ -186,9 +194,10 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x = ggplot2::element_blank(),  axis.ticks.y = ggplot2::element_blank())                   
 ```
 
-Figure 4D and 4E:
+## Figure 4D: Gene expression of Epithelial marker genes across spots
 
 Plot the spatial expression for Epithelial markers:
+
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 df = as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
 df$metagene = unname(rowSums(df[,-c(1:5)])) 
@@ -216,6 +225,9 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
                  axis.ticks.x=ggplot2::element_blank(),
                  axis.ticks.y=ggplot2::element_blank())
 ```
+
+## Figure 4E: Proportion of Epithelial cells across spots
+
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
@@ -240,13 +252,14 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
+
 Verify that the spatial pattern exhibited by the epithelial markers is largely similar to that of the estimated proportion for epithelial cells.
 
-Figure 5A:
+## Figure 5A: Proportion of different cell types in different spots 
 
 Visualize the proportion of different cell types and colocalization patterns:
 
-```{r}
+```{r, fig.dim = c(10,5)}
 ## Structure Plots
 plotfn <- function(df=NULL)
 {
@@ -263,10 +276,11 @@ plotfn <- function(df=NULL)
     ggplot2::scale_y_continuous(expand = c(0, 0))+
     ggplot2::labs(x = NULL, y = NULL)+
     ggplot2::theme_grey(base_size=7)+
-    ggplot2::theme(legend.text = ggplot2::element_text(size = 8),legend.position = "bottom",
+    ggplot2::theme(legend.text = ggplot2::element_text(size = 20),legend.position = "bottom",
           legend.key.size = ggplot2::unit(0.4, "cm"),
           legend.title = ggplot2::element_blank(),
           axis.ticks = ggplot2::element_blank(),
+          axis.text.y = ggplot2::element_text(size = 15),
           axis.text.x = ggplot2::element_blank())+
     ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9", 
                                "#009E73", "#CC79A7", "#0072B2",
@@ -293,11 +307,11 @@ df_q$matchval <- NULL
 
 plotfn(df=df_q)+
   ggplot2::theme(legend.position="bottom")+
-  ggplot2::ggtitle("Fetal 19 PCW (C)")+ 
-  ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=9))
+  ggplot2::ggtitle("Fetal 12 PCW (B)")+ 
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust=0.5,size=25))
 ```
 
-Figure 5D: 
+## Figure 5D: Spots with 1 dominant cell type i.e., proportion > 0.5
 
 Plot the proportion of only dominant cell types i.e., cell types with proportion > 0.5 in a spot.
 
@@ -318,7 +332,7 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
                              "#009E73", "#CC79A7", "#0072B2", 
                              "#D55E00", "#F0E442"),
                     labels=c("Epithelial","Immune", 
-                             "Myofibroblasts/\nMesothelium",
+                             "Myofibroblasts\nMesothelium",
                              "Muscle", "Neural", "Endothelium", 
                              "Pericytes", "Fibroblasts"))+ 
   ggplot2::xlab("") + ggplot2::ylab("") +
@@ -334,136 +348,101 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 5E: 
+## Figure 5E: Co-localized spots for Epithelial cells
 
 Visualize the spots that contain cell types co-localized with Epithelial cells:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
+#Epithelial
 df=dat
-df_new=df[df$Epithelial>0.25,]
-df_new=df_new[  df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
-              df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
-              df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
+df_new=df[df$Epithelial>0.25,] 
+df_new=df_new[df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
+                  df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
+                  df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
 
 df_new$CellType=NA
 for(i in 1:nrow(df_new)){
-  df_new$CellType[i]=names(which.max(df_new[i,-c(1:3,5)]))
+  df_new$CellType[i]=names(which.max(df_new[i,-c(1:2,4)]))
 }
-df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso", "Muscle","Neural", "Endothelium",
+
+df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso",
+                                         "Muscle","Neural",
+                                         "Endothelium", 
                                          "Pericytes","Fibroblasts"))
 
-ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
+ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
   ggplot2::ylim(min(df$imagecol),max(df$imagecol)) +
   ggplot2::xlim(min(df$imagerow),max(df$imagerow))+
-  # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
   ggplot2::geom_point(size=1.8, shape=21, ggplot2::aes(fill=CellType))+
-  ggplot2::scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9",
-                             "#009E73", "#CC79A7", "#0072B2",
-                             "#D55E00", "#F0E442"),
-                    labels=c("Epithelial","Immune",
-                             "Myofibroblasts/\nMesothelium",
-                             "Muscle", "Neural", "Endothelium",
-                             "Pericytes", "Fibroblasts"))+
+  ggplot2::scale_fill_manual(values=c("#E69F00", "#56B4E9", "#0072B2","#F0E442"),
+    labels=c("Immune", "Myofibroblasts\nMesothelium", "Endothelium", 
+      "Fibroblasts"))+ 
   ggplot2::xlab("") + ggplot2::ylab("") +
-  ggplot2::theme_classic()+
-  ggplot2::theme(legend.key.height = ggplot2::unit(0.5, 'cm'), #change legend key size
-        legend.key.width = ggplot2::unit(1, 'cm'),
+  ggplot2::theme_classic()+ 
+  ggplot2::theme(legend.key.height = ggplot2::unit(0.2, 'cm'), #change legend key size
+        legend.key.width = ggplot2::unit(1, 'cm'), 
         legend.title = ggplot2::element_blank(),
-        legend.position = "none",
-        plot.margin = ggplot2::margin(-0.2, -0.2, 0.2, -1, "cm"),
+        legend.position = "bottom",
+        plot.margin = ggplot2::margin(-0.15, -0.5, 0.2, -0.55, "cm"), #A3
         axis.line = ggplot2::element_blank(),
         axis.text.x = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(),
         axis.ticks.x=ggplot2::element_blank(),axis.ticks.y=ggplot2::element_blank())
 ```
 
-Figure 6B:
+## Figure 6C: Concordance between expression profiles of found genes obtained from RETROFIT and scRNA-seq data
 
-We found cell-type specific genes using RETROFIT estimates. We filtered genes using the following steps:\
-
-- Common genes in the fetal and adult stages
-- Entropy < 1.5 for all replicates
-- Gini > 0.85 for all replicates
-- Estimated gene expression > 40 for all replicates
-- Cell type specificity consistent across replicates 
-
-Now read the relevant genes for this tissue:
-```{r}
+```{r, fig.dim = c(12, 12)}
 df=vignetteColonData$marker_ref_df
 gene1=vignetteColonData$fetal12_genes
-gene3=vignetteColonData$adult_genes
-genes=sort(unique(c(gene1,gene3)),decreasing = FALSE)
+gene1=gene1[!(gene1 %in% df$Gene)] #common genes
 W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
-W3=vignetteColonData$a1_results_4k_iterations$annotateWithCorrelations$w
-df1=as.matrix(W1[genes,-c(1,2)])
-df1=df1[order(row.names(df1)),]
-df3=as.matrix(W3[genes,-c(1,2)])
-df3=df3[order(row.names(df3)),]
-genes2=genes
-genes[genes %in% df$Gene]=paste(genes[genes %in% df$Gene], "*",sep="")
-```
+W12=vignetteColonData$intestine_w_12pcw
+W12=W12[gene1,]
+W12_prop=W12 
+w_rowsums1 = rowSums(W12)
+for (i in 1:length(w_rowsums1)){
+  if(w_rowsums1[i] > 0){
+    W12_prop[i,] = W12_prop[i,]/w_rowsums1[i]
+  }
+}
+W1_prop=W1[gene1,-c(1:2)]
 
-Plot the normalized gene expression for these genes estimated by RETROFIT:
-```{r}
-dat=data.frame(celltype=factor(c(rep("Epithelial",nrow(df1)),rep("Fibroblasts",nrow(df1)),
-                                 rep("Myofibroblasts\nMesothelium",nrow(df1)),rep("Endothelium",nrow(df1)),
-                                 rep("Pericytes",nrow(df1)),rep("Neural",nrow(df1)),
-                                 rep("Immune",nrow(df1)),rep("Muscle",nrow(df1)),
-                                 # rep("Epithelial",nrow(df2)),rep("Fibroblasts",nrow(df2)),
-                                 # rep("Myofibroblasts\nMesothelium",nrow(df2)),rep("Endothelium",nrow(df2)),
-                                 # rep("Pericytes",nrow(df2)),rep("Neural",nrow(df2)),
-                                 # rep("Immune",nrow(df2)),rep("Muscle",nrow(df2)),
-                                 rep("Epithelial",nrow(df3)),rep("Fibroblasts",nrow(df3)),
-                                 rep("Myofibroblasts\nMesothelium",nrow(df3)),rep("Endothelium",nrow(df3)),
-                                 rep("Pericytes",nrow(df3)),rep("Neural",nrow(df3)),
-                                 rep("Immune",nrow(df3)),rep("Muscle",nrow(df3))),
-                               levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
-                                        "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")),
-               genes=factor(c(genes,genes),#factor(c(rep(genes1,8),rep(genes3,8)),#rep(gene3,8)),
-                            levels=genes),
-               stage=factor(c(rep("Fetal 12 PCW (B)",length(genes)*8),
-                              # rep("Fetal 19 PCW (C)",length(gene2)*8),
-                              rep("Adult (A1)",length(genes)*8)),
-                            levels=c("Fetal 12 PCW (B)",#"Fetal 19 PCW (C)",
-                                     "Adult (A1)")),
-               val=c(df1[,"Epithelial"],df1[,"Fibroblasts"],
-                     df1[,"Myo.Meso"],df1[,"Endothelium"],
-                     df1[,"Pericytes"],df1[,"Neural"],
-                     df1[,"Immune"],df1[,"Muscle"],
-                     # df2[,"Epithelial"],df2[,"Fibroblasts"],
-                     # df2[,"Myo.Meso"],df2[,"Endothelium"],
-                     # df2[,"Pericytes"],df2[,"Neural"],
-                     # df2[,"Immune"],df2[,"Muscle"],
-                     df3[,"Epithelial"],df3[,"Fibroblasts"],
-                     df3[,"Myo.Meso"],df3[,"Endothelium"],
-                     df3[,"Pericytes"],df3[,"Neural"],
-                     df3[,"Immune"],df3[,"Muscle"]))
+dat=data.frame(gene=c(rep(gene1,8)),
+               celltype=factor(c(rep("Epithelial",length(gene1)),rep("Fibroblasts",length(gene1)),
+                                 rep("Myofibroblasts\nMesothelium",length(gene1)),rep("Endothelium",length(gene1)),
+                                 rep("Pericytes",length(gene1)),rep("Neural",length(gene1)),
+                                 rep("Immune",length(gene1)),rep("Muscle",length(gene1))
+               ),levels=c("Epithelial","Immune","Fibroblasts","Endothelium",
+                          "Neural","Pericytes", "Myofibroblasts\nMesothelium","Muscle")), 
+               stage=c(rep("Fetal 12 PCW (B)",length(gene1)*8)),
+               gene_exp1=c(W1_prop[gene1,"Epithelial"],W1_prop[gene1,"Fibroblasts"],
+                           W1_prop[gene1,"Myo.Meso"],W1_prop[gene1,"Endothelium"],
+                           W1_prop[gene1,"Pericytes"],W1_prop[gene1,"Neural"],
+                           W1_prop[gene1,"Immune"],W1_prop[gene1,"Muscle"]
+               ),
+               gene_exp2=c(W12_prop[gene1,"Epithelial"],W12_prop[gene1,"Fibroblasts"],
+                           W12_prop[gene1,"Myo.Meso"],W12_prop[gene1,"Endothelium"],
+                           W12_prop[gene1,"Pericytes"],W12_prop[gene1,"Neural"],
+                           W12_prop[gene1,"Immune"],W12_prop[gene1,"Muscle"]
+               ))
 
-genes1=gene1
-genes3=gene3
-genes1[genes1 %in% df$Gene]=paste(genes1[genes1 %in% df$Gene], "*",sep="")
-genes3[genes3 %in% df$Gene]=paste(genes3[genes3 %in% df$Gene], "*",sep="")
-
-color_list=1*(genes %in% genes1)+2*(genes %in% genes3)
-color_list=ifelse(color_list==1,"#5D3A9B",ifelse(color_list==2,"#40B0A6","#E66100"))
-
-ggplot2::ggplot(dat, ggplot2::aes(celltype, genes, fill= val)) +  
-  ggplot2::geom_tile() + ggplot2::theme_classic() +
-  ggplot2::scale_fill_gradientn(colors = pals::brewer.reds(20)[2:20], 
-                       name="Normalized\nGene Expression   ",
-                       limit=c(0,1), na.value="grey87"
-  )+ ggplot2::facet_grid(cols = ggplot2::vars(stage))+
-  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1,size=8),
-                 axis.text.y = ggplot2::element_text(colour = color_list),
-                 legend.key.height = ggplot2::unit(0.2, 'cm'), #change legend key size
-                 legend.key.width = ggplot2::unit(1, 'cm'), 
-                 legend.title = ggplot2::element_text(size=7),
-                 legend.justification="center",
-                 #plot.margin = unit(c(0.1,0.1,-0.3,0),"cm"),
-                 legend.box.margin=ggplot2::margin(-20,-10,-5,-10),
-                 legend.text=ggplot2::element_text(size=7)) +
-  ggplot2::xlab('')+ ggplot2::ylab('')+ 
-  ggplot2::theme(legend.position="bottom")
-
+ggplot2::ggplot(dat, ggplot2::aes(celltype, gene)) +  
+  ggplot2::geom_point(shape=21, ggplot2::aes(fill=gene_exp1, size=gene_exp2)) +
+  ggplot2::theme_classic() +
+  ggplot2::scale_fill_gradientn(colors = pals::brewer.blues(20)[2:20],
+                                name = "Expression (RETROFIT)") + 
+  ggplot2::facet_grid(cols=ggplot2::vars(stage))+
+  ggplot2::theme(axis.text.x=ggplot2::element_text(size=20, angle = 45, hjust = 1),
+                 axis.text.y=ggplot2::element_text(size=20),
+                 legend.title=ggplot2::element_text(size=20),
+                 legend.text=ggplot2::element_text(size=20),
+                 legend.key.width=ggplot2::unit(0.3,"cm"),
+                 legend.position="right"
+                 ) + 
+  ggplot2::guides(size=ggplot2::guide_legend("Expression (scRNA-seq)"))+
+  ggplot2::xlab('')+ 
+  ggplot2::ylab('Genes')+ 
+  ggplot2::theme()
 ```
 
 # Session information

@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, results = 'hide')
+knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning = FALSE)
 ```
 
 # Introduction
@@ -26,7 +26,7 @@ BiocManager::install("retrofit")
 ```
 
 The main functionalities of RETROFIT are covered in this tutorial.
-```{r, load_library}
+```{r, load_library, echo = FALSE}
 library(retrofit)
 ```
 
@@ -41,33 +41,36 @@ The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matr
 
 # Deconvolution
 
-Initialize the following parameters for deconvolution:\
-iterations: Number of iterations (default = 4000)\
-L: Number of components required\
-\
-After initialization, run RETROFIT on the data (X) as follows:
-```{r, decompose}
+Initialize the following parameters for deconvolution:
+- iterations: Number of iterations (default = 4000)
+- L: Number of components required
+```{r, decompose initialization}
 iterations  = 10
 L           = 20
-result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
-H           = result$h
-W           = result$w
-Theta       = result$th
+```
+
+After initialization, run RETROFIT on the data (X) as follows:
+```{r, decompose}
+result  = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
+H   = result$h
+W   = result$w
+Th  = result$th
 ```
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
-H           = vignetteSimulationData$results_4k_iterations$decompose$h
-W           = vignetteSimulationData$results_4k_iterations$decompose$w
-Theta       = vignetteSimulationData$results_4k_iterations$decompose$th
-################################################################################
-# The above results are obtained by running the code below.
-# iterations = 4000
-# set.seed(12)
-# result      = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
-################################################################################
+H   = vignetteSimulationData$results_4k_iterations$decompose$h
+W   = vignetteSimulationData$results_4k_iterations$decompose$w
+Th  = vignetteSimulationData$results_4k_iterations$decompose$th
 ```
 
+The above results are obtained by running the code below.
+
+```{r, retrofit reproducibility, eval = FALSE}
+iterations = 4000
+set.seed(12)
+result = retrofit::decompose(x, L=L, iterations=iterations)
+```
 # Cell-type Annotation
 
 Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
@@ -128,9 +131,11 @@ gg <- ggplot2::ggplot(df,ggplot2::aes(x=x, y=y, group=1)) +
   ggplot2::geom_text(data=df, ggplot2::aes(x=label_x2, y=label_y, label=label_cell), size=4, hjust=0)
 plot(gg)
 ```
-All mapped cell types have greater than 0.75 correlation with the component they are matched with.\
-\
+
+All mapped cell types have greater than 0.75 correlation with the component they are matched with.
+
 Since this is synthetic data, true cell type proportions are known. We can visualize the RMSE between the true and the estimated cell-type proportions as follows:
+
 ```{r, visualize_rmse}
 H_true  = vignetteSimulationData$sc_ref_h
 H_est   = H_annotated
