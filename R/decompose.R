@@ -109,19 +109,26 @@ decompose <- function(x,
   
   # parameter vectors
   if(is.null(init_param)){
+    alpha_w_0  = 0.05
+    beta_w_0   = 0.0001
+    alpha_h_0  = 0.2
+    beta_h_0   = 0.2
+    alpha_th_0 = 1.25
+    beta_th_0  = 10
+    
     param = list(
-      alpha_w_0  = 0.05, 
-      beta_w_0   = 0.0001, 
-      alpha_h_0  = 0.2,
-      beta_h_0   = 0.2,
-      alpha_th_0 = 1.25,
-      beta_th_0  = 10,
-      alpha_th_k = array(stats::runif(K,  0,1)    +1.25,   c(K)),
-      beta_th_k  = array(stats::runif(K,  0,1)    +10,     c(K)),
-      alpha_w_gk = array(stats::runif(G*K,0,0.5)  +0.05,   c(G,K)),
-      beta_w_gk  = array(stats::runif(G*K,0,0.005)+0.0001, c(G,K)),
-      alpha_h_ks = array(stats::runif(K*S,0,0.1)  +0.2,    c(K,S)),
-      beta_h_ks  = array(stats::runif(K*S,0,0.5)  +0.2,    c(K,S))
+      alpha_w_0  = alpha_w_0, 
+      beta_w_0   = beta_w_0, 
+      alpha_h_0  = alpha_h_0,
+      beta_h_0   = beta_h_0,
+      alpha_th_0 = alpha_th_0,
+      beta_th_0  = beta_th_0,
+      alpha_th_k = array(stats::runif(K,  0,1)    +alpha_th_0,  c(K)),
+      beta_th_k  = array(stats::runif(K,  0,1)    +beta_th_0,   c(K)),
+      alpha_w_gk = array(stats::runif(G*K,0,0.5)  +alpha_w_0,   c(G,K)),
+      beta_w_gk  = array(stats::runif(G*K,0,0.005)+beta_w_0,    c(G,K)),
+      alpha_h_ks = array(stats::runif(K*S,0,0.1)  +alpha_h_0,   c(K,S)),
+      beta_h_ks  = array(stats::runif(K*S,0,0.5)  +beta_h_0,    c(K,S))
     )
   } else {
     param=init_param
