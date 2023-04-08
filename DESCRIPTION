@@ -60,6 +60,7 @@ Suggests:
     png,
     reshape2,
     pals,
-    RCurl
+    RCurl,
+    BiocFileCache
 VignetteBuilder:
     knitr
