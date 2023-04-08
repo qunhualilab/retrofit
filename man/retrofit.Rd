@@ -3,7 +3,9 @@
 \docType{package}
 \name{retrofit}
 \alias{retrofit}
-\title{RETROFIT}
+\alias{_PACKAGE}
+\alias{retrofit-package}
+\title{retrofit: Reference-free deconvolution of cell mixtures in spatial transcriptomics}
 \usage{
 retrofit(
   x,
@@ -58,7 +60,11 @@ A list of decomposed vectors that contains
 }
 }
 \description{
-The main algorithm
+RETROFIT is a Bayesian non-negative matrix factorization framework to decompose cell type mixtures in ST data without using external single-cell expression references. RETROFIT outperforms existing reference-based methods in estimating cell type proportions and reconstructing gene expressions in simulations with varying spot size and sample heterogeneity, irrespective of the quality or availability of the single-cell reference. RETROFIT recapitulates known cell-type localization patterns in a Slide-seq dataset of mouse cerebellum without using any single-cell data.
+
+The function "retrofit" is an implementation of the main algorithm of RETROFIT.
+"retrofit" is composed of two functions: decompose & annotate.
+Two types of annotation is defined based on referencing method: annotate with correlations, annotate with markers.
 }
 \examples{
 utils::data("testSimulationData")
@@ -74,5 +80,23 @@ W_annotated <- res$annotateWithCorrelations$w
 ranked_cells<- res$annotateWithCorrelations$ranked_cells
 }
 \seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/qunhualilab/retrofit}
+  \item Report bugs at \url{https://github.com/qunhualilab/retrofit/issues}
+}
+
+
 papers reference
+}
+\author{
+\strong{Maintainer}: Adam Park \email{akp6031@psu.edu}
+
+Authors:
+\itemize{
+  \item Roopali Singh \email{rus82@psu.edu} (\href{https://orcid.org/0000-0001-6539-6622}{ORCID})
+  \item Xiang Zhu \email{xiangzhu@psu.edu} (\href{https://orcid.org/0000-0003-1134-6413}{ORCID})
+  \item Qunhua Li \email{qunhua.li@psu.edu} (\href{https://orcid.org/0000-0003-0675-7648}{ORCID})
+}
+
 }

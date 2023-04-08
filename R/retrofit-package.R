@@ -4,5 +4,6 @@
 #' @importFrom Rcpp evalCpp
 #' @useDynLib retrofit, .registration = TRUE
 #' @name retrofit
+#' @aliases retrofit-package
 ## usethis namespace: end
-NULL
+"_PACKAGE"

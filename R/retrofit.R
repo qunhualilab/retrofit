@@ -1,6 +1,8 @@
 #' RETROFIT 
 #' 
-#' @description The main algorithm
+#' @description The function "retrofit" is an implementation of the main algorithm of RETROFIT.
+#' "retrofit" is composed of two functions: decompose & annotate.
+#' Two types of annotation is defined based on referencing method: annotate with correlations, annotate with markers.
 #' @param x           A matrix or array with dimension (GeneExpressions, Spots). This is the main spatial transciptomics data.
 #' @param sc_ref      A matrix or array with two dimensions (GeneExpressions, Cell types).
 #' @param marker_ref  A list with (keys, values) = (cell types, an array of genes).
@@ -21,11 +23,11 @@
 #'    }
 #'    \item annotateWithCorrelations: \itemize{
 #'        \item w:  Filtered 2d array with GeneExpressions, Cell types
-#'        \item h:  Filtered2d array with Cell types, Spots
+#'        \item h:  Filtered 2d array with Cell types, Spots
 #'    }
 #'    \item annotateWithMarkers: \itemize{
 #'        \item w:  Filtered 2d array with GeneExpressions, Cell types
-#'        \item h:  Filtered2d array with Cell types, Spots
+#'        \item h:  Filtered 2d array with Cell types, Spots
 #'    }
 #' }
 #'
