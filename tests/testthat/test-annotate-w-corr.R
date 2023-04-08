@@ -1,5 +1,5 @@
 test_that("annotateWithCorrelations-works", {
-  data("testSimulationData")
+  utils::data("testSimulationData")
   d = testSimulationData
   res = retrofit::annotateWithCorrelations(
     sc_ref   = d$sc_ref,

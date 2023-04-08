@@ -1,5 +1,5 @@
 test_that("decompose-works", {
-  data("testSimulationData")
+  utils::data("testSimulationData")
   d = testSimulationData
   
   iterations = 10

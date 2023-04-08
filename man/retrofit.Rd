@@ -61,7 +61,7 @@ A list of decomposed vectors that contains
 The main algorithm
 }
 \examples{
-data("testSimulationData")
+utils::data("testSimulationData")
 iterations  = 10
 L           = 16
 K           = 8

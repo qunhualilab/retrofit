@@ -1,5 +1,5 @@
 test_that("annotateWithMarkers-works", {
-  data("testSimulationData")
+  utils::data("testSimulationData")
   d = testSimulationData
   res = retrofit::annotateWithMarkers(
     marker_ref = d$marker_ref,

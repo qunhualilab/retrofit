@@ -34,7 +34,7 @@ library(retrofit)
 
 First load the ST data, using the following command:
 ```{r, data}
-data("vignetteSimulationData")
+utils::data("vignetteSimulationData")
 x = vignetteSimulationData$n10m3_x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.

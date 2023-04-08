@@ -16,7 +16,7 @@
 #' }
 #'
 #'@examples
-#' data("testSimulationData")
+#' utils::data("testSimulationData")
 #' K            = 10
 #' sc_ref       = testSimulationData$sc_ref
 #' W            = testSimulationData$decompose$w

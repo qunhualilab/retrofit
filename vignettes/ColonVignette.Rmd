@@ -36,7 +36,7 @@ library(retrofit)
 First load the Colon ST data from fetal 12 PCW tissue, using the following command:
 
 ```{r, data}
-data("vignetteColonData")
+utils::data("vignetteColonData")
 X = vignetteColonData$a3_x
 ```
 

@@ -14,7 +14,7 @@
 #' }
 #'
 #'@examples
-#' data("testSimulationData")
+#' utils::data("testSimulationData")
 #' K            = 10
 #' marker_ref   = testSimulationData$marker_ref
 #' W            = testSimulationData$decompose$w

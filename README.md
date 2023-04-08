@@ -25,7 +25,7 @@ BiocManager::install("retrofit")
 ``` r
 library(retrofit)
 ## load built in data
-data(testSimulationData)
+utils::data(testSimulationData)
 x           = testSimulationData$extra5_x
 sc_ref      = testSimulationData$sc_ref
 marker_ref  = testSimulationData$marker_ref

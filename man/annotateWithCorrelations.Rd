@@ -28,7 +28,7 @@ A list of selected components, cells, and correlations
 Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 }
 \examples{
-data("testSimulationData")
+utils::data("testSimulationData")
 K            = 10
 sc_ref       = testSimulationData$sc_ref
 W            = testSimulationData$decompose$w

@@ -1,5 +1,5 @@
 test_that("retrofit-works-correlations", {
-  data("testSimulationData")
+  utils::data("testSimulationData")
   d = testSimulationData
   iterations = 10
   L = 16
@@ -18,7 +18,7 @@ test_that("retrofit-works-correlations", {
 })
 
 test_that("retrofit-works-markers", {
-  data("testSimulationData")
+  utils::data("testSimulationData")
   d = testSimulationData
   iterations = 10
   L = 16

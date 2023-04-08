@@ -26,7 +26,7 @@ A list of
 Match cell types based on correlations with reference. decomp_w   between matching algorithm description
 }
 \examples{
-data("testSimulationData")
+utils::data("testSimulationData")
 K            = 10
 marker_ref   = testSimulationData$marker_ref
 W            = testSimulationData$decompose$w
