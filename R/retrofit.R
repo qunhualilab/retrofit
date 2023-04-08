@@ -31,16 +31,16 @@
 #'
 #'@examples
 #' utils::data("testSimulationData")
-#' iterations  = 10
-#' L           = 16
-#' K           = 8
-#' x           = testSimulationData$extra5_x
-#' sc_ref      = testSimulationData$sc_ref
+#' iterations  <- 10
+#' L           <- 16
+#' K           <- 8
+#' x           <- testSimulationData$extra5_x
+#' sc_ref      <- testSimulationData$sc_ref
 #' 
-#' res         = retrofit::retrofit(x, sc_ref=sc_ref, L=L, K=K, iterations=iterations)
-#' W           = res$decompose$w
-#' W_annotated = res$annotateWithCorrelations$w
-#' ranked_cells= res$annotateWithCorrelations$ranked_cells
+#' res         <- retrofit::retrofit(x, sc_ref=sc_ref, L=L, K=K, iterations=iterations)
+#' W           <- res$decompose$w
+#' W_annotated <- res$annotateWithCorrelations$w
+#' ranked_cells<- res$annotateWithCorrelations$ranked_cells
 #'@seealso papers reference
 #'@export
 retrofit <- function(x,
@@ -54,31 +54,31 @@ retrofit <- function(x,
                      kappa       = 0.5,
                      verbose     = FALSE) {
   # Decompose
-  decomposed = decompose(x,
+  decomposed <- decompose(x,
                          L           = L,
                          iterations  = iterations, 
                          init_param  = init_param,
                          lambda      = lambda,
                          kappa       = kappa,
                          verbose     = verbose)
-  ret = list(
+  ret <- list(
     decompose = decomposed
   )
   
   # Annotate
   if(!is.null(sc_ref)){
-    annotated = annotateWithCorrelations(sc_ref   = sc_ref, 
+    annotated <- annotateWithCorrelations(sc_ref   = sc_ref, 
                                          K        = K, 
                                          decomp_w = decomposed$w, 
                                          decomp_h = decomposed$h)
-    ret$annotateWithCorrelations = annotated 
+    ret$annotateWithCorrelations <- annotated 
   }
   if(!is.null(marker_ref)){
-    annotated = annotateWithMarkers(marker_ref = marker_ref, 
+    annotated <- annotateWithMarkers(marker_ref = marker_ref, 
                                     K          = K, 
                                     decomp_w   = decomposed$w, 
                                     decomp_h   = decomposed$h)
-    ret$annotateWithMarkers = annotated
+    ret$annotateWithMarkers <- annotated
   }
   return(ret)
 }

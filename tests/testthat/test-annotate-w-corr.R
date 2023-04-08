@@ -1,7 +1,7 @@
 test_that("annotateWithCorrelations-works", {
   utils::data("testSimulationData")
-  d = testSimulationData
-  res = retrofit::annotateWithCorrelations(
+  d <- testSimulationData
+  res <- retrofit::annotateWithCorrelations(
     sc_ref   = d$sc_ref,
     K        = 10,
     decomp_w = d$decompose$w,
@@ -44,14 +44,14 @@ test_that("annotatedWithCorrelations-parameters-are-validated", {
   }
   
   get_args <- function() {
-    sc_ref   = array(runif(4*10, 0, 1), c(4, 5))
-    rownames(sc_ref) = c("cell1","cell2","cell3","cell4")
-    decomp_w = array(runif(4*10, 0, 1), c(4, 10))
-    rownames(decomp_w) = seq_len(4)
-    colnames(decomp_w) = seq_len(10)
-    decomp_h = array(runif(10*2, 0, 1), c(10, 2))
-    rownames(decomp_h) = seq_len(10)
-    colnames(decomp_h) = seq_len(2)
+    sc_ref   <- array(runif(4*10, 0, 1), c(4, 5))
+    rownames(sc_ref) <- c("cell1","cell2","cell3","cell4")
+    decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
+    rownames(decomp_w) <- seq_len(4)
+    colnames(decomp_w) <- seq_len(10)
+    decomp_h <- array(runif(10*2, 0, 1), c(10, 2))
+    rownames(decomp_h) <- seq_len(10)
+    colnames(decomp_h) <- seq_len(2)
     return(list(
       sc_ref   = sc_ref,
       K        = 5,
@@ -61,22 +61,22 @@ test_that("annotatedWithCorrelations-parameters-are-validated", {
   }
   
   # default run
-  args = get_args()
+  args <- get_args()
   testthat::expect_true(run(args, no_issue_check = TRUE))
   # sc_ref no rownames
-  args = get_args()
-  args$sc_ref = array(runif(4*10, 0, 1), c(4, 5))
+  args <- get_args()
+  args$sc_ref <- array(runif(4*10, 0, 1), c(4, 5))
   testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w no rownames
-  # args = get_args()
-  # args$decomp_w = array(runif(4*10, 0, 1), c(4, 10))
+  # args <- get_args()
+  # args$decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
   # testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w - sc_ref dimension
-  args = get_args()
-  args$decomp_w = array(runif(3*10, 0, 1), c(3, 10))
+  args <- get_args()
+  args$decomp_w <- array(runif(3*10, 0, 1), c(3, 10))
   testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w - decomp_h dimension
-  args = get_args()
-  args$decomp_w = array(runif(4*11, 0, 1), c(3, 11))
+  args <- get_args()
+  args$decomp_w <- array(runif(4*11, 0, 1), c(3, 11))
   testthat::expect_true(run(args, error_check = TRUE))
 })

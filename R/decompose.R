@@ -40,11 +40,11 @@
 #' 
 #'@examples
 #' utils::data("testSimulationData")
-#' x   = testSimulationData$extra5_x
-#' res = retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
-#' W   = res$w
-#' H   = res$h
-#' TH  = res$th
+#' x   <- testSimulationData$extra5_x
+#' res <- retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
+#' W   <- res$w
+#' H   <- res$h
+#' TH  <- res$th
 #'@seealso papers reference
 #'@export
 decompose <- function(x, 
@@ -93,30 +93,30 @@ decompose <- function(x,
   }
   
   # change type.
-  L = as.integer(L)
-  iterations = as.integer(iterations)
+  L <- as.integer(L)
+  iterations <- as.integer(iterations)
   
   # copy and 'purify' the matrix
-  x_rownames = rownames(x)
-  x_colnames = colnames(x)
-  x = matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
+  x_rownames <- rownames(x)
+  x_colnames <- colnames(x)
+  x <- matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
   
   # dimensions
-  G   = dim(x)[1] # Gene expressions
-  S   = dim(x)[2] # Spots
-  K   = L # alias the component number
-  dim = c(G,K,S)
+  G   <- dim(x)[1] # Gene expressions
+  S   <- dim(x)[2] # Spots
+  K   <- L # alias the component number
+  dim <- c(G,K,S)
   
   # parameter vectors
   if(is.null(init_param)){
-    alpha_w_0  = 0.05
-    beta_w_0   = 0.0001
-    alpha_h_0  = 0.2
-    beta_h_0   = 0.2
-    alpha_th_0 = 1.25
-    beta_th_0  = 10
+    alpha_w_0  <- 0.05
+    beta_w_0   <- 0.0001
+    alpha_h_0  <- 0.2
+    beta_h_0   <- 0.2
+    alpha_th_0 <- 1.25
+    beta_th_0  <- 10
     
-    param = list(
+    param <- list(
       alpha_w_0  = alpha_w_0, 
       beta_w_0   = beta_w_0, 
       alpha_h_0  = alpha_h_0,
@@ -131,38 +131,38 @@ decompose <- function(x,
       beta_h_ks  = array(stats::runif(K*S,0,0.5)  +beta_h_0,    c(K,S))
     )
   } else {
-    param=init_param
+    param<-init_param
   }
   
   # W/H/Th from Gamma dist
-  dist = list(
+  dist <- list(
     w_gk = array(rep(0, len=G*K), c(G,K)),
     h_ks = array(rep(0, len=K*S), c(K,S)),
     th_k = array(rep(0, len=K),   c(K))
   )
   # probability variables
-  prob = list(
+  prob <- list(
     phi_a_gks = array(rep(0, len=G*K*S),c(G,K,S)),
     phi_b_gk  = array(rep(0, len=G*K),  c(G,K))
   )
   
   # variables for verbose mode
-  previous_param = list()
-  relative_error = list()
+  previous_param <- list()
+  relative_error <- list()
   for (n in names(param)){
-    previous_param[[n]] = rep(0, len=length(param[[n]]))
-    relative_error[[n]] = c()
+    previous_param[[n]] <- rep(0, len=length(param[[n]]))
+    relative_error[[n]] <- c()
   }
-  durations = NULL
+  durations <- NULL
   
   ## start of algorithm
-  t=0
+  t <- 0
   while(t<iterations){
-    from = Sys.time()
-    t = t+1
+    from <- Sys.time()
+    t <- t+1
     
     # step (1)
-    rho = (t)^(-kappa)
+    rho <- (t)^(-kappa)
     
     # step (2) - Sample distributions
     decompose_step2(param$alpha_h_ks, param$beta_h_ks, dist$h_ks)
@@ -174,8 +174,8 @@ decompose <- function(x,
     decompose_step3_beta(dist, lambda, dim, prob$phi_b_gk)
     
     # step (4) - Calculate new parameters
-    alpha_asterisk = decompose_step4_alpha(x, prob, param$alpha_w_0, param$alpha_h_0, param$alpha_th_0, dim)
-    beta_asterisk  = decompose_step4_beta(dist, param$beta_w_0, param$beta_h_0, param$beta_th_0, lambda, dim)
+    alpha_asterisk <- decompose_step4_alpha(x, prob, param$alpha_w_0, param$alpha_h_0, param$alpha_th_0, dim)
+    beta_asterisk  <- decompose_step4_beta(dist, param$beta_w_0, param$beta_h_0, param$beta_th_0, lambda, dim)
     
     # step (5) - Update parameters
     decompose_step5(param$alpha_w_gk, alpha_asterisk$w, rho)
@@ -188,23 +188,23 @@ decompose <- function(x,
     if(verbose){
       # record error
       for (name in names(param)){
-        e = decompose_compute_error_mat_norm(previous_param[[name]], param[[name]])
+        e <- decompose_compute_error_mat_norm(previous_param[[name]], param[[name]])
         decompose_update_original(previous_param[[name]], param[[name]])
-        relative_error[[name]] = c(relative_error[[name]], e)
+        relative_error[[name]] <- c(relative_error[[name]], e)
       }
       # record performance
-      dur = as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
-      durations = c(durations, dur)
+      dur <- as.numeric(difftime(time1 = Sys.time(), time2 = from, units = "secs"))
+      durations <- c(durations, dur)
       print(paste('iteration:', t, paste0(round(dur, 3), " Seconds")))  
     }
   }
   
-  w_hat  = matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
-  h_hat  = matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
-  th_hat = matrix(param$alpha_th_k/param$beta_th_k, nrow=K)
+  w_hat  <- matrix(param$alpha_w_gk/param$beta_w_gk, nrow=G, ncol=K)
+  h_hat  <- matrix(param$alpha_h_ks/param$beta_h_ks, nrow=K, ncol=S)
+  th_hat <- matrix(param$alpha_th_k/param$beta_th_k, nrow=K)
   
-  rownames(w_hat) = x_rownames
-  colnames(h_hat) = x_colnames
+  rownames(w_hat) <- x_rownames
+  colnames(h_hat) <- x_colnames
   
   if(!verbose){
     result <- list(w=w_hat, h=h_hat, th=th_hat)

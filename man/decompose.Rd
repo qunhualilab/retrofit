@@ -65,11 +65,11 @@ init_param specification
 }
 \examples{
 utils::data("testSimulationData")
-x   = testSimulationData$extra5_x
-res = retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
-W   = res$w
-H   = res$h
-TH  = res$th
+x   <- testSimulationData$extra5_x
+res <- retrofit::decompose(x, L=16, iterations=10, verbose=TRUE)
+W   <- res$w
+H   <- res$h
+TH  <- res$th
 }
 \seealso{
 papers reference

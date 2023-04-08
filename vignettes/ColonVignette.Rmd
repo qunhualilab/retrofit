@@ -37,7 +37,7 @@ First load the Colon ST data from fetal 12 PCW tissue, using the following comma
 
 ```{r, data}
 utils::data("vignetteColonData")
-X = vignetteColonData$a3_x
+X <- vignetteColonData$a3_x
 ```
 
 # Reference-free Deconvolution
@@ -46,33 +46,33 @@ Initialize the required parameters for deconvolution.
 - iterations: Number of iterations (default = 4000)
 - L: Number of components required
 ```{r, decompose initialization}
-iterations  = 10
-L           = 20
+iterations  <- 10
+L           <- 20
 ```
 
 After initialization, run retrofit on the data (X) as follows:
 
 ```{r, decompose}
-result = retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
-H   = result$h
-W   = result$w
-Th  = result$th
+result <- retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
+H   <- result$h
+W   <- result$w
+Th  <- result$th
 ```
 
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
-H   = vignetteColonData$a3_results_4k_iterations$decompose$h
-W   = vignetteColonData$a3_results_4k_iterations$decompose$w
-Th  = vignetteColonData$a3_results_4k_iterations$decompose$th
+H   <- vignetteColonData$a3_results_4k_iterations$decompose$h
+W   <- vignetteColonData$a3_results_4k_iterations$decompose$w
+Th  <- vignetteColonData$a3_results_4k_iterations$decompose$th
 ```
 
 Above results are obtained by running the code below.
 
 ```{r, reproducible codes, eval=FALSE}
-iterations = 4000
+iterations <- 4000
 set.seed(1)
-result = retrofit::decompose(x, L=L, iterations=iterations)
+result <- retrofit::decompose(x, L=L, iterations=iterations)
 ```
 
 Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
@@ -82,18 +82,18 @@ Next, we need to annotate the components, to get the proportion of K cell types.
 Here, we will annotate components using single-cell reference. Load the single-cell reference data:
 
 ```{r, sc}
-sc_ref = vignetteColonData$sc_ref
+sc_ref <- vignetteColonData$sc_ref
 ```
 
 This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate with sc}
-K = ncol(sc_ref) # number of cell types
-result    = annotateWithCorrelations(sc_ref, K, W, H)
-H_sc      = result$h
-W_sc      = result$w
-H_sc_prop = result$h_prop
-W_sc_prop = result$w_prop
+K <- ncol(sc_ref) # number of cell types
+result    <- annotateWithCorrelations(sc_ref, K, W, H)
+H_sc      <- result$h
+W_sc      <- result$w
+H_sc_prop <- result$h_prop
+W_sc_prop <- result$w_prop
 ```
 
 We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_prop of order K x S.
@@ -102,7 +102,7 @@ You can verify that the mappings from both methods are largely similar.
 ```{r, visualize correlation matrix between the sc reference and W}
 W_norm <- W
 for(i in seq_len(nrow(W))){
-    W_norm[i,]=W[i,]/sum(W[i,])
+    W_norm[i,]<-W[i,]/sum(W[i,])
 }
 
 corrplot::corrplot(stats::cor(sc_ref, W_norm), 
@@ -117,19 +117,19 @@ corrplot::corrplot(stats::cor(sc_ref, W_norm),
 Here, we will annotate using known marker genes for cell types. Load the marker gene list:
 
 ```{r, marker}
-marker_ref = vignetteColonData$marker_ref
+marker_ref <- vignetteColonData$marker_ref
 ```
 
 This file contains the list of marker genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate with marker}
-K = length(marker_ref) # number of cell types
-result      = retrofit::annotateWithMarkers(marker_ref, K, W, H)
-H_mark      = result$h
-W_mark      = result$w
-H_mark_prop = result$h_prop
-W_mark_prop = result$w_prop
-gene_sums   = result$gene_sums
+K <- length(marker_ref) # number of cell types
+result      <- retrofit::annotateWithMarkers(marker_ref, K, W, H)
+H_mark      <- result$h
+W_mark      <- result$w
+H_mark_prop <- result$h_prop
+W_mark_prop <- result$w_prop
+gene_sums   <- result$gene_sums
 ```
 
 ```{r, visualize correlation matrix marker}
@@ -160,7 +160,7 @@ rowSums(H_mark_prop)/ncol(H_mark_prop)
 Load the coordinates for the spots in the tissue and the tissue image:
 
 ```{r}
-coords=vignetteColonData$a3_coords
+coords<-vignetteColonData$a3_coords
 bfc <- BiocFileCache::BiocFileCache(ask=FALSE)
 url <- "https://user-images.githubusercontent.com/90921267/210159136-96b56551-f414-4b0b-921e-98f05a98c8bc.png"
 loc <- BiocFileCache::bfcadd(bfc, "img", fpath=url)
@@ -173,15 +173,15 @@ t <- grid::rasterGrob(png::readPNG(loc),
 Find the cell-type with maximum proportion in each spot and plot:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-dat=as.data.frame(cbind(coords,t(H_mark_prop)))
-colnames(dat)=c(colnames(coords),rownames(H_mark_prop))
+dat<-as.data.frame(cbind(coords,t(H_mark_prop)))
+colnames(dat)<-c(colnames(coords),rownames(H_mark_prop))
 
-df=dat[,-c(seq(from=1, to=3))]
-df$CellType=NA
+df<-dat[,-c(seq(from=1, to=3))]
+df$CellType<-NA
 for(i in seq_len(nrow(df))){
-  df$CellType[i]=names(which.max(df[i,-c(seq(from=1,to=2))]))
+  df$CellType[i]<-names(which.max(df[i,-c(seq(from=1,to=2))]))
 }
-df$CellType=factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Muscle",
+df$CellType<-factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Muscle",
                                         "Neural", "Endothelium", "Pericytes","Fibroblasts"))
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
@@ -205,9 +205,9 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
 Plot the spatial expression for Epithelial markers:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-df = as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
-df$metagene = unname(rowSums(df[,-c(seq(from=1,to=5))])) 
-df$metagene[df$metagene>quantile(df$metagene,0.95)]=quantile(df$metagene,0.95)
+df <- as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
+df$metagene <- unname(rowSums(df[,-c(seq(from=1,to=5))])) 
+df$metagene[df$metagene>quantile(df$metagene,0.95)]<-quantile(df$metagene,0.95)
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
   # Omitted background image to reduce the vignette size
@@ -238,7 +238,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-df=dat[,-c(seq(from=1,to=3))]
+df<-dat[,-c(seq(from=1,to=3))]
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
   # Omitted background image to reduce the vignette size
   # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
@@ -297,7 +297,7 @@ plotfn <- function(df=NULL)
   p
 }
 
-df=as.data.frame(t(H_mark_prop[c(2,4,6,5,7,1,8,3),]))
+df<-as.data.frame(t(H_mark_prop[c(2,4,6,5,7,1,8,3),]))
 #pick max cluster, match max to cluster
 maxval <- apply(df,1,max)
 matchval <- vector(length=nrow(df))
@@ -324,14 +324,14 @@ plotfn(df=df_q)+
 Plot the proportion of only dominant cell types i.e., cell types with proportion > 0.5 in a spot.
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-df=dat
-df_new=df[df$Epithelial>0.5 | df$Fibroblasts>0.5 | df$Myo.Meso>0.5 |
+df<-dat
+df_new<-df[df$Epithelial>0.5 | df$Fibroblasts>0.5 | df$Myo.Meso>0.5 |
             df$Endothelium>0.5 | df$Pericytes>0.5 | df$Neural>0.5 |
             df$Immune>0.5 | df$Muscle>0.5,-c(seq(from=1, to=3))]
-df_new$CellType=1*(df_new$Epithelial>0.5) + 2*(df_new$Immune>0.5) +
+df_new$CellType<-1*(df_new$Epithelial>0.5) + 2*(df_new$Immune>0.5) +
   3*(df_new$Myo.Meso>0.5) + 4*(df_new$Muscle>0.5) + 5*(df_new$Neural>0.5)+
   6*(df_new$Endothelium>0.5) + 7*(df_new$Pericytes>0.5) + 8*(df_new$Fibroblasts>0.5)
-df_new$CellType=factor(df_new$CellType)
+df_new$CellType<-factor(df_new$CellType)
 
 ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  + 
   # Omitted background image to reduce the vignette size
@@ -363,18 +363,18 @@ Visualize the spots that contain cell types co-localized with Epithelial cells:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 #Epithelial
-df=dat
-df_new=df[df$Epithelial>0.25,] 
-df_new=df_new[df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
+df<-dat
+df_new<-df[df$Epithelial>0.25,] 
+df_new<-df_new[df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
                   df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
                   df_new$Immune>0.25 | df_new$Muscle>0.25,-c(seq(from=1, to=3))]
 
-df_new$CellType=NA
+df_new$CellType<-NA
 for(i in seq_len(nrow(df_new))){
-  df_new$CellType[i]=names(which.max(df_new[i,-c(seq(from=1,to=2),4)]))
+  df_new$CellType[i]<-names(which.max(df_new[i,-c(seq(from=1,to=2),4)]))
 }
 
-df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso",
+df_new$CellType<-factor(df_new$CellType,c("Immune", "Myo.Meso",
                                          "Muscle","Neural",
                                          "Endothelium", 
                                          "Pericytes","Fibroblasts"))
@@ -401,22 +401,22 @@ ggplot2::ggplot(df_new, ggplot2::aes(x=imagerow, y=imagecol))  +
 ## Figure 6C: Concordance between expression profiles of found genes obtained from RETROFIT and scRNA-seq data
 
 ```{r, fig.dim = c(12, 12)}
-df=vignetteColonData$marker_ref_df
-gene1=vignetteColonData$fetal12_genes
-gene1=gene1[!(gene1 %in% df$Gene)] #common genes
-W1=vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
-W12=vignetteColonData$intestine_w_12pcw
-W12=W12[gene1,]
-W12_prop=W12 
-w_rowsums1 = rowSums(W12)
+df<-vignetteColonData$marker_ref_df
+gene1<-vignetteColonData$fetal12_genes
+gene1<-gene1[!(gene1 %in% df$Gene)] #common genes
+W1<-vignetteColonData$a3_results_4k_iterations$annotateWithCorrelations$w
+W12<-vignetteColonData$intestine_w_12pcw
+W12<-W12[gene1,]
+W12_prop<-W12 
+w_rowsums1 <- rowSums(W12)
 for (i in seq_along(w_rowsums1)){
   if(w_rowsums1[i] > 0){
-    W12_prop[i,] = W12_prop[i,]/w_rowsums1[i]
+    W12_prop[i,] <- W12_prop[i,]/w_rowsums1[i]
   }
 }
-W1_prop=W1[gene1,-c(seq(from=1,to=2))]
+W1_prop<-W1[gene1,-c(seq(from=1,to=2))]
 
-dat=data.frame(gene=c(rep(gene1,8)),
+dat<-data.frame(gene=c(rep(gene1,8)),
                celltype=factor(c(rep("Epithelial",length(gene1)),rep("Fibroblasts",length(gene1)),
                                  rep("Myofibroblasts\nMesothelium",length(gene1)),rep("Endothelium",length(gene1)),
                                  rep("Pericytes",length(gene1)),rep("Neural",length(gene1)),

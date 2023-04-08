@@ -35,7 +35,7 @@ library(retrofit)
 First load the ST data, using the following command:
 ```{r, data}
 utils::data("vignetteSimulationData")
-x = vignetteSimulationData$n10m3_x
+x <- vignetteSimulationData$n10m3_x
 ```
 The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
@@ -45,31 +45,31 @@ Initialize the following parameters for deconvolution:
 - iterations: Number of iterations (default = 4000)
 - L: Number of components required
 ```{r, decompose initialization}
-iterations  = 10
-L           = 20
+iterations  <- 10
+L           <- 20
 ```
 
 After initialization, run RETROFIT on the data (X) as follows:
 ```{r, decompose}
-result  = retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
-H   = result$h
-W   = result$w
-Th  = result$th
+result  <- retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
+H   <- result$h
+W   <- result$w
+Th  <- result$th
 ```
 After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
-H   = vignetteSimulationData$results_4k_iterations$decompose$h
-W   = vignetteSimulationData$results_4k_iterations$decompose$w
-Th  = vignetteSimulationData$results_4k_iterations$decompose$th
+H   <- vignetteSimulationData$results_4k_iterations$decompose$h
+W   <- vignetteSimulationData$results_4k_iterations$decompose$w
+Th  <- vignetteSimulationData$results_4k_iterations$decompose$th
 ```
 
 The above results are obtained by running the code below.
 
 ```{r, retrofit reproducibility, eval = FALSE}
-iterations = 4000
+iterations <- 4000
 set.seed(12)
-result = retrofit::decompose(x, L=L, iterations=iterations)
+result <- retrofit::decompose(x, L=L, iterations=iterations)
 ```
 # Cell-type Annotation
 
@@ -77,17 +77,17 @@ Next, we need to annotate the components, to get the proportion of, say K, cell 
 
 Get the single cell reference data:
 ```{r, reference}
-sc_ref_w = vignetteSimulationData$sc_ref_w
+sc_ref_w <- vignetteSimulationData$sc_ref_w
 ```
 
 This file contains average gene expression values for G = 500 genes in K = 10 cell types i.e., a matrix of order G x K. Run the following command to get K cell-type mixtures from the ST data X:
 ```{r, annotate}
-K             = 10
-result        = retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K, 
+K             <- 10
+result        <- retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K, 
                                                    decomp_w=W, decomp_h=H)
-H_annotated   = result$h
-W_annotated   = result$w
-ranked_cells  = result$ranked_cells
+H_annotated   <- result$h
+W_annotated   <- result$w
+ranked_cells  <- result$ranked_cells
 ```
 Above code assigns components to the cell type it has maximum correlation with.
 
@@ -95,10 +95,10 @@ Above code assigns components to the cell type it has maximum correlation with.
 
 We can also deconvolve the ST data matrix along with cell-type annotation all in one step, as follows:
 ```{r, retrofit}
-iterations  = 10
-L           = 20
-K           = 10 
-result      = retrofit::retrofit(x, 
+iterations  <- 10
+L           <- 20
+K           <- 10 
+result      <- retrofit::retrofit(x, 
                                  sc_ref=sc_ref_w,
                                  iterations=iterations, 
                                  L=L, 
@@ -110,9 +110,9 @@ result      = retrofit::retrofit(x,
 Visualize the correlation values between each cell type and the chosen component, as follows:
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
-correlations        = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
-ranked_correlations = sort(diag(correlations), decreasing=TRUE)
-df                  = data.frame(x=seq_along(ranked_correlations), 
+correlations        <- stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
+ranked_correlations <- sort(diag(correlations), decreasing=TRUE)
+df                  <- data.frame(x=seq_along(ranked_correlations), 
                                  y=ranked_correlations, 
                                  label_x1=1, 
                                  label_x2=2, 
@@ -137,12 +137,12 @@ All mapped cell types have greater than 0.75 correlation with the component they
 Since this is synthetic data, true cell type proportions are known. We can visualize the RMSE between the true and the estimated cell-type proportions as follows:
 
 ```{r, visualize_rmse}
-H_true  = vignetteSimulationData$sc_ref_h
-H_est   = H_annotated
-corrH   = sort(diag(stats::cor(H_true,H_est)), decreasing=TRUE, na.last=TRUE)
-df      = data.frame(x=seq(0,1,length.out = 1000), 
+H_true  <- vignetteSimulationData$sc_ref_h
+H_est   <- H_annotated
+corrH   <- sort(diag(stats::cor(H_true,H_est)), decreasing=TRUE, na.last=TRUE)
+df      <- data.frame(x=seq(0,1,length.out = 1000), 
                      y=corrH)
-df_text = data.frame(x=0.2,
+df_text <- data.frame(x=0.2,
                      y=0.6,
                      label = c(paste("RETROFIT:", round(DescTools::AUC(x=seq(0,1,length.out = 1000), y=corrH),digits=3))))
 

@@ -1,7 +1,7 @@
 test_that("annotateWithMarkers-works", {
   utils::data("testSimulationData")
-  d = testSimulationData
-  res = retrofit::annotateWithMarkers(
+  d <- testSimulationData
+  res <- retrofit::annotateWithMarkers(
     marker_ref = d$marker_ref,
     K          = 10,
     decomp_w   = d$decompose$w,
@@ -45,15 +45,15 @@ test_that("annotateWithMarkers-parameters-are-validated", {
   }
   
   get_args <- function() {
-    marker_ref   = list("1"=seq(from=1,to=10), "2"=seq(from=2,to=5), 
+    marker_ref   <- list("1"=seq(from=1,to=10), "2"=seq(from=2,to=5), 
                         "3"=seq(from=1,to=7), "4"=seq(from=1,to=7), 
                         "5"=seq(from=1,to=7))
-    decomp_w = array(runif(4*10, 0, 1), c(4, 10))
-    rownames(decomp_w) = seq_len(4)
-    colnames(decomp_w) = seq_len(10)
-    decomp_h = array(runif(10*2, 0, 1), c(10, 2))
-    rownames(decomp_h) = seq_len(10)
-    colnames(decomp_h) = seq_len(2)
+    decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
+    rownames(decomp_w) <- seq_len(4)
+    colnames(decomp_w) <- seq_len(10)
+    decomp_h <- array(runif(10*2, 0, 1), c(10, 2))
+    rownames(decomp_h) <- seq_len(10)
+    colnames(decomp_h) <- seq_len(2)
     return(list(
       marker_ref= marker_ref,
       K         = 5,
@@ -63,18 +63,18 @@ test_that("annotateWithMarkers-parameters-are-validated", {
   }
   
   # default run
-  args = get_args()
+  args <- get_args()
   testthat::expect_true(run(args, no_issue_check = TRUE))
   # fewer cell types
-  args = get_args()
-  args$marker_ref = list("1"=seq(from=1,to=10), "2"=seq(from=2,to=))
+  args <- get_args()
+  args$marker_ref <- list("1"=seq(from=1,to=10), "2"=seq(from=2,to=))
   testthat::expect_true(run(args, warning_check = TRUE))
   # decomp_w no rownames
-  # args = get_args()
-  # args$decomp_w = array(runif(4*10, 0, 1), c(4, 10))
+  # args <- get_args()
+  # args$decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
   # testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w - decomp_h dimension
-  args = get_args()
-  args$decomp_w = array(runif(4*11, 0, 1), c(3, 11))
+  args <- get_args()
+  args$decomp_w <- array(runif(4*11, 0, 1), c(3, 11))
   testthat::expect_true(run(args, error_check = TRUE))
 })

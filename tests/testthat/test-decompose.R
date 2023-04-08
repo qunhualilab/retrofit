@@ -1,12 +1,12 @@
 test_that("decompose-works", {
   utils::data("testSimulationData")
-  d = testSimulationData
+  d <- testSimulationData
   
-  iterations = 10
-  L = 16
-  x   = d$extra5_x
+  iterations <- 10
+  L <- 16
+  x   <- d$extra5_x
   set.seed(1)
-  res = retrofit::decompose(x, 
+  res <- retrofit::decompose(x, 
                             L=L, 
                             iterations=iterations, 
                             verbose=TRUE)
@@ -18,28 +18,28 @@ test_that("decompose-works", {
 
 test_that("decompose-accepts-various-x", {
   # matrix
-  G   = 6
-  S   = 8
-  x   = matrix(runif(G*S, 0, 1), nrow=G, ncol=S)
-  res = retrofit::decompose(x, L=16, iterations=5)
+  G   <- 6
+  S   <- 8
+  x   <- matrix(runif(G*S, 0, 1), nrow=G, ncol=S)
+  res <- retrofit::decompose(x, L=16, iterations=5)
   
   # matrix all zeros
-  G   = 6
-  S   = 8
-  x   = matrix(0,nrow=G, ncol=S)
-  res = retrofit::decompose(x, L=16, iterations=5)
+  G   <- 6
+  S   <- 8
+  x   <- matrix(0,nrow=G, ncol=S)
+  res <- retrofit::decompose(x, L=16, iterations=5)
   
   # matrix larger dimensions
-  G   = 1000
-  S   = 300
-  x   = matrix(runif(G*S, 0, 1), nrow=G, ncol=S)
-  res = retrofit::decompose(x, L=3, iterations=5)
+  G   <- 1000
+  S   <- 300
+  x   <- matrix(runif(G*S, 0, 1), nrow=G, ncol=S)
+  res <- retrofit::decompose(x, L=3, iterations=5)
   
   # array 
-  G   = 6
-  S   = 8
-  x   = array(runif(G*S, 0, 1), c(G, S))
-  res = retrofit::decompose(x, L=16, iterations=5)
+  G   <- 6
+  S   <- 8
+  x   <- array(runif(G*S, 0, 1), c(G, S))
+  res <- retrofit::decompose(x, L=16, iterations=5)
   
   testthat::expect_true(TRUE)
 })

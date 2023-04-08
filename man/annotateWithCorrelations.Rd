@@ -29,16 +29,16 @@ Match cell types based on correlations with reference. decomp_w   between matchi
 }
 \examples{
 utils::data("testSimulationData")
-K            = 10
-sc_ref       = testSimulationData$sc_ref
-W            = testSimulationData$decompose$w
-H            = testSimulationData$decompose$h
+K            <- 10
+sc_ref       <- testSimulationData$sc_ref
+W            <- testSimulationData$decompose$w
+H            <- testSimulationData$decompose$h
 
-result       = retrofit::annotateWithCorrelations(sc_ref=sc_ref, K=K, 
+result       <- retrofit::annotateWithCorrelations(sc_ref=sc_ref, K=K, 
                                                  decomp_w=W, decomp_h=H)
-H_annotated  = result$h                                              
-W_annotated  = result$w
-ranked_cells = result$ranked_cells
+H_annotated  <- result$h                                              
+W_annotated  <- result$w
+ranked_cells <- result$ranked_cells
 }
 \seealso{
 papers reference
