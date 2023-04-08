@@ -41,11 +41,9 @@ annotateWithCorrelations <- function(sc_ref,
   stopifnot(!is.null(decomp_w))
   stopifnot((is.matrix(decomp_w) || is.array(decomp_w) || is.list(decomp_w)))
   stopifnot(length(dim(decomp_w)) == 2)
-  # stopifnot(!is.null(rownames(decomp_w)) && !is.null(colnames(decomp_w)))
   stopifnot(!is.null(decomp_h))
   stopifnot((is.matrix(decomp_h) || is.array(decomp_h) || is.list(decomp_h)))
   stopifnot(length(dim(decomp_h)) == 2)
-  # stopifnot(!is.null(rownames(decomp_h)) && !is.null(colnames(decomp_h)))
   stopifnot(dim(decomp_w)[2] == dim(decomp_h)[1])
   stopifnot(dim(decomp_w)[1] == dim(sc_ref)[1])
   
@@ -72,7 +70,6 @@ annotateWithCorrelations <- function(sc_ref,
   rownames(h) <- rownames(decomp_h)
   colnames(h) <- colnames(decomp_h)
   
-  # sc_ref_normalized <- matrix(0, nrow=nrow(sc_ref), ncol=ncol(sc_ref))
   sc_ref_normalized <- sc_ref
   sc_ref_rowsums <- rowSums(sc_ref)
   for (i in seq_along(sc_ref_rowsums)){

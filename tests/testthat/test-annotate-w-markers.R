@@ -69,10 +69,6 @@ test_that("annotateWithMarkers-parameters-are-validated", {
   args <- get_args()
   args$marker_ref <- list("1"=seq(from=1,to=10), "2"=seq(from=2,to=))
   testthat::expect_true(run(args, warning_check = TRUE))
-  # decomp_w no rownames
-  # args <- get_args()
-  # args$decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
-  # testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w - decomp_h dimension
   args <- get_args()
   args$decomp_w <- array(runif(4*11, 0, 1), c(3, 11))

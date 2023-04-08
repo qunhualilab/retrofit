@@ -67,10 +67,6 @@ test_that("annotatedWithCorrelations-parameters-are-validated", {
   args <- get_args()
   args$sc_ref <- array(runif(4*10, 0, 1), c(4, 5))
   testthat::expect_true(run(args, error_check = TRUE))
-  # decomp_w no rownames
-  # args <- get_args()
-  # args$decomp_w <- array(runif(4*10, 0, 1), c(4, 10))
-  # testthat::expect_true(run(args, error_check = TRUE))
   # decomp_w - sc_ref dimension
   args <- get_args()
   args$decomp_w <- array(runif(3*10, 0, 1), c(3, 10))
