@@ -86,10 +86,10 @@ decompose <- function(x,
     stopifnot(is.array(init_param$beta_h_ks))
     stopifnot(all(dim(init_param$alpha_th_k) == c(L)))
     stopifnot(all(dim(init_param$beta_th_k)  == c(L)))
-    stopifnot(all(dim(init_param$alpha_w_gk) == c(dim(x)[1],L)))
-    stopifnot(all(dim(init_param$beta_w_gk)  == c(dim(x)[1],L)))
-    stopifnot(all(dim(init_param$alpha_h_ks) == c(L,dim(x)[2])))
-    stopifnot(all(dim(init_param$beta_h_ks)  == c(L,dim(x)[2])))
+    stopifnot(all(dim(init_param$alpha_w_gk) == c(nrow(x),L)))
+    stopifnot(all(dim(init_param$beta_w_gk)  == c(nrow(x),L)))
+    stopifnot(all(dim(init_param$alpha_h_ks) == c(L,ncol(x))))
+    stopifnot(all(dim(init_param$beta_h_ks)  == c(L,ncol(x))))
   }
   
   # change type.
@@ -102,8 +102,8 @@ decompose <- function(x,
   x <- matrix(as.numeric(unlist(x)), nrow=nrow(x), ncol=ncol(x))
   
   # dimensions
-  G   <- dim(x)[1] # Gene expressions
-  S   <- dim(x)[2] # Spots
+  G   <- nrow(x) # Gene expressions
+  S   <- ncol(x) # Spots
   K   <- L # alias the component number
   dim <- c(G,K,S)
   

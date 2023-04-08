@@ -40,7 +40,7 @@ annotateWithMarkers <- function(marker_ref,
   stopifnot(!is.null(decomp_h))
   stopifnot((is.matrix(decomp_h) || is.array(decomp_h) || is.list(decomp_h)))
   stopifnot(length(dim(decomp_h)) == 2)
-  stopifnot(dim(decomp_w)[2] == dim(decomp_h)[1])
+  stopifnot(ncol(decomp_w) == nrow(decomp_h))
   
   # copy w, h to 'clear' colnames, rownames of w, h respectively.
   w <- matrix(as.numeric(unlist(decomp_w)), nrow=nrow(decomp_w), ncol=ncol(decomp_w))
@@ -57,9 +57,9 @@ annotateWithMarkers <- function(marker_ref,
     warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, ")."))
     K <- length(cell_types)
   }
-  if(dim(decomp_w)[2]<K){
-    warning(paste("columns of decomp_w(", dim(decomp_w)[2], ") are fewer than the mapping target K(", K, "). K is overriden by ", dim(decomp_w)[2]))
-    K <- dim(decomp_w)[2]
+  if(ncol(decomp_w)<K){
+    warning(paste("columns of decomp_w(", ncol(decomp_w), ") are fewer than the mapping target K(", K, "). K is overriden by ", ncol(decomp_w)))
+    K <- ncol(decomp_w)
   }
   
   gene_sums <- matrix(NA, nrow=length(cell_types), ncol=ncol(decomp_w))
