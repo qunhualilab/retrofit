@@ -45,13 +45,15 @@ test_that("annotateWithMarkers-parameters-are-validated", {
   }
   
   get_args <- function() {
-    marker_ref   = list("1"=1:10, "2"=2:5, "3"=1:7, "4"=1:7, "5"=1:7)
+    marker_ref   = list("1"=seq(from=1,to=10), "2"=seq(from=2,to=5), 
+                        "3"=seq(from=1,to=7), "4"=seq(from=1,to=7), 
+                        "5"=seq(from=1,to=7))
     decomp_w = array(runif(4*10, 0, 1), c(4, 10))
-    rownames(decomp_w) = c(1:4)
-    colnames(decomp_w) = c(1:10)
+    rownames(decomp_w) = seq_len(4)
+    colnames(decomp_w) = seq_len(10)
     decomp_h = array(runif(10*2, 0, 1), c(10, 2))
-    rownames(decomp_h) = c(1:10)
-    colnames(decomp_h) = c(1:2)
+    rownames(decomp_h) = seq_len(10)
+    colnames(decomp_h) = seq_len(2)
     return(list(
       marker_ref= marker_ref,
       K         = 5,
@@ -65,7 +67,7 @@ test_that("annotateWithMarkers-parameters-are-validated", {
   testthat::expect_true(run(args, no_issue_check = TRUE))
   # fewer cell types
   args = get_args()
-  args$marker_ref = list("1"=1:10, "2"=2:5)
+  args$marker_ref = list("1"=seq(from=1,to=10), "2"=seq(from=2,to=))
   testthat::expect_true(run(args, warning_check = TRUE))
   # decomp_w no rownames
   # args = get_args()

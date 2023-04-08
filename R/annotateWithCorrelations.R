@@ -53,7 +53,7 @@ annotateWithCorrelations <- function(sc_ref,
   
   if(is.null(cell_types)){
     col_length = dim(sc_ref)[2]
-    cell_types = paste('sc_ref', array(1:col_length), sep='')
+    cell_types = paste('sc_ref', seq_len(col_length), sep='')
   }
   if(length(cell_types)<K){
     warning(paste("cell_types(", length(cell_types), ") are fewer than the mapping target K(", K, "). K is overriden by ", length(cell_types)))
@@ -75,7 +75,7 @@ annotateWithCorrelations <- function(sc_ref,
   # sc_ref_normalized = matrix(0, nrow=nrow(sc_ref), ncol=ncol(sc_ref))
   sc_ref_normalized <- sc_ref
   sc_ref_rowsums = rowSums(sc_ref)
-  for (i in 1:length(sc_ref_rowsums)){
+  for (i in seq_along(sc_ref_rowsums)){
     if(sc_ref_rowsums[i] != 0){
       sc_ref_normalized[i,] = sc_ref[i,]/sc_ref_rowsums[i]
     }
@@ -87,7 +87,7 @@ annotateWithCorrelations <- function(sc_ref,
     stop("the length of rowsums is 0. the rows of decomposed w may not match with the reference")
   }
   
-  for (i in 1:length(w_rowsums)){
+  for (i in seq_along(w_rowsums)){
     if(w_rowsums[i] != 0){
       w_normalized[i,] = w[i,]/w_rowsums[i]
     }
@@ -100,7 +100,7 @@ annotateWithCorrelations <- function(sc_ref,
   row_sel=rep(NA,K)
   cor_sel=rep(NA,K) 
   cell_sel=rep(NA, K)
-  for(i in 1:K){
+  for(i in seq_len(K)){
     r2=which(correlations == max(correlations2), arr.ind=TRUE)[1]
     c2=which(correlations == max(correlations2), arr.ind=TRUE)[2]
     r1=which(correlations2 == max(correlations2), arr.ind=TRUE)[1]
@@ -124,7 +124,7 @@ annotateWithCorrelations <- function(sc_ref,
   col_sel = sel$c
   
   cell_mod = rep(NA, K)
-  for (i in 1:K) {
+  for (i in seq_len(K)) {
     cell_mod[i] = cell_types[row_sel[i]]
   }
   
@@ -135,11 +135,11 @@ annotateWithCorrelations <- function(sc_ref,
   
   # weight to proportion
   w_mod_prop <- w_mod
-  for(i in 1:nrow(w_mod)){
+  for(i in seq_len(nrow(w_mod))){
     w_mod_prop[i,]=w_mod[i,]/sum(w_mod[i,])
   }
   h_mod_prop <- h_mod
-  for(i in 1:ncol(h_mod)){
+  for(i in seq_len(ncol(h_mod))){
     h_mod_prop[,i]=h_mod[,i]/sum(h_mod[,i])
   }
   

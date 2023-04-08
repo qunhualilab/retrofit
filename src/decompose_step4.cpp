@@ -9,7 +9,7 @@ List decompose_step4_alpha(NumericVector x_gs,
                            double alpha_th_0,
                            NumericVector dim) {
   /* Equivalent code
-   * for(k in 1:K){
+   * for(k in seq_len(K)){
    *  alpha_w_gk[,k]= alpha_W_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
    *  alpha_h_ks[k,]= alpha_H_0 + colSums(x*phi_a_gks[,k,])
    *  alpha_th_k[k]= alpha_TH_0 + sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
@@ -93,7 +93,7 @@ List decompose_step4_beta(List distributions,
                           NumericVector dim)
 {
   /* Equivalent code
-   * for(k in 1:K){
+   * for(k in seq_len(K)){
    * beta_w_gk[,k]= beta_W_0 + sum(h_ks[k,]*th_k[k])
    * beta_h_ks[k,]= beta_H_0 + sum(w_gk[,k]*th_k[k] + lamda)
    * beta_th_k[k]= beta_TH_0 + sum(as.matrix(w_gk[,k]) %*% t(as.matrix(h_ks[k,])))

@@ -47,11 +47,11 @@ test_that("annotatedWithCorrelations-parameters-are-validated", {
     sc_ref   = array(runif(4*10, 0, 1), c(4, 5))
     rownames(sc_ref) = c("cell1","cell2","cell3","cell4")
     decomp_w = array(runif(4*10, 0, 1), c(4, 10))
-    rownames(decomp_w) = c(1:4)
-    colnames(decomp_w) = c(1:10)
+    rownames(decomp_w) = seq_len(4)
+    colnames(decomp_w) = seq_len(10)
     decomp_h = array(runif(10*2, 0, 1), c(10, 2))
-    rownames(decomp_h) = c(1:10)
-    colnames(decomp_h) = c(1:2)
+    rownames(decomp_h) = seq_len(10)
+    colnames(decomp_h) = seq_len(2)
     return(list(
       sc_ref   = sc_ref,
       K        = 5,

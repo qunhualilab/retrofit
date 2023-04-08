@@ -25,8 +25,8 @@ test_that("measure-error-two-norm-randomly", {
   
   norm = decompose_compute_error_two_norm(original, inferred)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       norm_expected = norm_expected + abs(inferred[k,s]/original[k,s] - 1)
     }
   }
@@ -36,8 +36,8 @@ test_that("measure-error-two-norm-randomly", {
   # reverse
   norm = decompose_compute_error_two_norm(inferred, original)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       norm_expected = norm_expected + abs(original[k,s]/inferred[k,s] - 1)
     }
   }
@@ -48,8 +48,8 @@ test_that("measure-error-two-norm-randomly", {
   original_copy = array(original,   c(K, S))
   norm = decompose_compute_and_update_error_two_norm(original, inferred)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       norm_expected = norm_expected + abs(inferred[k,s]/original_copy[k,s] - 1)
       original_copy[k,s] = inferred[k,s]
     }
@@ -86,8 +86,8 @@ test_that("measure-error-mat-norm-randomly", {
   
   norm = decompose_compute_error_mat_norm(original, inferred)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       err =abs(inferred[k,s]/original[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  
@@ -100,8 +100,8 @@ test_that("measure-error-mat-norm-randomly", {
   # reverse
   norm = decompose_compute_error_mat_norm(inferred, original)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       err = abs(original[k,s]/inferred[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  
@@ -115,8 +115,8 @@ test_that("measure-error-mat-norm-randomly", {
   original_copy = array(original,   c(K, S))
   norm = decompose_compute_and_update_error_mat_norm(original, inferred)
   norm_expected = 0
-  for (k in 1:K){
-    for (s in 1:S){
+  for (k in seq_len(K)){
+    for (s in seq_len(S)){
       err = abs(inferred[k,s]/original_copy[k,s] - 1)
       if(err > norm_expected){
         norm_expected = err  

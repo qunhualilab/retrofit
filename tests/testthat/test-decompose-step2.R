@@ -2,8 +2,8 @@ test_that("step2-works-equally-with-Rcpp-and-R", {
   r_decompose_step2 <- function(shapes, rates, val){
     K = nrow(shapes)
     S = ncol(shapes)
-    for(s in 1:S){
-      for(k in 1:K){
+    for(s in seq_len(S)){
+      for(k in seq_len(K)){
         val[k, s] = rgamma(1, shapes[k, s], rates[k, s])
       }
     }

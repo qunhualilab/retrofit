@@ -6,11 +6,11 @@ test_that("step3-alpha-works-equally-with-Rcpp-and-R", {
     w_gk = array(distributions$w_gk, c(G,K))
     h_ks = array(distributions$h_ks, c(K,S))
     th_k = array(distributions$th_k, c(K))
-    for(s in 1:S){
-      for(k in 1:K){
+    for(s in seq_len(S)){
+      for(k in seq_len(K)){
         phi_a_gks[,k,s] = ((w_gk[,k] * th_k[k]) +lambda)* h_ks[k,s]
       }
-      for(v in 1:G){
+      for(v in seq_len(G)){
         phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
       }
     }
@@ -47,8 +47,8 @@ test_that("step3-beta-works-equally-with-Rcpp-and-R", {
     w_gk = array(distributions$w_gk, c(G,K))
     h_ks = array(distributions$h_ks, c(K,S))
     th_k = array(distributions$th_k, c(K))
-    for(k in 1:K){
-      for(v in 1:G){
+    for(k in seq_len(K)){
+      for(v in seq_len(G)){
         if((w_gk[v,k]*th_k[k] + lambda)==0){
           phi_b_gk[v,k]=1 ## to avoid numerical error of 0/0 when lambda=0
         } else {

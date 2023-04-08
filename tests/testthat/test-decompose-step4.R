@@ -13,7 +13,7 @@ test_that("step4-alpha-works-equally-with-Rcpp-and-R", {
     alpha_th_k = array(rep(0, K) , c(K))
     phi_a_gks <- probabilities$phi_a_gks
     phi_b_gk <- probabilities$phi_b_gk
-    for(k in 1:K){
+    for(k in seq_len(K)){
       alpha_w_gk[,k] = alpha_w_0 + rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k]
       alpha_h_ks[k,] = alpha_h_0 + colSums(x*phi_a_gks[,k,])
       alpha_th_k[k]  = alpha_th_0+ sum(rowSums(x*phi_a_gks[,k,])*phi_b_gk[,k])
@@ -73,7 +73,7 @@ test_that("step4-beta-works-equally-with-Rcpp-and-R", {
     beta_w_gk=matrix(rep(0, G*K), nrow=G, ncol=K)
     beta_h_ks=matrix(rep(0, K*S), nrow=K, ncol=S)
     beta_th_k=array(rep(0, K) , c(K))
-    for(k in 1:K){
+    for(k in seq_len(K)){
       beta_w_gk[,k]= beta_w_0 + sum(h_ks[k,]*th_k[k])
       beta_h_ks[k,]= beta_h_0 + sum(w_gk[,k]*th_k[k] + lambda)
       beta_th_k[k]= beta_th_0 + sum(as.matrix(w_gk[,k]) %*% t(as.matrix(h_ks[k,])))

@@ -9,13 +9,13 @@ void decompose_step3_alpha(List distributions,
                            NumericVector &phi_a_gks) {
   /*
    * Equivalent code
-   * for(s in 1:S){
-   *  for(k in 1:K){
+   * for(s in seq_len(S)){
+   *  for(k in seq_len(K)){
    *    phi_a_gks[,k,s]=((w_gk[,k] * th_k[k]) +lamda)* h_ks[k,s]
    *  }
    * }
-   * for(s in 1:S){
-   *  for(v in 1:G){
+   * for(s in seq_len(S)){
+   *  for(v in seq_len(G)){
    *    phi_a_gks[v,,s]=phi_a_gks[v,,s]/sum(phi_a_gks[v,,s])
    *  }
    * }
@@ -95,8 +95,8 @@ void decompose_step3_beta(List distributions,
                           NumericVector dim,
                           NumericVector &phi_b_gk) {
   /* Equivalent code
-   * for(k in 1:K){
-   *  for(v in 1:G){
+   * for(k in seq_len(K)){
+   *  for(v in seq_len(G)){
    *    if((w_gk[v,k]*th_k[k] + lamda)==0){
    *      phi_b_gk[v,k]=1 ## to avoid numerical error of 0/0 when lamda=0
    *    } else {

@@ -10,7 +10,7 @@ test_that("step5-alpha-works-equally-with-Rcpp-and-R", {
     alpha_w_gk = array(rep(0,G*K), c(G,K))
     alpha_h_ks = array(rep(0,K*S), c(K,S))
     alpha_th_k = array(rep(0,K), c(K))
-    for(k in 1:K){
+    for(k in seq_len(K)){
       alpha_w_gk[,k]= (1-rho)*w_gk[,k] + rho*w_gk_updated[,k]
       alpha_h_ks[k,]= (1-rho)*h_ks[k,] + rho*h_ks_updated[k,]
       alpha_th_k[k]= (1-rho)*th_k[k] + rho*th_k_updated[k]

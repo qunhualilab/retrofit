@@ -112,7 +112,7 @@ Visualize the correlation values between each cell type and the chosen component
 # correlation between true and estimated cell-type proportions
 correlations        = stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
 ranked_correlations = sort(diag(correlations), decreasing=TRUE)
-df                  = data.frame(x=1:length(ranked_correlations), 
+df                  = data.frame(x=seq_along(ranked_correlations), 
                                  y=ranked_correlations, 
                                  label_x1=1, 
                                  label_x2=2, 

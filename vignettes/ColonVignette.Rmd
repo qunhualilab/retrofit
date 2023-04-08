@@ -101,7 +101,7 @@ You can verify that the mappings from both methods are largely similar.
 
 ```{r, visualize correlation matrix between the sc reference and W}
 W_norm <- W
-for(i in 1:nrow(W)){
+for(i in seq_len(nrow(W))){
     W_norm[i,]=W[i,]/sum(W[i,])
 }
 
@@ -176,10 +176,10 @@ Find the cell-type with maximum proportion in each spot and plot:
 dat=as.data.frame(cbind(coords,t(H_mark_prop)))
 colnames(dat)=c(colnames(coords),rownames(H_mark_prop))
 
-df=dat[,-c(1:3)]
+df=dat[,-c(seq(from=1, to=3))]
 df$CellType=NA
-for(i in 1:nrow(df)){
-  df$CellType[i]=names(which.max(df[i,-c(1:2)]))
+for(i in seq_len(nrow(df))){
+  df$CellType[i]=names(which.max(df[i,-c(seq(from=1,to=2))]))
 }
 df$CellType=factor(df$CellType,levels=c("Epithelial", "Immune", "Myo.Meso","Muscle",
                                         "Neural", "Endothelium", "Pericytes","Fibroblasts"))
@@ -206,7 +206,7 @@ Plot the spatial expression for Epithelial markers:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
 df = as.data.frame(cbind(coords, t(X[marker_ref$Epithelial,]))) 
-df$metagene = unname(rowSums(df[,-c(1:5)])) 
+df$metagene = unname(rowSums(df[,-c(seq(from=1,to=5))])) 
 df$metagene[df$metagene>quantile(df$metagene,0.95)]=quantile(df$metagene,0.95)
 
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
@@ -238,7 +238,7 @@ ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
 Plot the estimated proportions for Epithelial cell-type:
 
 ```{r, fig.dim = c(4.5, 4.5*(456/480))}
-df=dat[,-c(1:3)]
+df=dat[,-c(seq(from=1,to=3))]
 ggplot2::ggplot(df, ggplot2::aes(x=imagerow, y=imagecol))  +
   # Omitted background image to reduce the vignette size
   # ggplot2::annotation_custom(t, 700, 6400, 990, 6550) +
@@ -272,10 +272,10 @@ Visualize the proportion of different cell types and colocalization patterns:
 plotfn <- function(df=NULL)
 {
   #reshape to long format
-  df$num <- 1:nrow(df)
+  df$num <- seq_len(nrow(df))
   df1 <- reshape2::melt(df,id.vars = "num")
   #reversing order for cosmetic reasons
-  df1 <- df1[rev(1:nrow(df1)),]
+  df1 <- df1[rev(seq_len(nrow(df1))),]
   
   #plot
   p <- ggplot2::ggplot(df1, ggplot2::aes(x=num,y=value,fill=variable))+
@@ -301,7 +301,7 @@ df=as.data.frame(t(H_mark_prop[c(2,4,6,5,7,1,8,3),]))
 #pick max cluster, match max to cluster
 maxval <- apply(df,1,max)
 matchval <- vector(length=nrow(df))
-for(j in 1:nrow(df)) matchval[j] <- match(maxval[j],df[j,])
+for(j in seq_len(nrow(df))) matchval[j] <- match(maxval[j],df[j,])
 #add max and match to df
 df_q <- df
 df_q$maxval <- maxval
@@ -327,7 +327,7 @@ Plot the proportion of only dominant cell types i.e., cell types with proportion
 df=dat
 df_new=df[df$Epithelial>0.5 | df$Fibroblasts>0.5 | df$Myo.Meso>0.5 |
             df$Endothelium>0.5 | df$Pericytes>0.5 | df$Neural>0.5 |
-            df$Immune>0.5 | df$Muscle>0.5,-c(1:3)]
+            df$Immune>0.5 | df$Muscle>0.5,-c(seq(from=1, to=3))]
 df_new$CellType=1*(df_new$Epithelial>0.5) + 2*(df_new$Immune>0.5) +
   3*(df_new$Myo.Meso>0.5) + 4*(df_new$Muscle>0.5) + 5*(df_new$Neural>0.5)+
   6*(df_new$Endothelium>0.5) + 7*(df_new$Pericytes>0.5) + 8*(df_new$Fibroblasts>0.5)
@@ -367,11 +367,11 @@ df=dat
 df_new=df[df$Epithelial>0.25,] 
 df_new=df_new[df_new$Fibroblasts>0.25 | df_new$Myo.Meso>0.25 |
                   df_new$Endothelium>0.25 | df_new$Pericytes>0.25 | df_new$Neural>0.25 |
-                  df_new$Immune>0.25 | df_new$Muscle>0.25,-c(1:3)]
+                  df_new$Immune>0.25 | df_new$Muscle>0.25,-c(seq(from=1, to=3))]
 
 df_new$CellType=NA
-for(i in 1:nrow(df_new)){
-  df_new$CellType[i]=names(which.max(df_new[i,-c(1:2,4)]))
+for(i in seq_len(nrow(df_new))){
+  df_new$CellType[i]=names(which.max(df_new[i,-c(seq(from=1,to=2),4)]))
 }
 
 df_new$CellType=factor(df_new$CellType,c("Immune", "Myo.Meso",
@@ -409,12 +409,12 @@ W12=vignetteColonData$intestine_w_12pcw
 W12=W12[gene1,]
 W12_prop=W12 
 w_rowsums1 = rowSums(W12)
-for (i in 1:length(w_rowsums1)){
+for (i in seq_along(w_rowsums1)){
   if(w_rowsums1[i] > 0){
     W12_prop[i,] = W12_prop[i,]/w_rowsums1[i]
   }
 }
-W1_prop=W1[gene1,-c(1:2)]
+W1_prop=W1[gene1,-c(seq(from=1,to=2))]
 
 dat=data.frame(gene=c(rep(gene1,8)),
                celltype=factor(c(rep("Epithelial",length(gene1)),rep("Fibroblasts",length(gene1)),
