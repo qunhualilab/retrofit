@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning =
 
 # Introduction
 
-RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. We will annotate cell types using an annotated single cell reference.
+Spatial transcriptomic (ST) technologies produce gene expression from a mixture of potentially heterogeneous cells at each spot. We have developed RETROFIT, a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. This dataset is created using scRNA-seq data of 10 cell types in Mouse Cerebellum published in this [paper](https://pubmed.ncbi.nlm.nih.gov/30923225/). We will annotate cell types using an annotated single cell reference.
 
 # Package Installation
 
@@ -32,31 +32,30 @@ library(retrofit)
 
 # Spatial Transcriptomics Data
 
-First load the ST data, using the following command:
+Load the ST data, using the following command:
 ```{r, data}
 utils::data("vignetteSimulationData")
 x <- vignetteSimulationData$n10m3_x
 ```
-The ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
+Here, we are using a synthetic spatial transcriptomic data that tells us expression of G genes in S spots. This ST data matrix will consist of G = 500 genes and S = 1000 spots i.e., a matrix of order G x S.
 
 # Deconvolution
 
-Initialize the following parameters for deconvolution:
+RETROFIT deconvolves ST data into multiple components, representing different cell types. As a rule of thumb, we recommend using a higher number of components than the actual expected number of cell types in the data. Initialize the following parameters for deconvolution:
 - iterations: Number of iterations (default = 4000)
 - L: Number of components required
 ```{r, decompose initialization}
 iterations  <- 10
 L           <- 20
 ```
-
-After initialization, run RETROFIT on the data (X) as follows:
+In paper, we use L=20 and iterations = 4000. After initialization, run RETROFIT on the data (X) as follows:
 ```{r, decompose}
 result  <- retrofit::decompose(x, L=L, iterations=iterations, verbose=TRUE)
 H   <- result$h
 W   <- result$w
 Th  <- result$th
 ```
-After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing the results from the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
 H   <- vignetteSimulationData$results_4k_iterations$decompose$h
@@ -73,9 +72,9 @@ result <- retrofit::decompose(x, L=L, iterations=iterations)
 ```
 # Cell-type Annotation
 
-Next, we need to annotate the components, to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using single cell reference.
+After we have deconvolved our ST data matrix into different components, we need to annotate the components to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. Here, we will annotate using a single cell reference i.e., the scRNA-seq data published in this [paper](https://pubmed.ncbi.nlm.nih.gov/30923225/).
 
-Get the single cell reference data:
+Load the single cell reference data:
 ```{r, reference}
 sc_ref_w <- vignetteSimulationData$sc_ref_w
 ```
@@ -89,7 +88,7 @@ H_annotated   <- result$h
 W_annotated   <- result$w
 ranked_cells  <- result$ranked_cells
 ```
-Above code assigns components to the cell type it has maximum correlation with.
+The code above assigns components to the cell type it has maximum correlation with. In this manner, all cell types in the reference will now be mapped to a component from RETROFIT. Here, H_annotated represents your cell type proportions for K = 10 cell types in S = 1000 spots.
 
 # Deconvolution and annotation in one step (Optional)
 
@@ -107,7 +106,7 @@ result      <- retrofit::retrofit(x,
 
 # Results 
 
-Visualize the correlation values between each cell type and the chosen component, as follows:
+To check how well our components are mapped to the cell types, we can visualize the correlation values between each cell type and the chosen component, as follows:
 ```{r, visualize_correlations}
 # correlation between true and estimated cell-type proportions
 correlations        <- stats::cor(sc_ref_w[ranked_cells], W_annotated[,ranked_cells])
@@ -134,7 +133,7 @@ plot(gg)
 
 All mapped cell types have greater than 0.75 correlation with the component they are matched with.
 
-Since this is synthetic data, true cell type proportions are known. We can visualize the RMSE between the true and the estimated cell-type proportions as follows:
+Since this is synthetic data, true cell type proportions are known. We can also visualize the RMSE between the true and the estimated cell-type proportions as follows:
 
 ```{r, visualize_rmse}
 H_true  <- vignetteSimulationData$sc_ref_h
