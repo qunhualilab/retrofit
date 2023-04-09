@@ -51,11 +51,11 @@ A list of decomposed vectors that contains
 }
 \item annotateWithCorrelations: \itemize{
 \item w:  Filtered 2d array with GeneExpressions, Cell types
-\item h:  Filtered2d array with Cell types, Spots
+\item h:  Filtered 2d array with Cell types, Spots
 }
 \item annotateWithMarkers: \itemize{
 \item w:  Filtered 2d array with GeneExpressions, Cell types
-\item h:  Filtered2d array with Cell types, Spots
+\item h:  Filtered 2d array with Cell types, Spots
 }
 }
 }
