@@ -56,7 +56,14 @@ H_annotated <- res$h
 cells       <- res$ranked_cells	  
 ```
 
-More details on how to use RETROFIT can be found in the vignettes below:
-- [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd) : This vignette uses sample data simulated by us to demonstrate the use of the package and how to interpret the generated results. This vignette can be used to get started with RETROFIT and understand its usage.
+## Tutorial
+- [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd) is designed to get started with RETROFIT and understand its usage reproducing main results showcased in the paper. A simple practice of following the codes will provide an overall picture of the basic but comprehensive scenario. 
 
-- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd) : This vignette utilizes real data from Human Colon tissue generated using the 10x Genomics Visium platform in this [paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Herein, we demonstrate that our method is effective in identifying biologically relevant spatial patterns using ST tissues. This is a slightly more advanced vignette as it not only uses RETROFIT to deconvolve ST data but also analyzes its results.
+## Paper Reproducibility
+Vignettes provide more details about main results of the RETROFIT paper.
+
+- [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd) : This vignette uses sample data simulated by us to demonstrate the use of the package and how to interpret the generated results.  
+
+- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd) : This vignette utilizes real data from Human Colon tissue generated using the 10x Genomics Visium platform in this.
+
+- [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Herein, we demonstrate that our method is effective in identifying biologically relevant spatial patterns using ST tissues. This is a slightly more advanced vignette as it not only uses RETROFIT to deconvolve ST data but also analyzes its results.
