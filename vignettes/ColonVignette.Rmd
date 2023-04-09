@@ -15,8 +15,9 @@ knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning =
 
 # Introduction
 
-RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a Colon dataset. We will annotate cell types using marker gene lists as well as single cell reference. 
-We will also reproduce some of the results from the paper for illustration.
+RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). We will annotate cell types using marker gene lists as well as single cell reference. We will also reproduce some of the results from the paper for illustration.
+
+For getting started with RETROFIT, please see [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd). This is a more advanced vignette with analysis of a real ST data.
 
 # Package Installation and other requirements
 
@@ -33,24 +34,25 @@ library(retrofit)
 
 # Spatial Transcriptomics Data
 
-First load the Colon ST data from fetal 12 PCW tissue, using the following command:
+All data required for this vignette is stored in vignetteColonData file. First, we load the entire data and then extract the Colon ST data, using the following command:
 
 ```{r, data}
 utils::data("vignetteColonData")
 X <- vignetteColonData$a3_x
 ```
+Here, we are using a real spatial transcriptomic data of a Human Colon tissue (prepared at 12 post-conception weeks) that tells us expression of G genes in S spots. This ST data matrix will consist of G = 722 genes and S = 1080 spots i.e., a matrix of order G x S.
+
 
 # Reference-free Deconvolution
 
-Initialize the required parameters for deconvolution. 
+RETROFIT deconvolves ST data into multiple components, representing different cell types. As a rule of thumb, we recommend using a higher number of components than the actual expected number of cell types in the data. Initialize the following parameters for deconvolution:
 - iterations: Number of iterations (default = 4000)
 - L: Number of components required
 ```{r, decompose initialization}
 iterations  <- 10
 L           <- 20
 ```
-
-After initialization, run retrofit on the data (X) as follows:
+After initialization, run RETROFIT on the data (X) as follows:
 
 ```{r, decompose}
 result <- retrofit::decompose(X, L=L, iterations=iterations, verbose=TRUE)
@@ -59,7 +61,7 @@ W   <- result$w
 Th  <- result$th
 ```
 
-After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 20 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
+After deconvolution of ST data, we have our estimates of W (a matrix of order G x L), H (a matrix of order L x S) and Theta (a vector of L components). Here, we are using number of iterations as 10 for demonstration purposes. For reproducing results in the paper, we need to run RETROFIT for iterations = 4000. The whole computation is omitted here due to time complexity (> 10min). We will load the results from 4000 iterations for the rest of the analysis.
 
 ```{r, load_retrofit_results}
 H   <- vignetteColonData$a3_results_4k_iterations$decompose$h
@@ -75,17 +77,17 @@ set.seed(1)
 result <- retrofit::decompose(x, L=L, iterations=iterations)
 ```
 
-Next, we need to annotate the components, to get the proportion of K cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes. 
+After we have deconvolved our ST data matrix into different components, we need to annotate the components to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes.  
 
 # Cell-type Annotation via annotated single-cell reference
 
-Here, we will annotate components using single-cell reference. Load the single-cell reference data:
+Here, we will annotate components using single-cell reference from the [same paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Load the single-cell reference data:
 
 ```{r, sc}
 sc_ref <- vignetteColonData$sc_ref
 ```
 
-This file contains average gene expression values for K=8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
+This file contains average gene expression values of G = 722 genes for K = 8 cell types. Run the following command to get K cell-type mixtures from the ST data X:
 
 ```{r, annotate with sc}
 K <- ncol(sc_ref) # number of cell types
@@ -96,8 +98,7 @@ H_sc_prop <- result$h_prop
 W_sc_prop <- result$w_prop
 ```
 
-We assign components to the cell type it has maximum correlation with as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_mark_prop of order K x S.
-You can verify that the mappings from both methods are largely similar.
+We assign components to the cell type it has maximum correlation with, as shown in figure above. In this manner, all cell types in the reference will now be mapped to a component from RETROFIT. Here, H_sc_prop represents your cell type proportions for K = 8 cell types in S = 1080 spots.
 
 ```{r, visualize correlation matrix between the sc reference and W}
 W_norm <- W
@@ -114,7 +115,7 @@ corrplot::corrplot(stats::cor(sc_ref, W_norm),
 
 # Cell-type Annotation via known marker genes
 
-Here, we will annotate using known marker genes for cell types. Load the marker gene list:
+Here, we will annotate using known marker genes for the cell types. This information is also collected from the [same paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Load the marker gene list:
 
 ```{r, marker}
 marker_ref <- vignetteColonData$marker_ref
@@ -140,11 +141,13 @@ corrplot::corrplot(gene_sums,
                    main="Marker-based Mapping Matrix")
 ```
 
-We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Finally, cell-type proportions for each spot in the ST data (X) are stored in H_est of order K x S.
+We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Here, H_mark_prop represents your cell type proportions for K = 8 cell types in S = 1080 spots.
+
+You can verify that the mappings from both methods are largely similar.
 
 # Results and visualization
 
-Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results.
+Hereon, we will be reproducing some of the analysis from the paper using marker-based mapping results. 
 
 ## Figure 4A: Proportion of different cell types in the tissue.
 
@@ -453,6 +456,8 @@ ggplot2::ggplot(dat, ggplot2::aes(celltype, gene)) +
   ggplot2::ylab('Genes')+ 
   ggplot2::theme()
 ```
+
+Please read the paper for more information: Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023).
 
 # Session information
 
