@@ -3,15 +3,45 @@
 \docType{data}
 \name{testSimulationData}
 \alias{testSimulationData}
-\title{simulation data}
+\title{Test simulation data}
 \format{
-Includes input x, references and results with large iterations
+\subsection{\code{testSimulationData}}{
+
+A data frame with input, references, decomposed results based on "mouse brain Slide-seq"\link{Roopali}.
+\describe{
+\item{extra5_x}{500 x 1000 GeneExpressions x Spots}
+\item{sc_ref}{500 x 10 GeneExpressions x Cell types}
+\item{marker_ref}{Dictionary of 10 Cell Type:Genes}
+\item{decompose/}{Results of decomposition}
+\item{decompose/w}{500 x 16 GeneExpressions x Components}
+\item{decompose/h}{16 x 1000 Components x Spots}
+\item{decompose/th}{16 Components}
+\item{annotateWithCorrelations/}{Results of cell type annotation with correlations}
+\item{annotateWithCorrelations/w}{500 x 10 GeneExpressions x Cell Types}
+\item{annotateWithCorrelations/h}{10 x 1000 Cell Types x Spots}
+\item{annotateWithCorrelations/w_prop}{500 x 10 (normalized) GeneExpressions x Cell Types}
+\item{annotateWithCorrelations/h_prop}{10 x 1000 (normalized) Cell Types x Spots}
+\item{annotateWithCorrelations/ranked_cells}{10 Cell Types by rank}
+\item{annotateWithCorrelations/ranked_correlations}{10 Correlations by rank}
+\item{annotateWithCorrelations/sc_ref_prop}{500 x 10 (normalized) GeneExpressions x Cell types}
+\item{annotateWithMarkers/}{Results of cell type annotation with markers}
+\item{annotateWithMarkers/w}{500 x 10 GeneExpressions x Cell Types}
+\item{annotateWithMarkers/h}{10 x 1000 Cell Types x Spots}
+\item{annotateWithMarkers/w_prop}{500 x 10 (normalized) GeneExpressions x Cell Types}
+\item{annotateWithMarkers/h_prop}{10 x 1000 (normalized) Cell Types x Spots}
+\item{annotateWithMarkers/ranked_cells}{10 Cell Types by rank}
+\item{annotateWithMarkers/gene_sums}{10 x 16 Cell Types vs Components gene expression sums}
+}
+}
+}
+\source{
+\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
 }
 \usage{
 data(testSimulationData)
 }
 \description{
-A dataset with input and output of retrofit functions for reproducibility tests.
+A dataset with input and output of retrofit functions for unit&reproducibility testing
 }
 \details{
 \itemize{

@@ -3,15 +3,31 @@
 \docType{data}
 \name{vignetteSimulationData}
 \alias{vignetteSimulationData}
-\title{simulation vignette}
+\title{SimulationVignette process supporting data}
 \format{
-Includes n10m3 scenario x, references, a large iterations results.
+\subsection{\code{vignetteSimulationData}}{
+
+A data frame with input, references, decomposed results of "mouse brain Slide-seq"\link{Roopali}.
+\describe{
+\item{n10m3_x}{500 x 1000 GeneExpressions x Spots}
+\item{sc_ref_w}{500 x 10 GeneExpressions x Cell types}
+\item{sc_ref_h}{10 x 1000 Cell types x Spots}
+\item{results_4k_iterations/}{Results of 4k iterations computation}
+\item{results_4k_iterations/decompose/h}{20 x 1000 Components x Spots}
+\item{results_4k_iterations/decompose/w}{500 x 20 GeneExpressions x Components}
+\item{results_4k_iterations/decompose/th}{20 Components}
+}
+}
+}
+\source{
+\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
 }
 \usage{
 data(vignetteSimulationData)
 }
 \description{
-A dataset supporting the simulation vignette process
+A dataset based on "mouse brain Slide-seq"\link{Roopali} that supports the process of following SimulationVignette.
+Items include input sequencing data to be decomposed, and resulting data requiring expensive computations.
 }
 \details{
 \itemize{

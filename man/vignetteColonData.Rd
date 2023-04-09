@@ -3,15 +3,39 @@
 \docType{data}
 \name{vignetteColonData}
 \alias{vignetteColonData}
-\title{colon vignette}
+\title{ColonVignette process supporting data}
 \format{
-Includes colon scenario x, references, a large iterations results.
+\subsection{\code{vignetteColonData}}{
+
+A data frame with input, references, decomposed results of "human intestine Visium"\link{Roopali}.
+\describe{
+\item{a3_x}{722 x 1080 GeneExpressions x Spots}
+\item{a3_coords}{1080 x 5 \link{Roopali}}
+\item{sc_ref}{722 x 8 GeneExpressions x Cell types}
+\item{marker_ref}{Dictionary of 8 Cell Type:Genes}
+\item{marker_ref_df}{Rows of Cell Type:Genes}
+\item{fetal12_genes}{14 strings \link{Roopali}}
+\item{fetal12_genes}{27 strings \link{Roopali}}
+\item{a3_results_4k_iterations}{Results of 4k iterations computation on a3}
+\item{a3_results_4k_iterations/decompose/h}{16 x 1080 Components x Spots}
+\item{a3_results_4k_iterations/decompose/w}{722 x 16 GeneExpressions x Components}
+\item{a3_results_4k_iterations/decompose/th}{16 Components}
+\item{a3_results_4k_iterations/annotateWithCorrelations/w}{413 x 10 GeneExpressions x Cell Types}
+\item{a1_results_4k_iterations}{Results of 4k iterations computation on a1}
+\item{a1_results_4k_iterations/annotateWithCorrelations/w}{829 x 10 GeneExpressions x Cell Types}
+\item{intestine_w_12pcw}{33538 x 8 \link{Roopali}}
+}
+}
+}
+\source{
+\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
 }
 \usage{
 data(vignetteColonData)
 }
 \description{
-A dataset supporting the colon vignette process
+A dataset based on "human intestine Visium"\link{Roopali} that supports the process of following ColonVignette.
+Items include input sequencing data to be decomposed, and resulting data requiring expensive computations.
 }
 \details{
 \itemize{
