@@ -7,15 +7,15 @@
 \format{
 \subsection{\code{vignetteColonData}}{
 
-A data frame with input, references, decomposed results of "human intestine Visium"\link{Roopali}.
+A data frame with the input for RETROFIT, reference for annotation purposes, decomposed results of the data using 4000 iterations.
 \describe{
 \item{a3_x}{722 x 1080 GeneExpressions x Spots}
-\item{a3_coords}{1080 x 5 \link{Roopali}}
+\item{a3_coords}{1080 Spots x 5 Atriibutes}
 \item{sc_ref}{722 x 8 GeneExpressions x Cell types}
 \item{marker_ref}{Dictionary of 8 Cell Type:Genes}
 \item{marker_ref_df}{Rows of Cell Type:Genes}
-\item{fetal12_genes}{14 strings \link{Roopali}}
-\item{fetal12_genes}{27 strings \link{Roopali}}
+\item{fetal12_genes}{14 Genes}
+\item{fetal12_genes}{27 Genes}
 \item{a3_results_4k_iterations}{Results of 4k iterations computation on a3}
 \item{a3_results_4k_iterations/decompose/h}{16 x 1080 Components x Spots}
 \item{a3_results_4k_iterations/decompose/w}{722 x 16 GeneExpressions x Components}
@@ -23,19 +23,19 @@ A data frame with input, references, decomposed results of "human intestine Visi
 \item{a3_results_4k_iterations/annotateWithCorrelations/w}{413 x 10 GeneExpressions x Cell Types}
 \item{a1_results_4k_iterations}{Results of 4k iterations computation on a1}
 \item{a1_results_4k_iterations/annotateWithCorrelations/w}{829 x 10 GeneExpressions x Cell Types}
-\item{intestine_w_12pcw}{33538 x 8 \link{Roopali}}
+\item{intestine_w_12pcw}{33538 Genes x 8 Cell Types}
 }
 }
 }
 \source{
-\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
+Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
 }
 \usage{
 data(vignetteColonData)
 }
 \description{
-A dataset based on "human intestine Visium"\link{Roopali} that supports the process of following ColonVignette.
-Items include input sequencing data to be decomposed, and resulting data requiring expensive computations.
+A dataset that supports the process of following ColonVignette.
+Items include input ST data tissue to be decomposed, and resulting data requiring expensive computations. The ST data and reference is from this \href{https://www.sciencedirect.com/science/article/pii/S009286742031686X}{Paper}.
 }
 \details{
 \itemize{

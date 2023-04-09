@@ -86,6 +86,8 @@ result        <- retrofit::annotateWithCorrelations(sc_ref=sc_ref_w, K=K,
                                                    decomp_w=W, decomp_h=H)
 H_annotated   <- result$h
 W_annotated   <- result$w
+H_sc_prop     <- result$h_prop
+W_sc_prop     <- result$w_prop
 ranked_cells  <- result$ranked_cells
 ```
 The code above assigns components to the cell type it has maximum correlation with. In this manner, all cell types in the reference will now be mapped to a component from RETROFIT. Here, H_annotated represents your cell type proportions for K = 10 cell types in S = 1000 spots.

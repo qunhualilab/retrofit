@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{testSimulationData}}{
 
-A data frame with input, references, decomposed results based on "mouse brain Slide-seq"\link{Roopali}.
+A data frame with the input for RETROFIT, reference for annotation purposes, decomposed results of the data using 4000 iterations.
 \describe{
 \item{extra5_x}{500 x 1000 GeneExpressions x Spots}
 \item{sc_ref}{500 x 10 GeneExpressions x Cell types}
@@ -35,7 +35,7 @@ A data frame with input, references, decomposed results based on "mouse brain Sl
 }
 }
 \source{
-\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
+Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
 }
 \usage{
 data(testSimulationData)

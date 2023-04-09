@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{vignetteSimulationData}}{
 
-A data frame with input, references, decomposed results of "mouse brain Slide-seq"\link{Roopali}.
+A data frame with sample input for RETROFIT, reference for annotation purposes, decomposed results of the sample data using 4000 iterations and true cell type proportions for the sample input data for analysis.
 \describe{
 \item{n10m3_x}{500 x 1000 GeneExpressions x Spots}
 \item{sc_ref_w}{500 x 10 GeneExpressions x Cell types}
@@ -20,14 +20,14 @@ A data frame with input, references, decomposed results of "mouse brain Slide-se
 }
 }
 \source{
-\link{Roopali} < include our future preprint as the source, cited as "\link{Full Author lists}, \link{Title}, Preprint Forthcoming (2023)".>
+Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
 }
 \usage{
 data(vignetteSimulationData)
 }
 \description{
-A dataset based on "mouse brain Slide-seq"\link{Roopali} that supports the process of following SimulationVignette.
-Items include input sequencing data to be decomposed, and resulting data requiring expensive computations.
+A dataset that supports the process of following SimulationVignette.
+Items include input synthetic ST data to be decomposed, and resulting data requiring expensive computations. The synthetic sample data and reference is created using scRNA-seq data published in \href{https://pubmed.ncbi.nlm.nih.gov/30923225/}{paper}.
 }
 \details{
 \itemize{
