@@ -21,7 +21,8 @@
 #'   \item{results_4k_iterations/decompose/w}{500 x 20 GeneExpressions x Components}
 #'   \item{results_4k_iterations/decompose/th}{20 Components}
 #' }
-#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+#' @source Rodriques, S. G. et al. Slide-seq: A scalable technology for measuring genome-wide expression at high spatial resolution. Science 363, 1463–1467 (2019)
 "vignetteSimulationData"
 
 
@@ -56,7 +57,8 @@
 #'   \item{a1_results_4k_iterations/annotateWithCorrelations/w}{829 x 10 GeneExpressions x Cell Types}
 #'   \item{intestine_w_12pcw}{33538 Genes x 8 Cell Types}
 #' }
-#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+#' @source Fawkner-Corbett, D. et al. Spatiotemporal analysis of human intestinal development at single-cell resolution. Cell 184, 810–826 (2021)
 "vignetteColonData"
 
 #' Test simulation data
@@ -96,5 +98,5 @@
 #'   \item{annotateWithMarkers/ranked_cells}{10 Cell Types by rank}
 #'   \item{annotateWithMarkers/gene_sums}{10 x 16 Cell Types vs Components gene expression sums}
 #' }
-#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
 "testSimulationData"
