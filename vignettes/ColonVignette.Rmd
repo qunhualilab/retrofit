@@ -15,9 +15,13 @@ knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning =
 
 # Introduction
 
-RETROFIT is a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). We will annotate cell types using marker gene lists as well as single cell reference. We will also reproduce some of the results from the paper for illustration.
+Spatial transcriptomic (ST) technologies produce gene expression from a mixture of potentially heterogeneous cells at each spot. However, ST data measured at each spatial location may represent gene expression of multiple cell types. Existing cell-type deconvolution methods rely on external, cell-type-annotated single-cell transcriptomic reference, which can be limited by sample availability, reference quality, and platform effects. We have developed RETROFIT, a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. 
+
+Other existing methods for such analysis are [NMFreg](https://pubmed.ncbi.nlm.nih.gov/30923225/), [Stereoscope](https://www.nature.com/articles/s42003-020-01247-y), [SPOTlight](https://academic.oup.com/nar/article/49/9/e50/6129341) and [RCTD](https://www.nature.com/articles/s41587-021-00830-w), and a reference-free method: [STdeconvolve](https://www.nature.com/articles/s41467-022-30033-z). We have compared RETROFIT with these similar packages in our future preprint: Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023).
 
 For getting started with RETROFIT, please see [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd). This is a more advanced vignette with analysis of a real ST data.
+
+In this Vignette, we will estimate cell type composition of a Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). We will annotate cell types using marker gene lists as well as single cell reference. We will also reproduce some of the results from the paper for illustration.
 
 # Package Installation and other requirements
 
