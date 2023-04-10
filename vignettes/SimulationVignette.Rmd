@@ -14,7 +14,11 @@ knitr::opts_chunk$set(echo = TRUE, comment = '##', results = 'markup', warning =
 
 # Introduction
 
-Spatial transcriptomic (ST) technologies produce gene expression from a mixture of potentially heterogeneous cells at each spot. We have developed RETROFIT, a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. In this Vignette, we will estimate cell type composition of a sample synthetic dataset. This dataset is created using scRNA-seq data of 10 cell types in Mouse Cerebellum published in this [paper](https://pubmed.ncbi.nlm.nih.gov/30923225/). We will annotate cell types using an annotated single cell reference.
+Spatial transcriptomic (ST) technologies produce gene expression from a mixture of potentially heterogeneous cells at each spot. However, ST data measured at each spatial location may represent gene expression of multiple cell types. Existing cell-type deconvolution methods rely on external, cell-type-annotated single-cell transcriptomic reference, which can be limited by sample availability, reference quality, and platform effects. We have developed RETROFIT, a statistical method for reference-free deconvolution of spatial transcriptomics data to estimate cell type mixtures. 
+
+Other existing methods for such analysis are [NMFreg](https://pubmed.ncbi.nlm.nih.gov/30923225/), [Stereoscope](https://www.nature.com/articles/s42003-020-01247-y), [SPOTlight](https://academic.oup.com/nar/article/49/9/e50/6129341) and [RCTD](https://www.nature.com/articles/s41587-021-00830-w), and a reference-free method: [STdeconvolve](https://www.nature.com/articles/s41467-022-30033-z). We have compared RETROFIT with these similar packages in our future preprint: Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023).
+
+This vignette is designed to get started with RETROFIT and understand its usage reproducing main results showcased in the paper. Here, we will estimate cell type composition of a sample synthetic dataset. This dataset is created using scRNA-seq data of 10 cell types in Mouse Cerebellum published in this [paper](https://pubmed.ncbi.nlm.nih.gov/30923225/). We will annotate cell types using an annotated single cell reference.
 
 # Package Installation
 
