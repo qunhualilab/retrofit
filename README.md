@@ -1,6 +1,6 @@
 # RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics
 
-Welcome to RETROFIT, an R package for reference-free learning of cell-type composition and cell-type-specific gene expression in spatial transcriptomics (ST).
+Welcome to RETROFIT, [a *Bioconductor* package](https://doi.org/doi:10.18129/B9.bioc.retrofit) for reference-free learning of cell-type composition and cell-type-specific gene expression in spatial transcriptomics (ST).
 
 If you find this R package or any part of this repository useful for your work,
 please kindly cite the following research article:
@@ -23,20 +23,21 @@ The following figure shows the method schematic of RETROFIT. First, RETROFIT tak
 
 ## Installation
 
-Please follow these steps to install `retrofit` from github:
+To install `retrofit` from [Bioconductor](https://doi.org/doi:10.18129/B9.bioc.retrofit),
+please start R (version "4.3") and enter:
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+    
+BiocManager::install("retrofit")
+```
+
+Alternatively, please follow these steps to install `retrofit` from GitHub:
 
 ``` r
 install.packages("devtools") 
 devtools::install_github("qunhualilab/retrofit")
-```
-Install `retrofit` from [Bioconductor](https://bioconductor.org/packages/devel/bioc/html/retrofit.html).
-
-```{r}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install(version='devel')
-BiocManager::install("retrofit")
 ```
 
 ## Example
@@ -45,25 +46,26 @@ Use the following code to apply RETROFIT to your data.
 
 ``` r
 library(retrofit)
-## load built in data
+
+## load the built-in demo data
 utils::data(testSimulationData)
 x           <- testSimulationData$extra5_x
 sc_ref      <- testSimulationData$sc_ref
 marker_ref  <- testSimulationData$marker_ref
 
-## decompose 
+## decompose the ST data matrix into latent components 
 res         <- retrofit::decompose(x, L=16, iterations=100, verbose=TRUE)
 W           <- res$w
 H           <- res$h
 TH          <- res$th
 
-## annotate with correlations
+## match the latent components to known cell types using a cell-type-specific gene expression reference
 res         <- retrofit::annotateWithCorrelations(sc_ref, K=8, decomp_w=W, decomp_h=H)
 W_annotated <- res$w
 H_annotated <- res$h
 cells       <- res$ranked_cells
 
-## annotate with markers
+## match the latent components to known cell types using a list of cell-type-specific marker genes
 res         <- retrofit::annotateWithMarkers(marker_ref, K=8, decomp_w=W, decomp_h=H)
 W_annotated <- res$w
 H_annotated <- res$h
@@ -74,8 +76,4 @@ cells       <- res$ranked_cells
 - [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd) is designed to get started with RETROFIT and understand its usage reproducing main results showcased in the paper. A simple practice of following the codes will provide an overall picture of the basic but comprehensive scenario. 
 
 ## Paper Reproducibility
-- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd) is a slightly more advanced vignette as it not only uses RETROFIT to deconvolve a real ST data but also reproduces certain results from the paper. This vignette utilizes real data from Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Herein, we demonstrate that our method is effective in identifying biologically relevant spatial patterns using ST tissues. 
-
-## Other related methods
-Other existing methods for such analysis are [NMFreg](https://pubmed.ncbi.nlm.nih.gov/30923225/), [Stereoscope](https://www.nature.com/articles/s42003-020-01247-y), [SPOTlight](https://academic.oup.com/nar/article/49/9/e50/6129341) and [RCTD](https://www.nature.com/articles/s41587-021-00830-w), and a reference-free method: [STdeconvolve](https://www.nature.com/articles/s41467-022-30033-z).
-We have compared RETROFIT with these similar packages in our future preprint: Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li, RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023).
+- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd) is a slightly more advanced vignette as it not only uses RETROFIT to deconvolve a real ST data but also reproduces certain results from the paper. This vignette utilizes real data from Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Herein, we demonstrate that our method is effective in identifying biologically relevant spatial patterns using ST tissues.
