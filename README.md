@@ -19,7 +19,9 @@ Built on a Bayesian hierarchical model, RETROFIT deconvolves the ST data matrix 
 
 The following figure shows the method schematic of RETROFIT. First, RETROFIT takes a ST data matrix as the only input and decomposes this matrix into latent components in an unsupervised manner, without using any single-cell transcriptomic information. Second, RETROFIT matches these latent components to known cell types using either a cell-type-specific gene expression reference or a list of cell-type-specific marker genes for the cell types present in the ST sample. Lastly, RETROFIT outputs a cell-type-specific gene expression matrix and a cell-type proportion matrix.
 
-![Figure1](https://user-images.githubusercontent.com/90921267/220766755-daea9d4b-4ac0-4dd3-978c-7e71b31bc36e.png)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/90921267/220766755-daea9d4b-4ac0-4dd3-978c-7e71b31bc36e.png" width="918">
+</p>
 
 ## Installation
 
