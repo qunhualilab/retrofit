@@ -40,9 +40,9 @@ install.packages("devtools")
 devtools::install_github("qunhualilab/retrofit")
 ```
 
-## Example
+## Quickstart
 
-Use the following code to apply RETROFIT to your data.
+Please follow the code below to run RETROFIT on your ST data.
 
 ``` r
 library(retrofit)
@@ -72,8 +72,21 @@ H_annotated <- res$h
 cells       <- res$ranked_cells	  
 ```
 
-## Tutorial
-- [Simulation Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/SimulationVignette.Rmd) is designed to get started with RETROFIT and understand its usage reproducing main results showcased in the paper. A simple practice of following the codes will provide an overall picture of the basic but comprehensive scenario. 
+## Vignettes
 
-## Paper Reproducibility
-- [Colon Vignette](https://github.com/qunhualilab/retrofit/blob/main/vignettes/ColonVignette.Rmd) is a slightly more advanced vignette as it not only uses RETROFIT to deconvolve a real ST data but also reproduces certain results from the paper. This vignette utilizes real data from Human Colon tissue generated using the 10x Genomics Visium platform in this [Paper](https://www.sciencedirect.com/science/article/pii/S009286742031686X). Herein, we demonstrate that our method is effective in identifying biologically relevant spatial patterns using ST tissues.
+Here we provide two vignettes illustrating how use the [RETROFIT R package](https://doi.org/doi:10.18129/B9.bioc.retrofit). 
+
+### Synthetic ST data
+
+The first and simpler vignette ([RMD file](vignettes/SimulationVignette.Rmd);
+[HTML file](https://bioconductor.org/packages/release/bioc/vignettes/retrofit/inst/doc/SimulationVignette.html))
+aims to help users get started with RETROFIT and understand its basic usage on a simulated ST dataset.
+Running the codes in this vignette will help users get an overall picture of what RETROFIT can do. 
+
+### Human fetal intestine ST data
+
+The second and slightly more advanced vignette ([RMD file](vignettes/ColonVignette.Rmd);
+[HTML file](https://bioconductor.org/packages/release/bioc/vignettes/retrofit/inst/doc/ColonVignette.html))
+aims to showcase how to use RETROFIT in a real-world ST study.
+This vignette utilizes ST data from a human fetal intestine sample, generated on the 10x Genomics
+Visium Spatial Gene Expression by [Fawkner-Corbett et al (*Cell* 2021)](https://doi.org/10.1016/j.cell.2020.12.016). 
