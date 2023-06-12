@@ -1,8 +1,17 @@
 # RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics
 
-## Overview
-
 Welcome to RETROFIT, an R package for reference-free learning of cell-type composition and cell-type-specific gene expression in spatial transcriptomics (ST).
+
+If you find this R package or any part of this repository useful for your work,
+please kindly cite the following research article:
+
+> Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li.
+> RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics.
+> *bioRxiv* (2023) <https://doi.org/10.1101/2023.06.07.544126>.
+
+Correspondence should be addressed to X.Z. (`xiangzhu[at]psu.edu`) and Q.L. (`qunhua.li[at]psu.edu`).
+
+## Overview
 
 ST profiles gene expression in intact tissues. However, ST data measured at each spatial location may represent gene expression of multiple cell types, making it difficult to identify cell-type-specific transcriptional variation across spatial contexts. Existing cell-type deconvolutions of ST data often require single-cell transcriptomic references, which can be limited by availability, completeness and platform effect of such references. We present RETROFIT, a reference-free Bayesian method that produces sparse and interpretable solutions to deconvolve cell types underlying each location independent of single-cell transcriptomic references.
 
