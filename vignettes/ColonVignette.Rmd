@@ -54,7 +54,7 @@ RETROFIT deconvolves ST data into multiple components, representing different ce
 - L: Number of components required
 ```{r, decompose initialization}
 iterations  <- 10
-L           <- 20
+L           <- 16
 ```
 After initialization, run RETROFIT on the data (X) as follows:
 
@@ -78,7 +78,7 @@ Above results are obtained by running the code below.
 ```{r, reproducible codes, eval=FALSE}
 iterations <- 4000
 set.seed(1)
-result <- retrofit::decompose(x, L=L, iterations=iterations)
+result <- retrofit::decompose(X, L=L, iterations=iterations)
 ```
 
 After we have deconvolved our ST data matrix into different components, we need to annotate the components to get the proportion of, say K, cell types. We can do this in two ways: (a) using an annotated single cell reference or (b) using the known marker genes.  
