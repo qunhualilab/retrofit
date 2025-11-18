@@ -1,17 +1,8 @@
 delta_metric <- function(cor_matrix){
-
-  # cor_matrix contains correlations for different cell types (rows) at different parameter settings (columns).
-  # For example:
-  #                  0   0.01   0.05    
-  # Endothelium  0.541  0.581  0.167  
-  # Epithelial   0.756  0.725  0.684 
-  # Muscle       0.881  0.869  0.780
-  # 
-  # Here columns are different lambda settings and rows are different cell types.
-
+  
   #' RETROFIT delta metric 
   #' 
-  #' @description Receiving the input with correlations matrix for different cell types (rows) at different parameter settings (columns), 
+  #' @description Receiving the input with correlation matrix for different cell types (rows) at different parameter settings (columns), 
   #'  the function returns the delta metric.
   #'
   #' @param cor_matrix matrix or array with dimension (CellTypes, Parameters). 
@@ -22,7 +13,7 @@ delta_metric <- function(cor_matrix){
   #' Muscle       0.881  0.869  0.780
   #' 
   #' Here, there are 3 cell types and 3 different parameter settings. 
-  #' The values of the matrix are correlation between correlation between the estimated gene expression profile via RETROFIT,
+  #' The values of the matrix are the correlation between the estimated gene expression profile via RETROFIT,
   #' and the corresponding cell-type specific marker gene expressions at different parameter settings.
   #'
   #' @return A dataframe that contains
@@ -42,7 +33,7 @@ delta_metric <- function(cor_matrix){
   
   for (i in 1:nr){
     for(j in 1:nc){
-      delta[i,j] = cor_matrix[i,j] - celltype_means1[i]
+      delta[i,j] = cor_matrix[i,j] - celltype_means[i]
     }
   }
   
