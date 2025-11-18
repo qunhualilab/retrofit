@@ -145,9 +145,25 @@ corrplot::corrplot(gene_sums,
                    main="Marker-based Mapping Matrix")
 ```
 
-We assign components to the cell type it has maximum average marker expression in, as shown in figure above. Here, H_mark_prop represents your cell type proportions for K = 8 cell types in S = 1080 spots.
+We assign components to the cell type it has maximum average marker expression in, as shown in the figure above. Here, H_mark_prop represents your cell-type proportions for K = 8 cell types in S = 1080 spots.
 
 You can verify that the mappings from both methods are largely similar.
+
+# Choosing optimal $\lambda$ via performance metric $\delta$
+
+For simplicity, we load the matrix of correlations between the estimated gene expression profile for each cell type via RETROFIT,
+and the corresponding cell-type-specific marker gene expressions at different $\lambda$ settings.
+
+```{r, delta data}
+utils::data("Colon_lambda_corr_matrix.rda")
+print(cor_matrix)
+```
+Compute the performance delta metric for different $\lambda$ settings:
+
+```{r, compute delta}
+delta_metric(cor_matrix)
+```
+This shows that the performance metric is highest for $\lambda = 0.01$ and hence that is the $\lambda$ we use to generate the final results for this ST data.
 
 # Results and visualization
 
