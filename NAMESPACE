@@ -3,6 +3,7 @@
 export(annotateWithCorrelations)
 export(annotateWithMarkers)
 export(decompose)
+export(delta_metric)
 export(retrofit)
 import(Rcpp)
 importFrom(Rcpp,evalCpp)

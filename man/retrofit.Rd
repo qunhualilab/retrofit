@@ -3,7 +3,6 @@
 \docType{package}
 \name{retrofit}
 \alias{retrofit}
-\alias{_PACKAGE}
 \alias{retrofit-package}
 \title{retrofit: Reference-free deconvolution of cell mixtures in spatial transcriptomics}
 \usage{

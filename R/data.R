@@ -100,3 +100,24 @@
 #' }
 #' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
 "testSimulationData"
+
+
+#' Lambda correlation data
+#'
+#' A dataset with the correlation matrix of the lambda parameter and cell types supporting parameter selection 
+#'
+#' \itemize{
+#'   \item lambdaCorrelationData
+#' }
+#'
+#' @docType data
+#' @name lambdaCorrelationData
+#' @usage data(lambdaCorrelationData)
+#' @format ## `lambdaCorrelationData`
+#' A data frame with the correlation matrix between lambda values and cell types. 
+#' \describe{
+#'   \item{cor_matrix}{8 x 6 Cell types x Lambda values}
+#' }
+#' @source Roopali Singh, Xi He, Adam Keebum Park, Ross Cameron Hardison, Xiang Zhu, Qunhua Li. RETROFIT: Reference-free deconvolution of cell-type mixtures in spatial transcriptomics, Preprint Forthcoming (2023)
+"lambdaCorrelationData"
+
